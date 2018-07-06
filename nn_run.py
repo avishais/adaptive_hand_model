@@ -54,8 +54,8 @@ y_test = X[n:,4:]
 # plt.show()
 
 # Training Parameters
-learning_rate = 0.01
-num_steps = int(1e5)
+learning_rate = 0.001
+num_steps = int(0.5e5)
 batch_size = 200
 display_step = 100
 
