@@ -30,8 +30,12 @@ else:
     training = True
     retrain = False
 
+DropOut = True
+
 print('Loading training data...')
-X = np.loadtxt('./data/data1.db')
+
+data_num = 2
+X = np.loadtxt('./data/data' + str(data_num) + '.db')
 
 n_test = 5000
 n = X.shape[0]-n_test
@@ -39,11 +43,17 @@ n = X.shape[0]-n_test
 x_max = np.max(X, axis=0)
 x_min = np.min(X, axis=0)
 
+# Network Parameters
+hidden_layers = [10]*2
+num_input = 8 
+num_output = 6
+activation = 2
+
 X = normz(X, x_max, x_min)
-x_train = X[0:n,0:4]
-y_train = X[0:n,4:]
-x_test = X[n:,0:4]
-y_test = X[n:,4:]
+x_train = X[0:n,0:num_input]
+y_train = X[0:n,num_input:]
+x_test = X[n:,0:num_input]
+y_test = X[n:,num_input:]
 
 # plt.figure(0)
 # ax = plt.axes(projection='3d')
@@ -55,15 +65,9 @@ y_test = X[n:,4:]
 
 # Training Parameters
 learning_rate = 0.01
-num_steps = int(1e5)
+num_steps = int(5e5)
 batch_size = 200
 display_step = 100
-
-# Network Parameters
-hidden_layers = [10]*2
-num_input = 4 
-num_output = 2
-activation = 1
 
 # tf Graph input (only pictures)
 X = tf.placeholder("float", [None, num_input])
@@ -73,17 +77,29 @@ Y = tf.placeholder("float", [None, num_output])
 weights, biases = wNb(num_input, hidden_layers, num_output)
 
 # Construct model
-prediction = neural_net(X, weights, biases, activation)
+keep_prob_input = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32)
+if not DropOut:
+    prediction = neural_net(X, weights, biases, activation)
+else:
+    X_drop = tf.nn.dropout(X, keep_prob=keep_prob_input)
+    prediction = neural_net_dropout(X, weights, biases, keep_prob, activation)
+
 
 # Define loss 
 cost = tf.reduce_mean(tf.pow(prediction - Y, 2))#/(2*n)
 # cost = tf.reduce_mean(np.absolute(y_true - y_pred))
 # cost = tf.reduce_sum(tf.square(y_true - y_pred))
 
+# L2 Regularization
+beta = 0.001
+regularizer = computeReg(weights)
+# cost = cost + beta * regularizer
+
 # Define optimizer
-optimizer = tf.train.AdamOptimizer(learning_rate)
+# optimizer = tf.train.AdamOptimizer(learning_rate)
 # optimizer = tf.train.GradientDescentOptimizer(learning_rate)
-# optimizer = tf.train.AdagradOptimizer(learning_rate)
+optimizer = tf.train.AdagradOptimizer(learning_rate)
 train_op = optimizer.minimize(cost)
 
 # Initialize the variables (i.e. assign their default value)
@@ -92,8 +108,8 @@ init = tf.global_variables_initializer()
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
 
-load_from = './models/cp.ckpt'
-save_to = './models/cp.ckpt'
+load_from = 'cp.ckpt'
+save_to = 'cp.ckpt'
 
 # Start Training
 # Start a new TF session
@@ -118,7 +134,10 @@ with tf.Session() as sess:
             batch_x, batch_y = next_batch(batch_size, x_train, y_train)
 
             # Run optimization op (backprop) and cost op (to get loss value)
-            _, c = sess.run([train_op, cost], feed_dict={X: batch_x, Y: batch_y})
+            if not DropOut:
+                _, c = sess.run([train_op, cost], feed_dict={X: batch_x, Y: batch_y})
+            else:
+                _, c = sess.run([train_op, cost], feed_dict={X: batch_x, Y: batch_y, keep_prob_input: 0.5, keep_prob: 0.5})
             # Display logs per step
             if i % display_step == 0 or i == 1:
                 print('Step %i: Minibatch Loss: %f' % (i, c))
@@ -145,21 +164,21 @@ with tf.Session() as sess:
 
     # Testing
     # Calculate cost for training data
-    y_train_pred = sess.run(prediction, {X: x_train})
-    training_cost = sess.run(cost, feed_dict={X: x_train, Y: y_train})
+    y_train_pred = sess.run(prediction, {X: x_train, keep_prob_input: 1.0, keep_prob: 1.0})
+    training_cost = sess.run(cost, feed_dict={X: x_train, Y: y_train, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Training cost:", training_cost)
 
-    y_test_pred = sess.run(prediction, {X: x_test})
-    testing_cost = sess.run(cost, feed_dict={X: x_test, Y: y_test})
+    y_test_pred = sess.run(prediction, {X: x_test, keep_prob_input: 1.0, keep_prob: 1.0})
+    testing_cost = sess.run(cost, feed_dict={X: x_test, Y: y_test, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing cost=", testing_cost)
 
     j = np.random.random_integers(1, x_test.shape[0])
-    f = np.array(x_test[j, :]).reshape(1,4)
-    yo = sess.run(prediction, {X: f})
+    f = np.array(x_test[j, :]).reshape(1,num_input)
+    yo = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing point: ", f)
     print("Point ", j, ": ", yo, y_test[j,:])
 
-    export_net(weights, biases, x_max, x_min, activation, sess, './models/net1.netxt')
+    export_net(weights, biases, x_max, x_min, activation, sess, './models/net' + str(data_num) + '.netxt')
 
 # x_train = denormz(x_train, x_max, x_min)
 # x_train_pred = denormz(x_train_pred, x_max, x_min)

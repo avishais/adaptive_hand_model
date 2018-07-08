@@ -66,6 +66,15 @@ def next_batch(num, data, labels):
 
     return np.asarray(data_shuffle), np.asarray(labels_shuffle)
 
+# Compute L2 Regularization
+def computeReg(weights):
+    regularizer = 0;
+
+    for i in range(1, len(weights)+1):
+        sth = 'h' + str(i)
+        regularizer = regularizer + tf.nn.l2_loss(weights[sth])
+
+    return regularizer
 
 # Initialize weight and bias matrices
 def wNb(num_input, hidden_layers, num_output):
@@ -81,11 +90,11 @@ def wNb(num_input, hidden_layers, num_output):
     # Net
     for i in range(len(h)-1):
         sth = 'h' + str(i+1)
-        # weights.update({sth: tf.Variable(tf.random_normal([h[i], h[i+1]]))})
-        weights.update({sth: tf.Variable(tf.random_uniform([h[i], h[i+1]], -1.0 / np.sqrt(h[i]), 1.0 / np.sqrt(h[i+1])))})
+        weights.update({sth: tf.Variable(tf.random_normal([h[i], h[i+1]]))})
+        # weights.update({sth: tf.Variable(tf.random_uniform([h[i], h[i+1]], -1.0 / np.sqrt(h[i]), 1.0 / np.sqrt(h[i+1])))})
         stb = 'b' + str(i+1)
-        # biases.update({stb: tf.Variable(tf.random_normal([h[i+1]]))})
-        biases.update({stb: tf.Variable(tf.zeros([h[i+1]]))})
+        biases.update({stb: tf.Variable(tf.random_normal([h[i+1]]))})
+        # biases.update({stb: tf.Variable(tf.zeros([h[i+1]]))})
 
     weights.update({'h' + str(len(h)): tf.Variable(tf.zeros([h[len(h)-1], num_output]))})
     biases.update({'b' + str(len(h)): tf.Variable(tf.zeros([num_output]))})
@@ -115,5 +124,22 @@ def neural_net(x, weights, biases, activation_index=1):
         layer = activF(tf.add(tf.matmul(layer, weights[sth]), biases[stb]), activation_index)
 
     layer = tf.matmul(layer, weights['h' + str(len(weights))]) + biases['b' + str(len(weights))]
+
+    return layer
+
+# Building the net with dripout
+def neural_net_dropout(x, weights, biases, keep_prob, activation_index=1):
+    # First hidden fully connected layer 
+    layer = activF(tf.add(tf.matmul(x, weights['h1']), biases['b1']), activation_index)
+    layer_drop = tf.nn.dropout(layer, keep_prob)
+
+    # Remaining hidden fully connected layer 
+    for i in range(1, int(len(weights)-1)):
+        sth = 'h' + str(i+1)
+        stb = 'b' + str(i+1)
+        layer = activF(tf.add(tf.matmul(layer_drop, weights[sth]), biases[stb]), activation_index)
+        layer_drop = tf.nn.dropout(layer, keep_prob)
+
+    layer = tf.matmul(layer_drop, weights['h' + str(len(weights))]) + biases['b' + str(len(weights))]
 
     return layer

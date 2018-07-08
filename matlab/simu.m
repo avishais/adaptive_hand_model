@@ -1,21 +1,24 @@
 clear all
-
-Q = load('../data/data1.mat', 'Q');
+num_net = 2;
+Q = load(['../data/data' num2str(num_net) '.mat'], 'Q');
 Q = Q.Q;
+action_inx = Q{1}.action_inx;
+state_inx = Q{1}.state_inx;
+state_nxt_inx = Q{1}.state_nxt_inx;
 
 P = Q{2}.data;
 P(1,:) = [];
 
 %%
-[W, b, x_max, x_min] = net_rep;
-s = P(1,1:2);
+[W, b, x_max, x_min] = net_rep(num_net);
+s = P(1,state_inx);
 S = s;
-Sr = s;
-for i = 1:size(P,1)
-    a = P(i,3:4);
-    Sr = [Sr; P(i,1:2)];
+Sr = [];%s;
+for i = 1:100%size(P,1)
+    a = P(i, action_inx);
+    Sr = [Sr; P(i, state_inx)];
     s = Net([s a], W, b, x_max, x_min);
-    s_real = P(i,5:6);
+    s_real = P(i, state_nxt_inx);
     S = [S; s];    
 end
 

@@ -1,6 +1,6 @@
 % M = dlmread('r_l_n_2.txt',',');
-% M = dlmread('c_l_n_1.txt',',');
-M = dlmread('r_m_d_2.txt',',');
+M = dlmread('c_l_n_1.txt',',');
+% M = dlmread('r_m_d_2.txt',',');
 
 
 % The columns are in the following order:
@@ -86,3 +86,18 @@ plot(T, M(:,4:5));
 xlabel('Time (sec)');
 ylabel('Load');
 legend('actuator 1','actuator 2');
+
+%%
+i = 1000;
+for i = 1:1000%size(M,1)
+    figure(3)
+    plot(M(i,24),M(i,25),'o-k');
+    hold on
+    plot(M(i,16),M(i,20),'o:y');
+    plot(M(i,17),M(i,21),'o:m');
+    plot(M(i,18),M(i,22),'o:c');
+    plot(M(i,19),M(i,23),'o:r');
+    hold off
+    
+    drawnow;
+end

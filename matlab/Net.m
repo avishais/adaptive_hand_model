@@ -1,4 +1,4 @@
-function x_out = Net(x_in, W, b, x_max, x_min)
+function x_out = Net(x_in, W, b, x_max, x_min, activation)
 
 l = length(x_in);
 
@@ -9,7 +9,8 @@ for i = 1:numel(W)
     
 %     T = tanh(T);
     if i < numel(W)
-        T = sigmoid(T);
+%         T = sigmoid(T);
+        T = poslin(T);
     end
 end
 

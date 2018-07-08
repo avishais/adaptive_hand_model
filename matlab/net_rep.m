@@ -1,5 +1,10 @@
-function [W, b, x_max, x_min] = net_rep
-R = load('../models/net1.netxt');
+function [W, b, x_max, x_min] = net_rep(num_net)
+
+if nargin == 0
+    num_net = 1;
+end
+
+R = load(['../models/net' num2str(num_net) '.netxt']);
 n = R(1);
 activation = R(2);
 R(1:2) = [];
@@ -41,7 +46,7 @@ x_max = R(1:l/2); x_min = R(l/2+1:end);
 % 
 % 
 % i = randi(size(D,1));
-% x = D(i,1:4);
+% x = [0.48069498 0.48878924 0.         0.        ];%D(i,1:4);
 % y_real = D(i,5:6)
-% 
+
 % y = Net(x, W, b, x_max, x_min)

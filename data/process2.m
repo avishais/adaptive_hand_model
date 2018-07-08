@@ -35,17 +35,20 @@ for i = 1:n
         
         % Currently take state as object position
         % M = [(state,action), (state')];
-        M = [M; [D(j,24:25), D(j,6:7), D(j+1, 24:25), i]];      
+        M = [M; [D(j,24:25), D(j, [16 20 18 22]), D(j,6:7), D(j+1, 24:25), D(j+1, [16 20 18 22]), i]];      
     end
     
     Q{i}.data = M;
     Q{i}.file = f;
+    Q{i}.action_inx = 7:8;
+    Q{i}.state_inx = 1:6;
+    Q{i}.state_nxt_inx = 9:14;
     P = [P; M];
 end
 
 %%
-save('data1.mat', 'Q', 'P');
-dlmwrite('data1.db', P(:,1:end-1), ' ');
+save('data2.mat', 'Q', 'P');
+dlmwrite('data2.db', P(:,1:end-1), ' ');
 
 %%
 plot(P(:,3:4));
