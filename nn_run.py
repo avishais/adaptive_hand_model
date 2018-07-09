@@ -30,7 +30,7 @@ else:
     training = True
     retrain = False
 
-DropOut = True
+DropOut = False
 
 print('Loading training data...')
 
@@ -50,10 +50,14 @@ num_output = 6
 activation = 2
 
 X = normz(X, x_max, x_min)
+prev_states = X[:,0:num_input-2]
+next_states = X[:,num_input:]
+
 x_train = X[0:n,0:num_input]
-y_train = X[0:n,num_input:]
+y_train = next_states[0:n,:] - prev_states[0:n,:]
+
 x_test = X[n:,0:num_input]
-y_test = X[n:,num_input:]
+y_test = next_states[n:,:] - prev_states[n:,:] #X[n:,num_input:]
 
 # plt.figure(0)
 # ax = plt.axes(projection='3d')
@@ -65,7 +69,7 @@ y_test = X[n:,num_input:]
 
 # Training Parameters
 learning_rate = 0.01
-num_steps = int(5e5)
+num_steps = int(1e5)
 batch_size = 200
 display_step = 100
 
@@ -87,7 +91,7 @@ else:
 
 
 # Define loss 
-cost = tf.reduce_mean(tf.pow(prediction - Y, 2))#/(2*n)
+cost = tf.reduce_mean(0.5*tf.pow(prediction - Y, 2))#/(2*n)
 # cost = tf.reduce_mean(np.absolute(y_true - y_pred))
 # cost = tf.reduce_sum(tf.square(y_true - y_pred))
 

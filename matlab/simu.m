@@ -14,10 +14,10 @@ P(1,:) = [];
 s = P(1,state_inx);
 S = s;
 Sr = [];%s;
-for i = 1:100%size(P,1)
+for i = 1:10%size(P,1)
     a = P(i, action_inx);
     Sr = [Sr; P(i, state_inx)];
-    s = Net([s a], W, b, x_max, x_min);
+    s = s + Net([s a], W, b, x_max, x_min);
     s_real = P(i, state_nxt_inx);
     S = [S; s];    
 end
