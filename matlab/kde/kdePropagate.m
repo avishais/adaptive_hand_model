@@ -15,8 +15,8 @@ end
 
 % P = P/sum(P);
 
-scatter3(X(:,1),X(:,2),P, 20, P,'filled'); colormap(jet); colorbar;
-view(2)
+% scatter3(X(:,1),X(:,2),P, 20, P,'filled'); colormap(jet); colorbar;
+% view(2)
 % grid
 % hold on
 % plot3(x(1),x(2),0.01,'xr')

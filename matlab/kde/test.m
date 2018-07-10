@@ -30,8 +30,8 @@ end
 
 %%
 
-a = [1 1];
-x = [0.5 0.5 a];
+a = [1 0];
+x = [0.5 0.4 a];
 [idx, d] = knnsearch(Xtraining(:,1:4), x(1:4), 'K', 1000);
 mind = min(d);
 maxd = max(d);
@@ -57,17 +57,20 @@ P = P/sp;
 Pp = Pp/sp;
 
 %
+figure(1)
 surf(XX,YY,P); 
 hold on
 plot3(ones(2,1)*x(1), ones(2,1)*x(2), zlim, ':k', 'linewidth',3);
 plot3(x(1),x(2),max(zlim),'ok','markerfacecolor','m','markersize',16);
 % plot3(X(:,1),X(:,2),Pp,'ok','markerfacecolor','y');
-text(0.05, 0.95, action(a),'fontsize',25,'color','white');
+text(0.05, 0.95, ['action =' action(a)],'fontsize',25,'color','white');
 text(0.05, 0.9, ['dist. = ' num2str(mind) ',' num2str(maxd)],'fontsize',25,'color','white');
 hold off
-axis equal
+% axis equal
 view(2)
 
+filen = ['f_' num2str(x(1)) '_' num2str(x(2)) '_' action(a) '.png'];
+% print(filen, '-dpng', '-r150');
 
 
 % [0.2211, 0.2513]
@@ -100,14 +103,14 @@ view(2)
 
 function str = action(a)
 if all(a==[0 0])
-    str = 'action = down';
+    str = 'down';
 else if all(a==[1 1])
-        str = 'action = up';
+        str = 'up';
     else if all(a==[1 0])
-            str = 'action = left';
+            str = 'left';
         else
             if all(a==[0 1])
-                str = 'action = right';
+                str = 'right';
             end
         end
     end

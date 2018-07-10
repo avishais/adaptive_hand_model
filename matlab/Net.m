@@ -2,7 +2,7 @@ function x_out = Net(x_in, W, b, x_max, x_min, activation)
 
 l = length(x_in);
 
-T = normz(x_in, x_max(1:l), x_min(1:l));
+T = normzG(x_in, x_max(1:l), x_min(1:l));
 
 for i = 1:numel(W)
     T = T*W{i} + b{i};
@@ -14,7 +14,7 @@ for i = 1:numel(W)
     end
 end
 
-x_out = T;%denormz(T, x_max(l+1:end), x_min(l+1:end));
+x_out = denormzG(T, x_max(l+1:end), x_min(l+1:end));
 
 end
 
@@ -27,6 +27,17 @@ end
 function x = denormz(x, x_max, x_min)
 
 x = x.*(x_max-x_min) + x_min;
+
+end
+
+function x = normzG(x, mu, sigma)
+
+x = (x-mu)./sigma;
+end
+
+function x = denormzG(x, mu, sigma)
+
+x = x.*sigma + mu;
 
 end
 

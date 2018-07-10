@@ -36,7 +36,7 @@ def export_net(W, B, x_max, x_min, activation, sess, path_file = './models/net.n
     f.close()
 
 def normz(x, x_max, x_min):
-    
+
     for i in range(x.shape[1]):
         x[:,i] = (x[:,i]-x_min[i])/(x_max[i]-x_min[i])
     
@@ -45,9 +45,27 @@ def normz(x, x_max, x_min):
     return x
 
 def denormz(x, x_max, x_min):
-    
+    x = x.reshape(2,)
     for i in range(x.shape[0]):
         x[i] = x[i]*(x_max[i]-x_min[i]) + x_min[i]
+
+    # x = x*(x_max-x_min) + x_min
+    
+    return x
+
+def normzG(x, mu, sigma):
+    
+    for i in range(x.shape[1]):
+        x[:,i] = (x[:,i]-mu[i])/sigma[i]
+    
+    # x = (x-x_min)/(x_max-x_min)
+
+    return x
+
+def denormzG(x, mu, sigma):
+    x = x.reshape(2,)
+    for i in range(x.shape[0]):
+        x[i] = x[i]*sigma[i] + mu[i]
 
     # x = x*(x_max-x_min) + x_min
     

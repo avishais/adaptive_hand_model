@@ -35,17 +35,10 @@ DropOut = False
 print('Loading training data...')
 
 data_num = 1
-X = np.loadtxt('./data/data' + str(data_num) + '.db')
+Xt = np.loadtxt('./data/data' + str(data_num) + '.db')
 
 n_test = 5000
-n = X.shape[0]-n_test
-
-x_max = np.max(X, axis=0)
-x_min = np.min(X, axis=0)
-x_max[0] = x_max[4] = np.max([x_max[0], x_max[4]])
-x_min[0] = x_min[4] = np.min([x_min[0], x_min[4]])
-x_max[1] = x_max[5] = np.max([x_max[1], x_max[5]])
-x_min[1] = x_min[5] = np.min([x_min[1], x_min[5]])
+n = Xt.shape[0]-n_test
 
 # Network Parameters
 hidden_layers = [10]*2
@@ -53,27 +46,28 @@ num_input = 4
 num_output = 2
 activation = 2
 
-X = normz(X, x_max, x_min)
-prev_states = X[:,0:num_input-2]
-next_states = X[:,num_input:]
+prev_states = Xt[:,0:num_input-2]
+next_states = Xt[:,num_input:]
+actions = Xt[:, num_input-2:num_input]
+
+X = np.concatenate((prev_states, actions, next_states-prev_states), axis=1)
+
+x_max = np.max(X, axis=0)
+x_min = np.min(X, axis=0)
+x_mu = np.mean(X, axis=0)
+x_sigma = np.std(X, axis=0)
+
+# X = normz(X, x_max, x_min)
+X = normzG(X, x_mu, x_sigma)
 
 x_train = X[0:n,0:num_input]
-y_train = next_states[0:n,:] - prev_states[0:n,:]
-
+y_train = X[0:n,num_input:]
 x_test = X[n:,0:num_input]
-y_test = next_states[n:,:] - prev_states[n:,:] #X[n:,num_input:]
-
-# plt.figure(0)
-# ax = plt.axes(projection='3d')
-# ir = [0,1,2]
-# ax.plot3D(x_train[:,ir[0]], x_train[:,ir[1]], x_train[:,ir[2]], 'bo')
-# fig = plt.figure(2)
-# plt.plot(y_train[:,0], y_train[:,1], 'ro', label='Original')
-# plt.show()
+y_test = X[n:,num_input:]
 
 # Training Parameters
-learning_rate = 0.01
-num_steps = int(1e4)
+learning_rate = 0.1
+num_steps = int(1e5)
 batch_size = 200
 display_step = 100
 
@@ -181,14 +175,20 @@ with tf.Session() as sess:
     print("Testing cost=", testing_cost)
 
     j = 22273#np.random.random_integers(1, x_train.shape[0])
-    f = np.array(x_train[j, :]).reshape(1,num_input)
-    yo = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
+    f = np.array([-0.1177 ,   0.0641  ,  0.9617  ,  0.9387])#x_train[j, :]).reshape(1,num_input)
+    f = f.reshape(1,num_input)
+    y = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing point: ", f)
-    print("Point ", j, ": ", yo, y_train[j,:])
-    print(denormz(x_train[j, 0:2], x_max, x_min))
-    print(denormz(x_train[j, 0:2] + yo, x_max, x_min))
+    print("Point ", j, ": ", y, y_train[j,:])
+    # xo = denormz(x_train[j, 0:2], x_max, x_min)
+    # yo = denormz(y, x_max[4:], x_min[4:])
+    xo = denormzG(f[:,0:2], x_mu, x_sigma)
+    yo = denormzG(y, x_mu[4:], x_sigma[4:])
+    yr = denormzG(y_train[j,:], x_mu[4:], x_sigma[4:])
+    # print(x_mu, x_sigma)
+    print("State: ", xo, ", predicted next state: ", xo + yo, ", real next step: ", xo + yr)
 
-    export_net(weights, biases, x_max, x_min, activation, sess, './models/net' + str(data_num) + '.netxt')
+    export_net(weights, biases, x_mu, x_sigma, activation, sess, './models/net' + str(data_num) + '.netxt')
 
 # x_train = denormz(x_train, x_max, x_min)
 # x_train_pred = denormz(x_train_pred, x_max, x_min)

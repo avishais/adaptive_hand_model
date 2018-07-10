@@ -28,11 +28,11 @@ for i = 1:n
             continue;
         end
         
-        % Check if there is change, if not, move on
-        if all(D(j,24:25)==D(j+1,24:25))
+        % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state 
+        if all(D(j,24:25)==D(j+1,24:25)) || norm(D(j,24:25)-D(j+1,24:25)) > 30
             continue;
         end
-        
+               
         % Currently take state as object position
         % M = [(state,action), (state')];
         M = [M; [D(j,24:25), D(j,6:7), D(j+1, 24:25), i]]; % data 1
