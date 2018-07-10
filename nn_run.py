@@ -34,7 +34,7 @@ DropOut = False
 
 print('Loading training data...')
 
-data_num = 2
+data_num = 1
 X = np.loadtxt('./data/data' + str(data_num) + '.db')
 
 n_test = 5000
@@ -42,11 +42,15 @@ n = X.shape[0]-n_test
 
 x_max = np.max(X, axis=0)
 x_min = np.min(X, axis=0)
+x_max[0] = x_max[4] = np.max([x_max[0], x_max[4]])
+x_min[0] = x_min[4] = np.min([x_min[0], x_min[4]])
+x_max[1] = x_max[5] = np.max([x_max[1], x_max[5]])
+x_min[1] = x_min[5] = np.min([x_min[1], x_min[5]])
 
 # Network Parameters
 hidden_layers = [10]*2
-num_input = 8 
-num_output = 6
+num_input = 4 
+num_output = 2
 activation = 2
 
 X = normz(X, x_max, x_min)
@@ -69,7 +73,7 @@ y_test = next_states[n:,:] - prev_states[n:,:] #X[n:,num_input:]
 
 # Training Parameters
 learning_rate = 0.01
-num_steps = int(1e5)
+num_steps = int(1e4)
 batch_size = 200
 display_step = 100
 
@@ -176,11 +180,13 @@ with tf.Session() as sess:
     testing_cost = sess.run(cost, feed_dict={X: x_test, Y: y_test, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing cost=", testing_cost)
 
-    j = np.random.random_integers(1, x_test.shape[0])
-    f = np.array(x_test[j, :]).reshape(1,num_input)
+    j = 22273#np.random.random_integers(1, x_train.shape[0])
+    f = np.array(x_train[j, :]).reshape(1,num_input)
     yo = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing point: ", f)
-    print("Point ", j, ": ", yo, y_test[j,:])
+    print("Point ", j, ": ", yo, y_train[j,:])
+    print(denormz(x_train[j, 0:2], x_max, x_min))
+    print(denormz(x_train[j, 0:2] + yo, x_max, x_min))
 
     export_net(weights, biases, x_max, x_min, activation, sess, './models/net' + str(data_num) + '.netxt')
 

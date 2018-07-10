@@ -1,5 +1,5 @@
 clear all
-num_net = 2;
+num_net = 1;
 Q = load(['../data/data' num2str(num_net) '.mat'], 'Q');
 Q = Q.Q;
 action_inx = Q{1}.action_inx;

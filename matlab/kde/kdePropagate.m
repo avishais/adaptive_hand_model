@@ -1,30 +1,31 @@
-function x_next = kdePropagate(x, a, r, data) 
+function [X, P] = kdePropagate(x, a, r, data) 
 
-N = 100;
+N = 10;
 X = zeros(N,2);
 P = zeros(N,1);
 
-% idx = knnsearch(data(:,1:4), [x a]);
-idx = rangesearch(data(:,1:4),[x a],0.04);
+% idx = knnsearch(data(:,1:2), x);
+idx = rangesearch(data(:,1:4), [x a], 0.25);
 data_nn = data(idx{1},:);
-size(data_nn,1)
 
 for i = 1:N
     X(i,:) = cirrdnPJ(x, r);
     P(i) = kde([x a X(i,:)], data_nn);
 end
 
-P = P/sum(P);
+% P = P/sum(P);
 
-% Fit data to gaussian - may not be the best solution
-mu = mean(P);
-sigma = std(P);
-p = normrnd(mu, sigma);
+scatter3(X(:,1),X(:,2),P, 20, P,'filled'); colormap(jet); colorbar;
+view(2)
+% grid
+% hold on
+% plot3(x(1),x(2),0.01,'xr')
+% hold off
 
 % Sample from distribution
-[~,i] = min(abs(P-p));
-x_next = X(i,:);
+x_next = sampleWeight(P, X);
 
+% Take most probapble state
 % [~,i] = max(P);
 % x_next = X(i,:);
 
@@ -45,5 +46,16 @@ function y = cirrdnPJ(x, rc)
 a = 2*pi*rand;
 r = sqrt(rand);
 y = (rc*r) * [cos(a) sin(a)] + x;
+end
+
+function x = sampleWeight(P, X)
+P = P/sum(P);
+S = cumsum(P);
+
+d = rand();
+j = min(find((d>S)==0));
+
+x = X(j,:);
+
 end
 

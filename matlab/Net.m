@@ -14,7 +14,7 @@ for i = 1:numel(W)
     end
 end
 
-x_out = denormz(T, x_max(l+1:end), x_min(l+1:end));
+x_out = T;%denormz(T, x_max(l+1:end), x_min(l+1:end));
 
 end
 

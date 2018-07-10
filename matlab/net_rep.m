@@ -38,15 +38,17 @@ x_max = R(1:l/2); x_min = R(l/2+1:end);
 
 %% Test net
 
-% D = dlmread('../data/data1.db');
-% Q = load('../data/data1.mat', 'Q');
-% Q = Q.Q;
-% 
-% P = Q{9}.data;
-% 
-% 
-% i = randi(size(D,1));
-% x = [0.48069498 0.48878924 0.         0.        ];%D(i,1:4);
-% y_real = D(i,5:6)
+D = dlmread('../data/data1.db');
+Q = load('../data/data1.mat', 'Q');
+Q = Q.Q;
 
-% y = Net(x, W, b, x_max, x_min)
+P = Q{9}.data;
+
+i = 22273+1;%randi(size(D,1));
+x = D(i,1:4);[0.52347826 0.42608696 0.         0.        ];%
+% x = x.*(x_max(1:4)-x_min(1:4)) + x_min(1:4)
+y_real = D(i,5:6)-D(i,1:2)
+
+Net(x, W, b, x_max, x_min)
+y = [0.63304348 0.60869565] + Net(x, W, b, x_max, x_min)
+y.*(x_max(5:6)-x_min(5:6)) + x_min(5:6)
