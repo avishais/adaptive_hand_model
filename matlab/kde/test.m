@@ -1,15 +1,19 @@
 clear all
+clf
 
 num_net = 1;
-Q = load(['../../data/data' num2str(num_net) '.mat'], 'Q');
-Q = Q.Q;
+% Q = load(['../../data/berk_data/data' num2str(num_net) '.mat'], 'Q');
+% Q = Q.Q;
+% 
+% Xtraining = [];
+% for i = 1:size(Q,1)
+%     Xtraining = [Xtraining; Q{i}.data(:,1:6)];    
+% end
 
-Xtraining = [];
-for i = 1:size(Q,1)
-    Xtraining = [Xtraining; Q{i}.data(:,1:6)];    
-end
+% Xtraining = load('../../data/toyData.db');
+Xtraining = load('../../data/data_25.db');
 
-Xtraining = load('../../data/toyData.db');
+% Xtraining = Xtraining(1:300,:);
 
 xmax = max(Xtraining); xmax([1, 5]) = max(xmax([1, 5])); xmax([2, 6]) = max(xmax([2, 6]));
 xmin = min(Xtraining); xmin([1, 5]) = min(xmin([1, 5])); xmin([2, 6]) = min(xmin([2, 6]));
@@ -30,14 +34,16 @@ end
 
 %%
 
-a = [1 0];
-x = [0.1 0.9 a];
-[idx, d] = knnsearch(Xtraining(:,1:4), x(1:4), 'K', 100);
+a = action('d');
+% x = [0.42 0.43 a];
+x = [0.55 0.37 a];
+[idx, d] = knnsearch(Xtraining(:,1:4), x(1:4), 'K', 30);
+% [idx, d] = rangesearch(Xtraining(:,1:4), x(1:4), 0.03); d = d{1}; idx = idx{1};
+
+data_nn = Xtraining(idx,:);
+
 mind = min(d);
 maxd = max(d);
-data_nn = Xtraining(idx,:);
-% idx = rangesearch(Xtraining(:,1:4), x(1:4), 0.1);
-% data_nn = Xtraining(idx{1},:);
 
 xx = linspace(0,1,100);
 yy = xx;
@@ -51,7 +57,7 @@ for i = 1:length(xx)
     end
 end
 sp = sum(P(1:end));
-P = P/sp;
+% P = P/sp;
 
 % [X, Pp] = kdePropagate(x(1:2), a, r_max, Xtraining);
 % Pp = Pp/sp;
@@ -63,22 +69,24 @@ x_nxt_prob = [XX(i_row, i_col) YY(i_row, i_col)];
 
 %
 figure(1)
-plot3(x(1),x(2),max(zlim),'ok','markerfacecolor','m','markersize',14);
+clf
 hold on
+plot3(x(1),x(2),max(zlim),'ok','markerfacecolor','m','markersize',14);
 plot3(x_nxt_prob(1),x_nxt_prob(2),max(zlim),'ok','markerfacecolor','c','markersize',14);
 surf(XX,YY,P); 
-plot3(ones(2,1)*x(1), ones(2,1)*x(2), zlim, ':k', 'linewidth',3);
-
-% plot3(X(:,1),X(:,2),Pp,'ok','markerfacecolor','y');
-text(0.05, 0.15, ['action =' action(a)],'fontsize',25,'color','white');
-text(0.05, 0.1, ['dist. = ' num2str(mind) ',' num2str(maxd)],'fontsize',25,'color','white');
+z = zlim;
+plot3(Xtraining(:,1),Xtraining(:,2),z(2)*ones(size(Xtraining,1),1),'xk');
+plot3(ones(2,1)*x(1), ones(2,1)*x(2), z, ':k', 'linewidth',3);
 hold off
 axis equal
 axis([0 1 0 1]);
 view(2)
 legend('current state','most probable state');
+camroll(-180);
+text(0.9, 0.87, z(2), ['action =' what_action(a)],'fontsize',25,'color','white');
+text(0.9, 0.92, z(2), ['dist. = ' num2str(mind) ',' num2str(maxd)],'fontsize',25,'color','white');
 
-filen = ['T_' num2str(x(1)) '_' num2str(x(2)) '_' action(a) '.png'];
+filen = ['T_' num2str(x(1)) '_' num2str(x(2)) '_' what_action(a) '.png'];
 % print(filen, '-dpng', '-r150');
 
 
@@ -110,15 +118,28 @@ filen = ['T_' num2str(x(1)) '_' num2str(x(2)) '_' action(a) '.png'];
 %     drawnow;
 % end
 
-function str = action(a)
+function a = action(index)
+switch index
+    case 'd'
+        a = [1 0];
+    case 'a'
+        a = [0 1];
+    case 'w'
+        a = [0 0];
+    case 'x'
+        a = [1 1];
+end
+end
+
+function str = what_action(a)
 if all(a==[0 0])
-    str = 'down';
+    str = 'up';
 else if all(a==[1 1])
-        str = 'up';
-    else if all(a==[1 0])
+        str = 'down';
+    else if all(a==[0 1])
             str = 'left';
         else
-            if all(a==[0 1])
+            if all(a==[1 0])
                 str = 'right';
             end
         end

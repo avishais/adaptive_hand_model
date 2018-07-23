@@ -1,71 +1,42 @@
-% M = dlmread('r_l_n_2.txt',',');
-M = dlmread('c_l_n_1.txt',',');
-% M = dlmread('r_m_d_2.txt',',');
+clear all
+
+M = dlmread('c_25_24.txt',' ');
+% M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 
 % The columns are in the following order:
 % 
-% 0: Time
+% 1: Time
 % 
-% 1: actuator pos 1
-% 2: actuator pos 2
-% 3: act load 1
-% 4: act load 2
-% 5: act vel ref 1
-% 6: act vel ref 2
-% 7: act pos ref 1f
-% 8: act pos ref 2
-% 9: cartesian vel ref 1
-% 10: cartesian vel ref 2
-% 11: finger angle 1
-% 12: finger angle 2
-% 13: finger angle 3
-% 14: finger angle 4
-% 15: finger pos x 1
-% 16: finger pos x 2
-% 17: finger pos x 3
-% 18: finger pos x 4
-% 19: finger pos y 1
-% 20: finger pos y 2
-% 21: finger pos y 3
-% 22: finger pos y 4
-% 23: obj pos x
-% 24: obj pos y
-% 25: obj orientation
+% 2: actuator pos 1
+% 3: actuator pos 2
+% 4: act load 1
+% 5: act load 2
+% 6: act vel ref 1
+% 7: act vel ref 2
+% 8: act pos ref 1
+% 9: act pos ref 2
+% 10: finger pos x 1
+% 11: finger pos y 1
+% 12: finger pos x 2
+% 13: finger pos y 2
+% 14: finger pos x 3
+% 15: finger pos y 3
+% 16: finger pos x 4
+% 17: finger pos y 4
+% 18: obj pos x
+% 19: obj pos y
+% 20: obj orientation
+% 21: Base angle
 
-%% Clean 0's
-i = 1;
-while (i <= size(M,1))
-    if (sum(M(i,2:end)==0) > 7)
-        M(i,:) = [];
-        continue;
-    end
-    i = i + 1;
-end
+%% Clean
 
-%% Clean steps
-% i = 2;
-% while (i <= size(M,1))
-%     if ( all(M(i,24:25)==M(i-1,24:25)) )
-%         M(i,:) = [];
-%         continue;
-%     end
-%     i = i + 1;
-% end
-
-% M = M(1:21:end,:);
-
-%% 
-% T = M(:,1)*1e-6;
-% T = T-T(1);
-dt = 0.033;
-T = (0:dt:dt*(size(M,1)-1))';
+data = process_data(M);
 
 %%
 figure(1)
 subplot(211)
-plot(T, M(:,24:25), '.-');
-% plot(M(:,24), M(:,25));
+plot(data.T, data.obj_pos(:,1:2), '.-');
 xlabel('Time (sec)');
 ylabel('Position');
 legend('x','y');
@@ -73,7 +44,7 @@ title('Object position');
 grid
 
 subplot(212)
-plot(T,M(:,[6 7]));
+plot(data.T,data.ref_vel);
 xlabel('Time (sec)');
 ylabel('Actuattors - velocities');
 legend('actuator 1','actuator 2');
@@ -82,22 +53,40 @@ grid
 title('Actuation inputs');
 
 figure(2)
-plot(T, M(:,4:5));
+plot(data.T, data.act_load);
 xlabel('Time (sec)');
 ylabel('Load');
 legend('actuator 1','actuator 2');
 
 %%
-i = 1000;
-for i = 1:1000%size(M,1)
+% for i = data.n-60:2:data.n
+for i = data.n%1:50:
     figure(3)
-    plot(M(i,24),M(i,25),'o-k');
+    clf
+    circle(data.obj_pos(i,1),data.obj_pos(i,2),15,'r');
+    circle(data.m1(i,1),data.m1(i,2),7,'g');
+    circle(data.m2(i,1),data.m2(i,2),7,'b');
+    circle(data.m3(i,1),data.m3(i,2),7,'k');
+    circle(data.m4(i,1),data.m4(i,2),7,'m');
+    circle(data.new_base_pos(1),data.new_base_pos(2),9,'c');
     hold on
-    plot(M(i,16),M(i,20),'o:y');
-    plot(M(i,17),M(i,21),'o:m');
-    plot(M(i,18),M(i,22),'o:c');
-    plot(M(i,19),M(i,23),'o:r');
+    plot(data.obj_pos(1:i,1),data.obj_pos(1:i,2),'-k');
+    quiver(data.obj_pos(i,1),data.obj_pos(i,2),cos(data.obj_pos(i,3)),sin(data.obj_pos(i,3)),50,'k');
+    quiver(data.new_base_pos(1),data.new_base_pos(2),cos(data.new_base_pos(3)),sin(data.new_base_pos(3)),50,'k');
     hold off
+    text(150, -50, num2str(data.ref_vel(i,:)));
+    axis equal
+    axis([-200 300 -450 10]);
     
     drawnow;
+end
+
+
+function circle(x,y,r,color)
+    hold on
+    th = 0:pi/50:2*pi;
+    xunit = r * cos(th) + x;
+    yunit = r * sin(th) + y;
+    patch(xunit, yunit,color);
+    hold off
 end

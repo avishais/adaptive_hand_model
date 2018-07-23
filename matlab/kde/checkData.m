@@ -2,28 +2,28 @@
 
 Xu = [];
 for i = 1:size(Xtraining,1)
-    if all(Xtraining(i,3:4)==0.06)
+    if all(Xtraining(i,3:4)==1)
         Xu = [Xu; Xtraining(i,:)];
     end
 end
 
 Xd = [];
 for i = 1:size(Xtraining,1)
-    if all(Xtraining(i,3:4)==-0.06)
+    if all(Xtraining(i,3:4)==0)
         Xd = [Xd; Xtraining(i,:)];
     end
 end
 
 Xr = [];
 for i = 1:size(Xtraining,1)
-    if Xtraining(i,3)==-0.06 && Xtraining(i,4)==0.06
+    if Xtraining(i,3)==0 && Xtraining(i,4)==1
         Xr = [Xr; Xtraining(i,:)];
     end
 end
 
 Xl = [];
 for i = 1:size(Xtraining,1)
-    if Xtraining(i,3)==0.06 && Xtraining(i,4)==-0.06
+    if Xtraining(i,3)==1 && Xtraining(i,4)==0
         Xl = [Xl; Xtraining(i,:)];
     end
 end
