@@ -13,6 +13,7 @@ args = parser.parse_args()
 
 # -----------------------------------------
 
+# Naive NN search while assuming a sorted list
 def NearestNeighbor(X, x):
 	ix = 0
 	while x > X[ix]:
@@ -31,10 +32,16 @@ str = args.file[:-4]
 # for (topic, msg, t) in bag.read_messages(topics=['/marker_tracker/image_space_pose_msg']):
 # 	print(topic, msg, t)
 
-Tc = [msg.ids for (topic, msg, t) in bag.read_messages(topics=['/clock'])]
-print len(Tc)
-exit(1)
+Tt = [t for (topic, msg, t) in bag.read_messages(topics=['/gripper_t42/vel_ref_monitor'])]
+T = [t for (topic, msg, t) in bag.read_messages(topics=['/marker_tracker/image_space_pose_msg'])]
+print len(T), len(Tt)
 
+t_init = np.min([Tt[0].to_sec(), T[0].to_sec()])
+print('Vel. Ref.,  Object')
+for i in range(0,30):
+	print('%9.3f, %7.3f' % (Tt[i].to_sec()-t_init, T[i].to_sec()-t_init))
+
+exit(1)
 
 ##### Get markers
 ids = [msg.ids for (topic, msg, t) in bag.read_messages(topics=['/marker_tracker/image_space_pose_msg'])]
@@ -138,9 +145,9 @@ for i in range(len(Tt)):
 	Tv[i] = Tt[i].to_sec()#-T_init
 # Tv = np.array(Tv)
 
-print len(Tv), len(Ts)
-for i in range(0,100):
-	print Tv[i]-Tv[0], T[i].to_sec()-Tv[0]
+# print len(Tv), len(Ts)
+# for i in range(0,10):
+# 	print Tv[i]-Tv[0], T[i].to_sec()-Tv[0]
 # print Tv[0:10], Ts[0:10]
 
 
