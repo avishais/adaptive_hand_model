@@ -1,6 +1,6 @@
 clear all
 
-M = dlmread('c_25_40.txt',' ');
+M = dlmread('c_25_56.txt',' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 
@@ -76,7 +76,7 @@ for i = data.n%1:50:
     hold off
     text(150, -50, num2str(data.ref_vel(i,:)));
     axis equal
-    axis([-200 300 -450 10]);
+%     axis([-200 300 -450 10]);
     
     drawnow;
 end

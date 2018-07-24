@@ -7,7 +7,7 @@ n = max(size(files));
 % 2 - state is only object position
 % 4 - state is object and gripper tips positions
 % 6 - state is object and all gripper positions
-mode = 6;
+mode = 2;
 
 Q = cell(n,1);
 P = [];
