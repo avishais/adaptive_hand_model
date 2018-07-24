@@ -34,17 +34,25 @@ DropOut = False
 
 print('Loading training data...')
 
-data_num = 1
-# Xt = np.loadtxt('./data/data' + str(data_num) + '.db')
-Xt = np.loadtxt('./data/toyData.db')
+mode = 2
+Xt = np.loadtxt('./data/data_25_' + str(mode) + '.db')
+# Xt = np.loadtxt('./data/toyData.db')
+
+if mode==2:
+    num_input = 4 
+    num_output = 2
+if mode==4:
+    num_input = 8 
+    num_output = 6
+if mode==6:
+    num_input = 12 
+    num_output = 10
 
 n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [20]*2
-num_input = 4 
-num_output = 2
+hidden_layers = [10]*2
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -189,7 +197,7 @@ with tf.Session() as sess:
     # print(x_mu, x_sigma)
     print("State: ", xo, ", predicted next state: ", xo + yo, ", real next step: ", xo + yr)
 
-    export_net(weights, biases, x_mu, x_sigma, activation, sess, './models/net' + str(data_num) + '.netxt')
+    export_net(weights, biases, x_mu, x_sigma, activation, sess, './models/net' + str(mode) + '.netxt')
 
 # x_train = denormz(x_train, x_max, x_min)
 # x_train_pred = denormz(x_train_pred, x_max, x_min)

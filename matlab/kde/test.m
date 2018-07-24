@@ -160,20 +160,18 @@ clf
 hold on
 plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
 
-for i = 1:size(Sr,1)
-    i
+for i = 1:5%size(Sr,1)
     s = Sr(i,I.state_inx);
     a = Sr(i, I.action_inx);
-    S = zeros(1000, I.state_dim);
-    for l = 1:1000
-        l
+    S = zeros(100, I.state_dim);
+    for l = 1:size(S,1)
         sp = kdePropagate(s, a, r_max, Xtraining, I);
 %         plot([s(1) sp(1)],[s(2) sp(2)],'.-');
-        S(i,:) = sp;
+        S(l,:) = sp;
     end   
     sp = mean(S);
     plot([s(1) sp(1)],[s(2) sp(2)],'.-r','linewidth',2.5);
-    drawnow;
+%     drawnow;
 end
 plot(Sr(1,1),Sr(1,2),'or','markerfacecolor','m');
 hold off
