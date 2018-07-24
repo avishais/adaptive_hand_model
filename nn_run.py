@@ -52,7 +52,7 @@ n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [10]*2
+hidden_layers = [60]*6
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -77,7 +77,7 @@ y_test = X[n:,num_input:]
 # Training Parameters
 learning_rate = 0.01
 num_steps = int(1e5)
-batch_size = 200
+batch_size = 150
 display_step = 100
 
 # tf Graph input (only pictures)
@@ -183,19 +183,22 @@ with tf.Session() as sess:
     testing_cost = sess.run(cost, feed_dict={X: x_test, Y: y_test, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing cost=", testing_cost)
 
-    j = 22273#np.random.random_integers(1, x_train.shape[0])
-    f = np.array([-0.1177 ,   0.0641  ,  0.9617  ,  0.9387])#x_train[j, :]).reshape(1,num_input)
+    j = 1#np.random.random_integers(1, x_train.shape[0]) %np.array([-0.1177 ,   0.0641  ,  0.9617  ,  0.9387])#
+    f = x_test[j, :]#.reshape(1,num_input)
     f = f.reshape(1,num_input)
     y = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing point: ", f)
     print("Point ", j, ": ", y, y_train[j,:])
     # xo = denormz(x_train[j, 0:2], x_max, x_min)
     # yo = denormz(y, x_max[4:], x_min[4:])
-    xo = denormzG(f[:,0:2], x_mu, x_sigma)
+    f = f.reshape(num_input, 1)
+    xo = denormzG(f[0:2], x_mu, x_sigma)
     yo = denormzG(y, x_mu[4:], x_sigma[4:])
     yr = denormzG(y_train[j,:], x_mu[4:], x_sigma[4:])
     # print(x_mu, x_sigma)
-    print("State: ", xo, ", predicted next state: ", xo + yo, ", real next step: ", xo + yr)
+    print("State: ", xo.reshape(1,2))
+    print("Predicted next state: ", xo.reshape(1,2) + yo)
+    print("Real next step: ", xo.reshape(1,2) + yr)
 
     export_net(weights, biases, x_mu, x_sigma, activation, sess, './models/net' + str(mode) + '.netxt')
 

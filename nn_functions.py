@@ -63,7 +63,7 @@ def normzG(x, mu, sigma):
     return x
 
 def denormzG(x, mu, sigma):
-    x = x.reshape(2,)
+    # x = x.reshape(2,)
     for i in range(x.shape[0]):
         x[i] = x[i]*sigma[i] + mu[i]
 

@@ -1,4 +1,4 @@
-function [W, b, x_max, x_min] = net_rep(num_net)
+function [W, b, x_max, x_min, activation] = net_rep(num_net)
 
 if nargin == 0
     num_net = 1;
