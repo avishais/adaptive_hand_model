@@ -47,8 +47,29 @@ data.new_base_pos(1:2) = [0 0];
 data.new_base_pos(3) = data.base_pos(3) + data.theta;
 
 R = [cos(data.theta) -sin(data.theta); sin(data.theta) cos(data.theta)];
-data.m1 = (R*data.m1')';
-data.m2 = (R*data.m2')';
-data.m3 = (R*data.m3')';
-data.m4 = (R*data.m4')';
-data.obj_pos(:,1:2) = (R*data.obj_pos(:,1:2)')';
+data.m1 = MovingAvgFilter((R*data.m1')');
+data.m2 = MovingAvgFilter((R*data.m2')');
+data.m3 = MovingAvgFilter((R*data.m3')');
+data.m4 = MovingAvgFilter((R*data.m4')');
+data.obj_pos(:,1:2) = MovingAvgFilter((R*data.obj_pos(:,1:2)')');
+
+end
+
+function y = MovingAvgFilter(x, windowSize)
+
+if nargin==1
+    windowSize = 13;
+end
+
+y = x;
+
+w = floor(windowSize/2);
+for j = 1:size(x,2)
+for i = w+1:size(x,1)-w-1
+    
+    y(i,j) = sum(x(i-w:i+w,j))/length(i-w:i+w);    
+    
+end
+
+end
+end

@@ -1,16 +1,17 @@
-function [X, P] = kdePropagate(x, a, r, data) 
+function x_next = kdePropagate(x, a, r, data, I) %[X, P]
 
 N = 10;
-X = zeros(N,2);
+X = zeros(N,I.state_dim);
 P = zeros(N,1);
 
-% idx = knnsearch(data(:,1:2), x);
-idx = rangesearch(data(:,1:4), [x a], 0.25);
-data_nn = data(idx{1},:);
+% [idx, d] = knnsearch(data(:,[I.state_inx I.action_inx]), [x, a], 'K', 100); 
+idx = rangesearch(data(:,[I.state_inx I.action_inx]), [x a], 0.01); idx = idx{1};
+data_nn = data(idx,:);
 
+X = x+randsphere(N, I.state_dim, r);
 for i = 1:N
-    X(i,:) = cirrdnPJ(x, r);
-    P(i) = kde([x a X(i,:)], data_nn);
+%     X(i,:) = cirrdnPJ(x, r);
+    P(i) = kde([x a X(i,:)], data_nn, I);
 end
 
 % P = P/sum(P);
@@ -41,13 +42,14 @@ x_next = sampleWeight(P, X);
 end
     
 
+% Sample in a cirlce
 function y = cirrdnPJ(x, rc)
-%the function, must be on a folder in matlab path
 a = 2*pi*rand;
 r = sqrt(rand);
 y = (rc*r) * [cos(a) sin(a)] + x;
 end
 
+% Sample from distribution
 function x = sampleWeight(P, X)
 P = P/sum(P);
 S = cumsum(P);
@@ -56,6 +58,28 @@ d = rand();
 j = min(find((d>S)==0));
 
 x = X(j,:);
+
+end
+
+% Sample in a hyper-sphere
+function X = randsphere(m,n,r)
+ 
+% This function returns an m by n array, X, in which 
+% each of the m rows has the n Cartesian coordinates 
+% of a random point uniformly-distributed over the 
+% interior of an n-dimensional hypersphere with 
+% radius r and center at the origin.  The function 
+% 'randn' is initially used to generate m sets of n 
+% random variables with independent multivariate 
+% normal distribution, with mean 0 and variance 1.
+% Then the incomplete gamma function, 'gammainc', 
+% is used to map these points radially to fit in the 
+% hypersphere of finite radius r with a uniform % spatial distribution.
+% Roger Stafford - 12/23/05
+ 
+X = randn(m,n);
+s2 = sum(X.^2,2);
+X = X.*repmat(r*(gammainc(s2/2,n/2).^(1/n))./sqrt(s2),1,n);
 
 end
 

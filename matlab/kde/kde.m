@@ -1,4 +1,4 @@
-function p = kde(x, data)
+function p = kde(x, data, I)
 
 n = size(data, 1);
 
@@ -6,7 +6,7 @@ p_n = 0;
 p_d = 0;
 for i = 1:n
     p_n = p_n + GaussianKernal(data(i,:), x, 0.01);
-    p_d = p_d + GaussianKernal(data(i,1:4), x(1:4), 0.007);
+    p_d = p_d + GaussianKernal(data(i,[I.state_inx I.action_inx]), x([I.state_inx I.action_inx]), 0.007);
 end
 
 p = p_n / p_d;

@@ -1,16 +1,16 @@
 
 
-Xu = [];
+Xd = [];
 for i = 1:size(Xtraining,1)
     if all(Xtraining(i,3:4)==1)
-        Xu = [Xu; Xtraining(i,:)];
+        Xd = [Xd; Xtraining(i,:)];
     end
 end
 
-Xd = [];
+Xu = [];
 for i = 1:size(Xtraining,1)
     if all(Xtraining(i,3:4)==0)
-        Xd = [Xd; Xtraining(i,:)];
+        Xu = [Xu; Xtraining(i,:)];
     end
 end
 

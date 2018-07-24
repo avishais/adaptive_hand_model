@@ -1,6 +1,6 @@
 clear all
 
-M = dlmread('c_25_24.txt',' ');
+M = dlmread('c_25_40.txt',' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 
