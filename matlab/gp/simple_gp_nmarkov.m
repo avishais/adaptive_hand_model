@@ -2,7 +2,9 @@ clear all
 clf
 
 mode = 2;
-file = ['../../data/data_25_' num2str(mode)];
+windowSize = 3;
+% file = ['../../data/data_25_' num2str(mode)];
+file = ['../../data/data_25_' num2str(mode) '_w' num2str(windowSize)];
 
 Q = load([file '.mat'], 'Q');
 Q = Q.Q;
@@ -49,18 +51,19 @@ Sr = Xtest(j_min:j_max,:);
 % Open loop
 figure(1)
 clf
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
 
 s = Sr(1,I.state_inx);
-S = s;
+S = s(end-1:end);
 for i = 1:size(Sr,1)
     a = Sr(i, I.action_inx);
-    s = prediction(Xtraining, s, a, I);
-    S = [S; s];
+    sp = prediction(Xtraining, s, a, I);
+    s = [s(5:end) a sp];
+    S = [S; sp];
 end
 hold on
-plot(S(:,1),S(:,2),'.-r');
-plot(S(1,1),S(1,2),'or','markerfacecolor','r');
+plot(S(:,1),S(:,2),'.-');
+plot(S(1,end-1),S(1,end),'or','markerfacecolor','r');
 hold off
 axis equal
 legend('original path');

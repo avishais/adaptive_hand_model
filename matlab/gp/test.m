@@ -61,3 +61,36 @@ hold off
 
 disp(resubLoss(gprMdl));
 disp(loss(gprMdl,[x_test y_test],z_real_test));
+
+%%
+clear all
+load(fullfile(matlabroot,'examples','stats','gprdata2.mat'))
+
+gprMdl1 = fitrgp(x,y,'KernelFunction','squaredexponential');
+ypred1 = resubPredict(gprMdl1);
+
+sigma0 = 0.2;
+kparams0 = [3.5, 6.2];
+gprMdl2 = fitrgp(x,y,'KernelFunction','squaredexponential','KernelParameters',kparams0,'Sigma',sigma0);
+ypred2 = resubPredict(gprMdl2);
+
+% Optimize the hyper-parameters
+rng default
+gprMdl3 = fitrgp(x,y,'KernelFunction','squaredexponential',...
+    'OptimizeHyperparameters','auto','HyperparameterOptimizationOptions',...
+    struct('AcquisitionFunctionName','expected-improvement-plus'));
+ypred3 = resubPredict(gprMdl3);
+
+figure(1);
+plot(x,y,'r.');
+hold on
+plot(x,ypred1,'b');
+plot(x,ypred2,'g');
+plot(x,ypred3,'m');
+xlabel('x');
+ylabel('y');
+legend({'data','default kernel parameters',...
+'kparams0 = [3.5,6.2], sigma0 = 0.2','optimized'},...
+'Location','Best');
+title('Impact of initial kernel parameter values');
+hold off

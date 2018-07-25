@@ -53,8 +53,8 @@ n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [80]*2
-activation = 4
+hidden_layers = [10]*10
+activation = 2
 
 prev_states = Xt[:,0:num_input-2]
 next_states = Xt[:,num_input:]
