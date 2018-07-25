@@ -31,6 +31,7 @@ else:
     retrain = False
 
 DropOut = False
+Regularization = False
 
 print('Loading training data...')
 
@@ -52,8 +53,8 @@ n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [20]*2
-activation = 2
+hidden_layers = [80]*2
+activation = 4
 
 prev_states = Xt[:,0:num_input-2]
 next_states = Xt[:,num_input:]
@@ -76,7 +77,7 @@ y_test = X[n:,num_input:]
 
 # Training Parameters
 learning_rate = 0.05
-num_steps = int(5e6)
+num_steps = int(2e5)
 batch_size = 150
 display_step = 100
 
@@ -103,9 +104,10 @@ cost = tf.reduce_mean(0.5*tf.pow(prediction - Y, 2))#/(2*n)
 # cost = tf.reduce_sum(tf.square(y_true - y_pred))
 
 # L2 Regularization
-beta = 0.001
-regularizer = computeReg(weights)
-# cost = cost + beta * regularizer
+if Regularization:
+    beta = 0.01
+    regularizer = computeReg(weights)
+    cost = cost + beta * regularizer
 
 # Define optimizer
 # optimizer = tf.train.AdamOptimizer(learning_rate)

@@ -4,9 +4,10 @@ n = size(data, 1);
 
 p_n = 0;
 p_d = 0;
+sigma2 = 0.007;
 for i = 1:n
-    p_n = p_n + GaussianKernal(data(i,:), x, 0.01);
-    p_d = p_d + GaussianKernal(data(i,[I.state_inx I.action_inx]), x([I.state_inx I.action_inx]), 0.007);
+    p_n = p_n + GaussianKernal(data(i,:), x, sigma2);
+    p_d = p_d + GaussianKernal(data(i,[I.state_inx I.action_inx]), x([I.state_inx I.action_inx]), sigma2);
 end
 
 p = p_n / p_d;

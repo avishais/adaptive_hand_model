@@ -35,7 +35,7 @@ DropOut = False
 print('Loading training data...')
 
 mode = 2
-windowSize = 3
+windowSize = 10
 Xt = np.loadtxt('./data/data_25_' + str(mode) + '_w' + str(windowSize) + '.db')
 # Xt = np.loadtxt('./data/toyData.db')
 
@@ -53,14 +53,14 @@ n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [100]*2
+hidden_layers = [40]*6
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
 next_states = Xt[:,num_input:]
 actions = Xt[:, num_input-2:num_input]
 
-X = np.concatenate((prev_states, actions, next_states), axis=1)
+X = np.concatenate((prev_states, actions, next_states-prev_states[:,num_input-num_output-2:]), axis=1)
 
 x_max = np.max(X, axis=0)
 x_min = np.min(X, axis=0)

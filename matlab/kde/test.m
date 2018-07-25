@@ -52,13 +52,13 @@ clear r no
 %%
 
 if I.state_dim==2
-    tc = 20000;
+    tc = 100;
     a = Xtraining(tc, I.action_inx); % action('d');
     x = Xtraining(tc, I.state_inx);
     x_next = Xtraining(tc,I.state_nxt_inx);
     
-    % [idx, d] = knnsearch(Xtraining(:,[state_inx action_inx]), [x a], 'K', 100);
-    [idx, d] = rangesearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 0.01); d = d{1}; idx = idx{1};
+    [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
+%     [idx, d] = rangesearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 0.01); d = d{1}; idx = idx{1};
     
     data_nn = Xtraining(idx,:);
     
@@ -77,7 +77,7 @@ if I.state_dim==2
         end
     end
     sp = sum(P(1:end));
-    P = P/sp;
+%     P = P/sp;
     
     % [X, Pp] = kdePropagate(x, a, r_max, Xtraining, I);
     % Pp = Pp/sp;

@@ -88,7 +88,7 @@ def next_batch(num, data, labels):
 
 # Compute L2 Regularization
 def computeReg(weights):
-    regularizer = 0;
+    regularizer = 0
 
     for i in range(1, len(weights)+1):
         sth = 'h' + str(i)
