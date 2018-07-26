@@ -125,4 +125,4 @@ for mode = 1:8
     save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest');
 end
 %%
-plot(P(:,[1:2]));
+plot(P(:,1),P(:,2),'.');

@@ -1,6 +1,6 @@
-clear all
+% clear all
 
-mode = 5;
+% mode = 8;
 file = ['../../data/data_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest');
@@ -44,25 +44,27 @@ x_next_pred = prediction(Xtraining, x, a, I, 1);
 
 s = Sr(1,I.state_inx);
 S = s;
+loss = 0;
 for i = 1:size(Sr,1)
     a = Sr(i, I.action_inx);
-    s = prediction(Xtraining, s, a, I);
+    [s, l] = prediction(Xtraining, s, a, I);
     S = [S; s];
+    loss = loss + l^2;
 end
 
 %% Closed loop
 
-sum = 0;
-Sp = zeros(size(Sr,1),I.state_dim);
-for i = 1:size(Sr,1)
-    s = Sr(i,I.state_inx);
-    a = Sr(i, I.action_inx);
-    sr = Sr(i,I.state_nxt_inx);
-    sp = prediction(Xtraining, s, a, I);
-    Sp(i,:) = sp;
-    sum = sum + norm(sp(1:2)-sr(1:2))^2;
-%     drawnow;
-end
+% sum = 0;
+% Sp = zeros(size(Sr,1),I.state_dim);
+% for i = 1:size(Sr,1)
+%     s = Sr(i,I.state_inx);
+%     a = Sr(i, I.action_inx);
+%     sr = Sr(i,I.state_nxt_inx);
+%     sp = prediction(Xtraining, s, a, I);
+%     Sp(i,:) = sp;
+%     sum = sum + norm(sp(1:2)-sr(1:2))^2;
+% %     drawnow;
+% end
 
 %%
 % Open loop
@@ -76,18 +78,19 @@ hold off
 axis equal
 legend('original path');
 title('open loop');
+disp(['Loss: ' num2str(loss)]);
 
-figure(2)
-clf
-hold on
-plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
-for i = 1:size(Sr,1)
-        plot([Sr(i,1) Sp(i,1)],[Sr(i,2) Sp(i,2)],'.-');
-end
-plot(Sr(1,1),Sr(1,2),'or','markerfacecolor','m');
-hold off
-axis equal
-legend('original path');
-title('Closed loop');
-Mse = sqrt(sum);
-disp(['Error: ' num2str(Mse)]);
+% figure(2)
+% clf
+% hold on
+% plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
+% for i = 1:size(Sr,1)
+%         plot([Sr(i,1) Sp(i,1)],[Sr(i,2) Sp(i,2)],'.-');
+% end
+% plot(Sr(1,1),Sr(1,2),'or','markerfacecolor','m');
+% hold off
+% axis equal
+% legend('original path');
+% title('Closed loop');
+% Mse = sqrt(sum);
+% disp(['Error: ' num2str(Mse)]);

@@ -1,4 +1,4 @@
-function sp = prediction(Xtraining, s, a, I, mode)
+function [sp, Loss] = prediction(Xtraining, s, a, I, mode)
 
 if nargin == 4
     mode = 1;
@@ -7,9 +7,13 @@ end
 gprMdl = getPredictor(Xtraining, s, a, I, mode);
 
 sp = zeros(1, length(I.state_nxt_inx));
+loss = zeros(1, length(I.state_nxt_inx));
 for i = 1:length(I.state_nxt_inx)
     sp(i) = predict(gprMdl{i}, [s a]);
+    loss(i) = resubLoss(gprMdl{i});
 end
+
+Loss = norm(loss);
 
 end
 
