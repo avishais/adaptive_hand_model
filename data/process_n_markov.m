@@ -4,9 +4,9 @@ files = dir(fullfile('./', '*.txt'));
 n = max(size(files));
 
 % mode: 
-% 2 - state is only object position
-% 4 - state is object and gripper tips positions
-% 6 - state is object and all gripper positions
+% 1 - state is only object position
+% 2 - state is object and gripper tips positions
+% 3 - state is object and all gripper positions
 mode = 2;
 windowSize = 10;
 
@@ -44,22 +44,22 @@ for i = 1:n
         K = [];
         for k = j-windowSize:j
             switch mode
-                case 2
+                case 1
                     K = [K [data.obj_pos(k,1:2), data.ref_vel(k,:)]];
-                case 4
+                case 2
                     K = [K [data.obj_pos(k,1:2), data.m1(k,:), data.m2(k,:), data.ref_vel(k,:)]];
-                case 6
+                case 3
                     K = [K [data.obj_pos(k,1:2), data.m1(k,:), data.m2(k,:), data.m3(j,:), data.m4(j,:), data.ref_vel(k,:)]];
             end                    
         end
         % Currently take state as object position (no angle)
         % M = [(state,action), (state')];
         switch mode
-            case 2
+            case 1
                 M = [M; [K, data.obj_pos(j+1,1:2)]]; % data 1
-            case 4
+            case 2
                 M = [M; [K, data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:)]];  % data 2
-            case 6
+            case 3
                 M = [M; [K, data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)]];  % data 3
         end
 

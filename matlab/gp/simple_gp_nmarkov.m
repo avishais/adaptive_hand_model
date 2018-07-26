@@ -21,6 +21,7 @@ Xtraining = load([file '.db']);
 
 xmax = max(Xtraining); xmax([1, 5]) = max(xmax([1, 5])); xmax([2, 6]) = max(xmax([2, 6]));
 xmin = min(Xtraining); xmin([1, 5]) = min(xmin([1, 5])); xmin([2, 6]) = min(xmin([2, 6]));
+% !!!!!!!!!!!!!!!!! - xmin and xmax must modified to the n-markov form
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
 
 % Xtest = Q{20}.data(2:end-1,:);

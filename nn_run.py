@@ -35,25 +35,37 @@ Regularization = False
 
 print('Loading training data...')
 
-mode = 2
+mode = 5
 Xt = np.loadtxt('./data/data_25_' + str(mode) + '.db')
 # Xt = np.loadtxt('./data/toyData.db')
 
-if mode==2:
+if mode==1:
     num_input = 4 
     num_output = 2
-if mode==4:
+if mode==2:
     num_input = 8 
     num_output = 6
-if mode==6:
+if mode==3:
     num_input = 12 
     num_output = 10
+if mode==4:
+    num_input = 6 
+    num_output = 4
+if mode==5:
+    num_input = 6 
+    num_output = 4
+if mode==6:
+    num_input = 14 
+    num_output = 12
+if mode==7:
+    num_input = 16
+    num_output = 14
 
 n_test = 5000
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [10]*10
+hidden_layers = [100]*3
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -76,7 +88,7 @@ x_test = X[n:,0:num_input]
 y_test = X[n:,num_input:]
 
 # Training Parameters
-learning_rate = 0.05
+learning_rate = 0.001
 num_steps = int(2e5)
 batch_size = 150
 display_step = 100
@@ -199,8 +211,8 @@ with tf.Session() as sess:
     yr = denormzG(y_train[j,:], x_mu[4:], x_sigma[4:])
     # print(x_mu, x_sigma)
     print("State: ", xo.reshape(1,2))
-    print("Predicted next state: ", xo.reshape(1,2) + yo)
-    print("Real next step: ", xo.reshape(1,2) + yr)
+    print("Predicted next state: ", xo.reshape(1,2) + yo[:,0:2])
+    print("Real next step: ", xo.reshape(1,2) + yr[0:2])
 
     export_net(weights, biases, x_mu, x_sigma, activation, sess, './models/net' + str(mode) + '.netxt')
 

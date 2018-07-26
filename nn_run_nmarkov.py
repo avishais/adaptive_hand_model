@@ -34,18 +34,18 @@ DropOut = False
 
 print('Loading training data...')
 
-mode = 2
+mode = 1
 windowSize = 10
 Xt = np.loadtxt('./data/data_25_' + str(mode) + '_w' + str(windowSize) + '.db')
 # Xt = np.loadtxt('./data/toyData.db')
 
-if mode==2:
+if mode==1:
     num_input = 4*(windowSize+1) 
     num_output = 2
-if mode==4:
+if mode==2:
     num_input = 8 
     num_output = 6
-if mode==6:
+if mode==3:
     num_input = 12 
     num_output = 10
 

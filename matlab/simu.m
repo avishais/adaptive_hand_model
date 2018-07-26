@@ -1,5 +1,5 @@
 clear all
-num_net = 2;
+num_net = 5;
 Q = load(['../data/data_25_' num2str(num_net) '.mat'], 'Q');
 Q = Q.Q;
 action_inx = Q{1}.action_inx;
@@ -48,7 +48,6 @@ title('open loop');
 figure(2)
 clf
 hold on
-
 for i = 1:size(P,1)
     s = P(i,state_inx);
     a = P(i, action_inx);
