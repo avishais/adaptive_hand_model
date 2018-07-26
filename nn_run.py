@@ -61,11 +61,13 @@ if mode==7:
     num_input = 16
     num_output = 14
 
-n_test = 5000
+i_test_start = 77657
+i_test_end = 78607
+n_test = i_test_end-i_test_start+1
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [100]*3
+hidden_layers = [88]*1
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -78,22 +80,23 @@ x_max = np.max(X, axis=0)
 x_min = np.min(X, axis=0)
 x_mu = np.mean(X, axis=0)
 x_sigma = np.std(X, axis=0)
-
 # X = normz(X, x_max, x_min)
 X = normzG(X, x_mu, x_sigma)
 
-x_train = X[0:n,0:num_input]
-y_train = X[0:n,num_input:]
-x_test = X[n:,0:num_input]
-y_test = X[n:,num_input:]
+x_train = X[:,0:num_input]
+y_train = X[:,num_input:]
+x_train = np.delete(x_train, range(i_test_start, i_test_end+1), 0)
+y_train = np.delete(y_train, range(i_test_start, i_test_end+1), 0)
+x_test = X[i_test_start:i_test_end+1,0:num_input]
+y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
-learning_rate = 0.001
+learning_rate = 0.002
 num_steps = int(2e5)
 batch_size = 150
 display_step = 100
 
-# tf Graph input (only pictures)
+# tf Graph input 
 X = tf.placeholder("float", [None, num_input])
 Y = tf.placeholder("float", [None, num_output])
 

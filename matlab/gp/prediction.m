@@ -15,8 +15,8 @@ end
 
 function gprMdl = getPredictor(Xtraining, x, a, I, mode)
 
-% [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
-[idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100,'Distance',@distfun);
+[idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
+% [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100, 'Distance',@distfun);
 
 % [idx, ~] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
 data_nn = Xtraining(idx,:);
@@ -49,13 +49,14 @@ end
 
 function D2 = distfun(ZI,ZJ)
 
-W = diag([1 1 2 2]);
+% W = diag([3 3 1 1 1.5 1.5]);
+W = diag([7 7 0.51 0.51 1 1]);
 
 n = size(ZJ,1);
 D2 = zeros(n,1);
 for i = 1:n
     Z = ZI-ZJ(i,:);
-    D2(i) = Z*Z';
+    D2(i) = Z*W*Z';
 end
     
 end

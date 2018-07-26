@@ -1,6 +1,6 @@
 clear all
 
-mode = 8;
+mode = 5;
 file = ['../../data/data_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest');
@@ -27,8 +27,8 @@ Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1),
 % Xtest = load('../../data/toyDataPath.db');
 % Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
-% j_min = 38; j_max = 48;
 j_min = 1; j_max = size(Xtest, 1);
+% j_min = 220; j_max = 400;%size(Xtest, 1);
 Sr = Xtest(j_min:j_max,:);
 
 clear Q
@@ -50,20 +50,7 @@ for i = 1:size(Sr,1)
     S = [S; s];
 end
 
-% Open loop
-figure(1)
-clf
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
-hold on
-plot(S(:,1),S(:,2),'.-r');
-plot(S(1,1),S(1,2),'or','markerfacecolor','r');
-hold off
-axis equal
-legend('original path');
-title('open loop');
-
 %% Closed loop
-
 
 sum = 0;
 Sp = zeros(size(Sr,1),I.state_dim);
@@ -76,6 +63,19 @@ for i = 1:size(Sr,1)
     sum = sum + norm(sp(1:2)-sr(1:2))^2;
 %     drawnow;
 end
+
+%%
+% Open loop
+figure(1)
+clf
+plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+hold on
+plot(S(:,1),S(:,2),'.-r');
+plot(S(1,1),S(1,2),'or','markerfacecolor','r');
+hold off
+axis equal
+legend('original path');
+title('open loop');
 
 figure(2)
 clf
