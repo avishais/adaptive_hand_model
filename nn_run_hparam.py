@@ -11,7 +11,7 @@ import random
 
 mode = 5
 
-def run_net(X, learning_rate, num_hidden_layer, k, activation):
+def run_net(Xt, learning_rate, num_hidden_layer, k, activation):
 
     if mode==1:
         num_input = 4 
@@ -37,8 +37,14 @@ def run_net(X, learning_rate, num_hidden_layer, k, activation):
 
     i_test_start = 77657
     i_test_end = 78607
-    n_test = i_test_end-i_test_start
-    n = X.shape[0]-n_test
+    n_test = i_test_end-i_test_start+1
+    n = Xt.shape[0]-n_test
+
+    prev_states = Xt[:,0:num_input-2]
+    next_states = Xt[:,num_input:]
+    actions = Xt[:, num_input-2:num_input]
+
+    X = np.concatenate((prev_states, actions, next_states-prev_states), axis=1)
 
     x_max = np.max(X, axis=0)
     x_min = np.min(X, axis=0)
