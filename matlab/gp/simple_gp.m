@@ -2,7 +2,7 @@ clear all
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
-% poolobj = gcp; % If no pool, do not create new one.
+poolobj = gcp; % If no pool, do not create new one.
 
 mode = 5;
 file = ['../../data/data_25_' num2str(mode)];
@@ -16,7 +16,7 @@ I.state_dim = length(I.state_inx);
 
 % Xtraining = load('../../data/toyData.db');
 Xtraining = D.Xtraining; %load([file '.db']);
-Xtest = D.Xtest2;
+Xtest = D.Xtest;
 
 xmax = max(Xtraining); 
 xmin = min(Xtraining); 
