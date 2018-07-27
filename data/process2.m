@@ -110,8 +110,12 @@ for mode = 1:8
                 Q{i}.state_nxt_inx = 9:14;
         end
         if strcmp(f, 'c_25_7.txt') % test path
-            i_s = size(P,1)+1 + 340;
-            i_e = size(P,1)+size(M,1) - 350;
+            i_s1 = size(P,1)+1 + 340;
+            i_e1 = size(P,1)+size(M,1) - 350;
+        end 
+        if strcmp(f, 'c_25_69.txt') % Second test path
+            i_s2 = size(P,1)+1;
+            i_e2 = size(P,1)+size(M,1);
         end 
         P = [P; M]; 
     end
@@ -119,10 +123,11 @@ for mode = 1:8
     %%
     dlmwrite(['data_25_' num2str(mode) '.db'], P, ' ');
     
-    Xtest = P(i_s:i_e,:);
-    P(i_s:i_e,:) = [];
+    Xtest = P(i_s1:i_e1,:);
+    Xtest2 = P(i_s2:i_e2,:);
+    P(i_s1:i_e1,:) = [];
     Xtraining = P;
-    save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest');
+    save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
 end
 %%
 plot(P(:,1),P(:,2),'.');

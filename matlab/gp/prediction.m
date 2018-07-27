@@ -1,4 +1,4 @@
-function [sp, Loss] = prediction(Xtraining, s, a, I, mode)
+function [sp, sigma_p] = prediction(Xtraining, s, a, I, mode)
 
 if nargin == 4
     mode = 1;
@@ -7,26 +7,22 @@ end
 gprMdl = getPredictor(Xtraining, s, a, I, mode);
 
 sp = zeros(1, length(I.state_nxt_inx));
-loss = zeros(1, length(I.state_nxt_inx));
+sigma_p = zeros(1, length(I.state_nxt_inx));
 for i = 1:length(I.state_nxt_inx)
-    sp(i) = predict(gprMdl{i}, [s a]);
-    loss(i) = resubLoss(gprMdl{i});
+    [sp(i), sigma_p(i)] = predict(gprMdl{i}, [s a]);
 end
-
-Loss = norm(loss);
 
 end
 
 function gprMdl = getPredictor(Xtraining, x, a, I, mode)
 
-[idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
-% [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100, 'Distance',@distfun);
+% [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
+[idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100, 'Distance',@distfun);
 
-% [idx, ~] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100);
 data_nn = Xtraining(idx,:);
 
 gprMdl = cell(length(I.state_nxt_inx),1);
-for i = 1:length(I.state_nxt_inx)
+parfor i = 1:length(I.state_nxt_inx)
     
     if mode == 1
         gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)),'Basis','linear','FitMethod','exact','PredictMethod','exact');
@@ -53,8 +49,10 @@ end
 
 function D2 = distfun(ZI,ZJ)
 
+global W
+
 % W = diag([3 3 1 1 1.5 1.5]);
-W = diag([7 7 0.51 0.51 1 1]);
+% W = diag([1 1 1 1 1 1]);
 
 n = size(ZJ,1);
 D2 = zeros(n,1);
