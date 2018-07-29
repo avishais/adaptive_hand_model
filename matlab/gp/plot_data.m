@@ -27,9 +27,9 @@ Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1),
 
 K = load('gp_5.mat','S','Sr'); S = K.S; A = K.Sr(:,5:6);
 
-writerObj=VideoWriter('vid_w1.avi'); %my preferred format
-writerObj.FrameRate = 60;
-open(writerObj);
+% writerObj=VideoWriter('vid_w1.avi'); %my preferred format
+% writerObj.FrameRate = 60;
+% open(writerObj);
 
 
 for j = 294:1:400
@@ -79,10 +79,10 @@ for j = 294:1:400
     title('Actuators load');
     
 %     drawnow;
-    frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-    writeVideo(writerObj, frame);
+%     frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
+%     writeVideo(writerObj, frame);
 end
-close(writerObj); % Saves the movie.
+% close(writerObj); % Saves the movie.
 
 %%
 function d = what_action(a)

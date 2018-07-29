@@ -1,33 +1,30 @@
 clear all
 clf
 
-mode = 2;
+mode = 5;
 file = ['../../data/data_25_' num2str(mode)];
 
-Q = load([file '.mat'], 'Q');
-Q = Q.Q;
-% 
-% Xtraining = [];
-% for i = 1:size(Q,1)
-%     Xtraining = [Xtraining; Q{i}.data(:,1:6)];    
-% end
-
-% Xtraining = load('../../data/toyData.db');
-Xtraining = load([file '.db']);
-
-% Xtraining = Xtraining(1:300,:);
-
-xmax = max(Xtraining); xmax([1, 5]) = max(xmax([1, 5])); xmax([2, 6]) = max(xmax([2, 6]));
-xmin = min(Xtraining); xmin([1, 5]) = min(xmin([1, 5])); xmin([2, 6]) = min(xmin([2, 6]));
-Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-
-Xtest = Q{20}.data(2:end-1,:);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
+D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
+Q = D.Q;
 I.action_inx = Q{1}.action_inx;
 I.state_inx = Q{1}.state_inx;
 I.state_nxt_inx = Q{1}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
+
+Xtraining = D.Xtraining;
+Xtest = D.Xtest;
+
+xmax = max(Xtraining); 
+xmin = min(Xtraining); 
+for i = 1:I.state_dim
+    id = [i i+I.state_dim+length(I.action_inx)];
+    xmax(id) = max(xmax(id));
+    xmin(id) = min(xmin(id));
+end
+Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
+Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+
+W = diag([3 3 1 1 1 1]);
 
 clear Q
 %% Max motion
@@ -42,11 +39,11 @@ for i = 1:size(Xtraining,1)
     end        
 end
 
-if mode == 2
-    r_max = mean(no);
-else
-    r_max = 0.0015*mean(no);
-end
+% if mode == 2
+%     r_max = mean(no);
+% else
+%     r_max = 0.0015*mean(no);
+% end
 
 clear r no
 %%
@@ -128,30 +125,30 @@ if I.state_dim==2
 end
 %% 
 % 
-% j_min = 38; j_max = 48;
-% Sr = Xtest(j_min:j_max,:);
-% 
-% % Open loop
-% figure(2)
-% clf
-% plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
-% 
-% for l = 1:10
-%     s = Sr(1,I.state_inx);
-%     S = s;
-%     for i = 1:size(Sr,1)
-%         a = Sr(i, I.action_inx);
-%         s = kdePropagate(s, a, r_max, Xtraining, I);
-%         S = [S; s];
-%     end   
-%     hold on
-%     plot(S(:,1),S(:,2),'.-');
-%     plot(S(1,1),S(1,2),'or','markerfacecolor','r');
-%     hold off
-% end
-% axis equal
-% legend('original path');
-% title('open loop');
+j_min = 1; j_max = size(Xtest,1);
+Sr = Xtest(j_min:j_max,:);
+
+% Open loop
+figure(2)
+clf
+plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
+
+for l = 1:1
+    s = Sr(1,I.state_inx);
+    S = s;
+    for i = 1:10%size(Sr,1)
+        a = Sr(i, I.action_inx);
+        s = kdePropagate(s, a, r_max, Xtraining, I);
+        S = [S; s];
+    end   
+    hold on
+    plot(S(:,1),S(:,2),'.-');
+    plot(S(1,1),S(1,2),'or','markerfacecolor','r');
+    hold off
+end
+axis equal
+legend('original path');
+title('open loop');
 % 
 % %% Closed loop
 % figure(3)
