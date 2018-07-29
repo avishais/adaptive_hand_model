@@ -61,6 +61,7 @@ for i = 1:size(Sr,1)-1
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
 end
 
+loss = loss / size(Sr,1);
 %% Closed loop
 
 % sum = 0;

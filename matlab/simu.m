@@ -1,24 +1,28 @@
 clear all
 num_net = 5;
-Q = load(['../data/data_25_' num2str(num_net) '.mat'], 'Q');
-Q = Q.Q;
+D = load(['../data/data_25_' num2str(num_net) '.mat'], 'Q', 'Xtest');
+Q = D.Q;
 action_inx = Q{1}.action_inx;
 state_inx = Q{1}.state_inx;
 state_nxt_inx = Q{1}.state_nxt_inx;
 
-P = load(['../data/data_25_' num2str(num_net) '.db']);
-P = P(end-3000:end-2000,:);
-% P = P(end-2000:end,:);
-
-% P = Q{7}.data;
-% P(1,:) = [];
-
+P = D.Xtest;
 % P = load('../data/toyDataPath.db');
 % action_inx = 3:4;
 % state_inx = 1:2;
 % state_nxt_inx = 5:6;
 
 [W, b, x_max, x_min, activation] = net_rep(num_net);
+
+%% 
+
+tc = 500;
+a = P(tc, action_inx);
+x = P(tc, state_inx);
+x_next = P(tc,state_nxt_inx);
+
+x_next_pred = x + Net([x a], W, b, x_max, x_min, activation);
+
 
 %% Open loop
 
