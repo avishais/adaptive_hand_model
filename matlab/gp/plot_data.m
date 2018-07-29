@@ -31,6 +31,7 @@ writerObj=VideoWriter('vid_w1.avi'); %my preferred format
 writerObj.FrameRate = 60;
 open(writerObj);
 
+
 for j = 294:1:400
     j
     x = [S(j,:) A(j,:)];
