@@ -38,9 +38,12 @@ data = process_data(M);
 
 if save2newFile
     
-    Q = [data.obj_pos data.ref_vel];
+    Q = [];
+    for i = 1:data.n-1
+        Q = [Q; data.obj_pos(i,1:2) data.act_load(i,1:2) data.ref_vel(i,:) data.obj_pos(i+1,1:2) data.act_load(i+1,1:2)];
+    end
     
-    dlmwrite(['../matlab/reruns/' filename '_processed.txt'],Q , ' ');
+    dlmwrite([filename '_processed.txt'],Q , ' ');
     
 end
 

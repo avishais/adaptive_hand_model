@@ -29,6 +29,7 @@ Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, si
 Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
 % Xtest = load('../../data/toyDataPath.db');
+% Xtest =  load('../../data/c_25_7_rerun_processed.txt');
 % Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
 % j_min = 250; j_max = 350;%size(Xtest, 1);
@@ -86,7 +87,7 @@ plot(S(:,1),S(:,2),'.-r');
 plot(S(1,1),S(1,2),'or','markerfacecolor','r');
 hold off
 axis equal
-legend('original path');
+legend('ground truth','predicted path');
 title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
