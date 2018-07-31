@@ -1,9 +1,13 @@
 clear all
-for mode = 1:8
+for mode = [4 5]%1:8
     
     simple_gp;
+%     gp_gpml;
     
     save(['gp_' num2str(mode) '.mat']);
+    
+    drawnow;
+    print(['im_' num2str(mode) '.png'],'-dpng','-r150');
     
 end
 
@@ -21,9 +25,11 @@ end
 % hold off
 % axis equal
 % legend('original path','prediction');
-% title('open loop');
+% title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 % print(['im_' num2str(mode) '.png'],'-dpng','-r150');
 % 
+% disp(['Loss: ' num2str(loss)]);
+
 % figure(2)
 % clf
 % hold on

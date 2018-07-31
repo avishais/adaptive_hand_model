@@ -67,7 +67,7 @@ n_test = i_test_end-i_test_start+1
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [88]*1
+hidden_layers = [2000]*2
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -91,8 +91,8 @@ x_test = X[i_test_start:i_test_end+1,0:num_input]
 y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
-learning_rate = 0.002
-num_steps = int(2e5)
+learning_rate = 0.02
+num_steps = int(1e5)
 batch_size = 150
 display_step = 100
 
@@ -116,7 +116,7 @@ else:
 # Define loss 
 cost = tf.reduce_mean(0.5*tf.pow(prediction - Y, 2))#/(2*n)
 # cost = tf.reduce_mean(np.absolute(y_true - y_pred))
-# cost = tf.reduce_sum(tf.square(y_true - y_pred))
+# cost = tf.reduce_sum(tf.square(prediction - Y))
 
 # L2 Regularization
 if Regularization:
@@ -136,7 +136,7 @@ init = tf.global_variables_initializer()
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
 
-load_from = 'cp.ckpt'
+load_from = 'cp_temp.ckpt'
 save_to = 'cp.ckpt'
 
 # Start Training

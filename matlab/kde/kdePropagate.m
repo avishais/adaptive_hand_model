@@ -4,8 +4,8 @@ N = 10;
 X = zeros(N,I.state_dim);
 P = zeros(N,1);
 
-% [idx, d] = knnsearch(data(:,[I.state_inx I.action_inx]), [x, a], 'K', 100); 
-idx = rangesearch(data(:,[I.state_inx I.action_inx]), [x a], 0.01); idx = idx{1};
+[idx, d] = knnsearch(data(:,[I.state_inx I.action_inx]), [x, a], 'K', 100, 'Distance',@distfun); 
+% idx = rangesearch(data(:,[I.state_inx I.action_inx]), [x a], 0.01); idx = idx{1};
 data_nn = data(idx,:);
 
 X = x+randsphere(N, I.state_dim, r);
@@ -24,11 +24,11 @@ end
 % hold off
 
 % Sample from distribution
-x_next = sampleWeight(P, X);
+% x_next = sampleWeight(P, X);
 
 % Take most probapble state
-% [~,i] = max(P);
-% x_next = X(i,:);
+[~,i] = max(P);
+x_next = X(i,:);
 
 
 % plot(x(1),x(2),'xr');
@@ -83,3 +83,20 @@ X = X.*repmat(r*(gammainc(s2/2,n/2).^(1/n))./sqrt(s2),1,n);
 
 end
 
+function D2 = distfun(ZI,ZJ)
+
+global W
+
+% W = diag([3 3 1 1 1.5 1.5]);
+if isempty(W)
+    W = diag(ones(1,size(ZI,2)));
+end    
+
+n = size(ZJ,1);
+D2 = zeros(n,1);
+for i = 1:n
+    Z = ZI-ZJ(i,:);
+    D2(i) = Z*W*Z';
+end
+    
+end

@@ -1,18 +1,22 @@
-% clear all
+clear all
 
-% mode = 8;
+ps = parallel.Settings;
+ps.Pool.AutoCreate = false;
+poolobj = gcp; % If no pool, do not create new one.
+
+mode = 1;
 file = ['../../data/data_25_' num2str(mode)];
 
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest');
+D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
 Q = D.Q;
 I.action_inx = Q{1}.action_inx;
 I.state_inx = Q{1}.state_inx;
 I.state_nxt_inx = Q{1}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
 
-% Xtraining = load('../../data/toyData.db');
-Xtraining = D.Xtraining; %load([file '.db']);
-Xtest = D.Xtest;
+Xtraining = load('../../data/toyData.db');
+% Xtraining = D.Xtraining; %load([file '.db']);
+% Xtest = D.Xtest;
 
 xmax = max(Xtraining); 
 xmin = min(Xtraining); 
@@ -22,36 +26,45 @@ for i = 1:I.state_dim
     xmin(id) = min(xmin(id));
 end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-% Xtest = load('../../data/toyDataPath.db');
 % Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
+Xtest = load('../../data/toyDataPath.db');
+% Xtest =  load('../../data/c_25_7_rerun_processed.txt');
+Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+
+% j_min = 250; j_max = 350;%size(Xtest, 1);
 j_min = 1; j_max = size(Xtest, 1);
-% j_min = 220; j_max = 400;%size(Xtest, 1);
 Sr = Xtest(j_min:j_max,:);
 
-clear Q
-%%
-tc = 1000;
-a = Xtraining(tc, I.action_inx);
-x = Xtraining(tc, I.state_inx);
-x_next = Xtraining(tc,I.state_nxt_inx);
+global W
+% W = diag([10 10 2 2 1 1]);
+% W = diag([3 3 1 1 1 1]);
 
-x_next_pred = prediction(Xtraining, x, a, I, 1);
+clear Q D
+%%
+% tc = 1000;
+% a = Xtraining(tc, I.action_inx);
+% x = Xtraining(tc, I.state_inx);
+% x_next = Xtraining(tc,I.state_nxt_inx);
+% 
+% a = [0 1];
+% x = [0.2 0.7];
+% x_next_pred = prediction(Xtraining, x, a, I, 1);
 
 %% 
 
 s = Sr(1,I.state_inx);
-S = s;
+S = zeros(size(Sr,1), I.state_dim);
+S(1,:) = s;
 loss = 0;
-for i = 1:size(Sr,1)
+for i = 1:size(Sr,1)-1
     a = Sr(i, I.action_inx);
-    [s, l] = prediction(Xtraining, s, a, I);
-    S = [S; s];
-    loss = loss + l^2;
+    [s, s2] = prediction(Xtraining, s, a, I);
+    S(i+1,:) = s;
+    loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
 end
 
+loss = loss / size(Sr,1);
 %% Closed loop
 
 % sum = 0;
@@ -76,8 +89,8 @@ plot(S(:,1),S(:,2),'.-r');
 plot(S(1,1),S(1,2),'or','markerfacecolor','r');
 hold off
 axis equal
-legend('original path');
-title('open loop');
+legend('ground truth','predicted path');
+title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 % figure(2)

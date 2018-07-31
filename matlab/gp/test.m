@@ -4,27 +4,54 @@ rng(0,'twister'); % For reproducibility
 
 f = @(x) 1 + x*5e-2 + sin(x)./x;
 
-n = 1000;
+n = 100;
 x = linspace(-10,10,n)';
-y = f(x) + 0.2*randn(n,1);
+y = f(x) + 0.08*randn(n,1);
 y_real_train = f(x);
 x_test = 10:0.5:15;
 y_real_test = f(x_test);
 xt = [-6.5, 5.2, 0];
 
-gprMdl = fitrgp(x,y,'Basis','linear','FitMethod','exact','PredictMethod','exact');
+% gprMdl = fitrgp(x,y,'Basis','linear','FitMethod','exact','PredictMethod','exact');
+gprMdl = fitrgp(x,y,'KernelFunction','squaredexponential');
 
 ypred = resubPredict(gprMdl);
-y_pred_test = predict(gprMdl, x_test');
-yt = predict(gprMdl, xt');
+[y_pred_test, ~, s2_test] = predict(gprMdl, x_test');
+[~, ~, s2] = predict(gprMdl, x);
 
+figure(1)
 plot(x,y,'b.');
 hold on;
 plot(x,ypred,'r','LineWidth',1.5);
 plot(x,y_real_train,'--r','LineWidth',1.5);
 plot(x_test,y_real_test,'--k','LineWidth',1.5);
 plot(x_test,y_pred_test,'-k','LineWidth',1.5);
-plot(xt, yt, 'ok','markerfacecolor','g');
+plot(x,s2(:,1),'g',x,s2(:,2),'g')
+plot(x_test,s2_test(:,1),'g',x_test,s2_test(:,2),'g');
+% plot(xt, yt, 'ok','markerfacecolor','g');
+xlabel('x');
+ylabel('y');
+legend('Data','GPR predictions');
+hold off
+
+% Using gpml
+
+meanfunc = [];                    % empty: don't use a mean function
+covfunc = @covSEiso;              % Squared Exponental covariance function
+likfunc = @likGauss;              % Gaussian likelihood
+hyp = struct('mean', [], 'cov', [0, 0], 'lik', -1);
+hyp = minimize(hyp, @gp, -100, @infGaussLik, meanfunc, covfunc, likfunc, x, y);
+[mu_test, s2_test] = gp(hyp, @infGaussLik, meanfunc, covfunc, likfunc, x, y, x_test');
+[mu, s2] = gp(hyp, @infGaussLik, meanfunc, covfunc, likfunc, x, y, x);
+
+figure(2)
+plot(x,y,'b.');
+hold on;
+plot(x_test,y_real_test,'--k','LineWidth',1.5);
+plot(x_test,mu_test,'-k','LineWidth',1.5);
+plot(x_test,mu_test+s2_test.^2,'g',x_test,mu_test-s2_test.^2,'g')
+plot(x,mu+s2.^2,'g',x,mu-s2.^2,'g');
+% plot(xt, yt, 'ok','markerfacecolor','g');
 xlabel('x');
 ylabel('y');
 legend('Data','GPR predictions');

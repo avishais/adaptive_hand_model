@@ -1,8 +1,11 @@
 clear all
 
-M = dlmread('c_25_80.txt',' ');
+filename = 'c_25_7_rerun';
+
+M = dlmread([filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
+save2newFile = false;
 
 % The columns are in the following order:
 % 
@@ -32,6 +35,17 @@ M = dlmread('c_25_80.txt',' ');
 %% Clean
 
 data = process_data(M);
+
+if save2newFile
+    
+    Q = [];
+    for i = 1:data.n-1
+        Q = [Q; data.obj_pos(i,1:2) data.act_load(i,1:2) data.ref_vel(i,:) data.obj_pos(i+1,1:2) data.act_load(i+1,1:2)];
+    end
+    
+    dlmwrite([filename '_processed.txt'],Q , ' ');
+    
+end
 
 %%
 figure(1)
