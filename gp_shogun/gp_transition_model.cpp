@@ -90,6 +90,49 @@ void gp_transition_model::predict(Vector state, Vector action) {
     predict(state);
 }
 
+void gp_transition_model::optimize_hparam() {
+
+    Matrix XX, YY;
+    for (int i = 0; i < 100; i++) {
+        XX.push_back(Xtraining_[i]);
+        YY.push_back(Ytraining_[i]);
+    }
+
+    SGMatrix<float64_t> X(state_dim_+action_dim_, XX.size());
+    X = Matrix2SGMatrix(XX);
+
+    SGVector<float64_t> y(YY.size());
+    y = Vector2SGVector(get_column(YY, 0));
+
+    // shogun representation 
+    CDenseFeatures<float64_t>* feat_train=new CDenseFeatures<float64_t>(X);
+    CRegressionLabels* label_train=new CRegressionLabels(y);
+
+    // specity GPR with exact inference 
+    float64_t shogun_sigma=0.2; // <= width
+    CGaussianKernel* kernel=new CGaussianKernel(10, shogun_sigma);
+    CZeroMean* mean=new CZeroMean();
+    CGaussianLikelihood* lik=new CGaussianLikelihood();
+
+    lik->set_sigma(1);
+    CExactInferenceMethod* inf=new CExactInferenceMethod(kernel, feat_train, mean, label_train, lik);
+
+    CGaussianProcessRegression* gpr=new CGaussianProcessRegression(inf);
+
+    CGradientCriterion* crit = new CGradientCriterion();
+    CGradientEvaluation* grad=new CGradientEvaluation(gpr, feat_train, label_train, crit);
+    grad->set_function(inf);
+    // gpr->print_modsel_params();
+    CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
+    CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
+    best_combination->print_tree();
+    best_combination->apply_to_machine(gpr);
+
+    cout << inf->get_scale() << endl;
+    cout << kernel->get_width() << endl;
+    cout << lik->get_sigma() << endl;
+}
+
 void gp_transition_model::predict(Vector state) {
 
     SGMatrix<float64_t> Xtrain_nn(state_dim_ + action_dim_, K_);
@@ -109,7 +152,7 @@ void gp_transition_model::predict(Vector state) {
 
     mu_.clear();
     sigma_.clear();
-    for (int i = 0; i < 2; i++) { //state_dim_
+    for (int i = 0; i < state_dim_; i++) { 
 
         SGVector<float64_t> y_train_nn(K_);
         y_train_nn = Vector2SGVector(get_column(Y_data_nn, i));
@@ -130,8 +173,8 @@ void gp_transition_model::predict(Vector state) {
             grad->set_function(inf);
             // gpr->print_modsel_params();
             CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
-            CParameterCombination* best_combination=grad_search->select_model(true);
-            // best_combination->print_tree();
+            CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
+            best_combination->print_tree();
             best_combination->apply_to_machine(gpr);
         }
 
@@ -297,8 +340,23 @@ void gp_transition_model::getNN(Vector state_action, Matrix &X_data_nn, Matrix &
     }
 }
 
-void gp_transition_model::propagate(Vector s, Vector a) {
+Vector gp_transition_model::propagate(Vector s, Vector a, bool deterministic) {
 
+    predict(s, a);
+    Vector mu = get_mu();
+    Vector sigma = get_sigma();
+
+    Vector s_next(state_dim_);
+
+    if (deterministic) 
+        for (int i = 0; i < state_dim_; i++) {
+            std::normal_distribution<double> distribution(mu[i],sigma[i]);
+            s_next[i] = distribution(generator);
+        }
+    else
+        s_next = mu;
+
+    return s_next;
 }
 
 
@@ -309,7 +367,7 @@ void gp_transition_model::pred_path() {
 
     string fileName = "../data/data_25_test_" + to_string(mode_) + ".db";
     // string fileName = "../data/toyDataPath.db";
-    load_data(fileName, X, Y);
+    load_data(fileName, X, Y, 100);
     normz(X, xmax_X_, xmin_X_);
     normz(Y, xmax_Y_, xmin_Y_);
 
@@ -320,7 +378,7 @@ void gp_transition_model::pred_path() {
     for (int i = 0; i < X.size(); i++) {
         Vector a(&X[i][state_dim_], &X[i][state_dim_+action_dim_]);
 
-        predict(s, a);
+        propagate(s, a);
         Vector s_next = get_mu();
 
         Ypred.push_back(s_next);
@@ -344,7 +402,6 @@ void gp_transition_model::pred_path() {
     }
 
     myfile.close();
-
 }
 
 double gp_transition_model::norm(Vector a, Vector b) {
@@ -364,10 +421,15 @@ int main() {
 
     init_shogun_with_defaults();
 
-    gp_transition_model gp(1, 2, 2);
+    int mode = 5;
+    Vector state_dims = {2, 6, 10, 4, 4, 12, 14, 6};
 
-    // gp.predict({0.2, 0.7},{0, 1});
-    gp.pred_path();
+    gp_transition_model gp(mode, state_dims[mode-1], 2);
+
+    gp.optimize_hparam();
+
+    // gp.predict({0.573672950220049,	0.155298637748662,	0.197238658777120,	0.843283582089552},{1, 1});
+    // gp.pred_path();
 
     exit_shogun();
 

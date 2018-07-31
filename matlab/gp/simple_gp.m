@@ -4,7 +4,7 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 poolobj = gcp; % If no pool, do not create new one.
 
-mode = 1;
+mode = 5;
 file = ['../../data/data_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
@@ -14,9 +14,9 @@ I.state_inx = Q{1}.state_inx;
 I.state_nxt_inx = Q{1}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
 
-Xtraining = load('../../data/toyData.db');
-% Xtraining = D.Xtraining; %load([file '.db']);
-% Xtest = D.Xtest;
+% Xtraining = load('../../data/toyData.db');
+Xtraining = D.Xtraining; %load([file '.db']);
+Xtest = D.Xtest;
 
 xmax = max(Xtraining); 
 xmin = min(Xtraining); 
@@ -26,11 +26,11 @@ for i = 1:I.state_dim
     xmin(id) = min(xmin(id));
 end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-% Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-Xtest = load('../../data/toyDataPath.db');
-% Xtest =  load('../../data/c_25_7_rerun_processed.txt');
 Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+
+% Xtest = load('../../data/toyDataPath.db');
+% Xtest =  load('../../data/c_25_7_rerun_processed.txt');
+% Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
 % j_min = 250; j_max = 350;%size(Xtest, 1);
 j_min = 1; j_max = size(Xtest, 1);

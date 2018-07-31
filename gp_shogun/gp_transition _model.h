@@ -46,7 +46,7 @@ class gp_transition_model {
 
         // ~gp_transition_model();
 
-        void regression();
+        void optimize_hparam();
 
         void printSGMatrix(SGMatrix<float64_t>, int = 6);
 
@@ -59,7 +59,7 @@ class gp_transition_model {
 
         void pred_path();
 
-        void propagate(Vector s, Vector a);
+        Vector propagate(Vector, Vector, bool = false);
 
         Vector get_mu() {
             return mu_;
@@ -94,9 +94,13 @@ class gp_transition_model {
 
         int K_ = 100; // Number of NN
 
-        bool opt_H_param = true;
+        bool opt_H_param = false;
 
         Vector mu_, sigma_;
 
         my_kd_tree_t KDtree_;
+
+        std::default_random_engine generator;
+
+        bool print_opt_status = false;
 };
