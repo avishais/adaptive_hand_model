@@ -120,14 +120,17 @@ for mode = 1:8
         P = [P; M]; 
     end
     
-    %%
-    dlmwrite(['data_25_' num2str(mode) '.db'], P, ' ');
-    
+    %%    
     Xtest = P(i_s1:i_e1,:);
     Xtest2 = P(i_s2:i_e2,:);
     P(i_s1:i_e1,:) = [];
     Xtraining = P;
+    
+    dlmwrite(['data_25_train_' num2str(mode) '.db'], P, ' ');
+    dlmwrite(['data_25_test_' num2str(mode) '.db'], Xtest, ' ');
+       
     save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
 end
 %%
 plot(P(:,1),P(:,2),'.');
+

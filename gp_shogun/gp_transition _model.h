@@ -1,5 +1,5 @@
+// For Shogun
 #include <shogun/lib/config.h>
-
 #include <shogun/labels/RegressionLabels.h>
 #include <shogun/features/DenseFeatures.h>
 #include <shogun/kernel/GaussianKernel.h>
@@ -14,20 +14,30 @@
 #include <shogun/modelselection/ModelSelectionParameters.h>
 #include <shogun/modelselection/ParameterCombination.h>
 
+// For nn-search
+#include "nanoflann.hpp"
+#include "KDTreeVectorOfVectorsAdaptor.h"
+
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <chrono>
 #include <time.h>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 using namespace shogun;
 
 typedef vector<vector<double>> Matrix;
 typedef vector<double> Vector;
+typedef vector< int > VectorInt;
+typedef KDTreeVectorOfVectorsAdaptor< Matrix, double > my_kd_tree_t;
 
-
+struct kNeighborSoln {
+	VectorInt neighbors;
+	Vector dist;
+};
 
 
 class gp_transition_model {
@@ -40,8 +50,24 @@ class gp_transition_model {
 
         void printSGMatrix(SGMatrix<float64_t>, int = 6);
 
-        void predict(Vector state, Vector action);
+        void predict(Vector, Vector);
+        void predict(Vector);
 
+        void kNeighbors(my_kd_tree_t&, Vector, kNeighborSoln&, size_t, bool = false);
+
+        void getNN(Vector state_action, Matrix &X_data_nn, Matrix &Y_data_nn);
+
+        void pred_path();
+
+        void propagate(Vector s, Vector a);
+
+        Vector get_mu() {
+            return mu_;
+        }
+
+        Vector get_sigma() {
+            return sigma_;
+        }
 
     // private:
 
@@ -49,18 +75,28 @@ class gp_transition_model {
         SGVector<float64_t> Vector2SGVector(Vector);
         SGMatrix<float64_t> Vector2SGMatrix(Vector);
 
-        void load_data();
+        Vector Max(Matrix M);
+        Vector Min(Matrix M);
+        void normz(Matrix &X, Vector xmax, Vector xmin);
+
+        double norm(Vector, Vector);
+
+        void load_data(string filename, Matrix &X, Matrix &Y, int = 1e8);
 
         int dim_, state_dim_, action_dim_, mode_;
 
         Matrix Xtraining_; // All current_state+action instances
         Matrix Ytraining_; // All next_states instances
 
+        Vector xmax_X_, xmin_X_, xmax_Y_, xmin_Y_; // For normalization
+
         Vector get_column(Matrix, int);
 
-        int K = 100; // Number of NN
+        int K_ = 100; // Number of NN
 
-        bool opt_H_param = false;
+        bool opt_H_param = true;
 
+        Vector mu_, sigma_;
 
+        my_kd_tree_t KDtree_;
 };
