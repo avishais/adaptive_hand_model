@@ -2,9 +2,45 @@ clear all
 
 X = load('path.txt');
 
-Sr = X(:,1:2);
-S = X(:,5:6);
-A = X(:,3:4);
+mode = 5;
+switch mode
+    case 1
+        action_inx = 3:4;
+        state_inx = 1:2;
+        state_nxt_inx = 5:6;
+    case 2
+        action_inx = 7:8;
+        state_inx = 1:6;
+        state_nxt_inx = 9:14;
+    case 3
+        action_inx = 11:12;
+        state_inx = 1:10;
+        state_nxt_inx = 13:22;
+    case 4
+        action_inx = 5:6;
+        state_inx = 1:4;
+        state_nxt_inx = 7:10;
+    case 5
+        action_inx = 5:6;
+        state_inx = 1:4;
+        state_nxt_inx = 7:10;
+    case 6
+        action_inx = 13:14;
+        state_inx = 1:12;
+        state_nxt_inx = 15:26;
+    case 7
+        action_inx = 15:16;
+        state_inx = 1:14;
+        state_nxt_inx = 17:30;
+    case 8
+        action_inx = 7:8;
+        state_inx = 1:6;
+        state_nxt_inx = 9:14;
+end
+
+Sr = X(:, state_inx);
+S = X(:, state_nxt_inx);
+A = X(:, action_inx);
 
 
 %%

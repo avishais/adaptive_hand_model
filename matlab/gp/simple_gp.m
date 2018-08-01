@@ -2,7 +2,7 @@ clear all
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
-poolobj = gcp; % If no pool, do not create new one.
+% poolobj = gcp; % If no pool, do not create new one.
 
 mode = 5;
 file = ['../../data/data_25_' num2str(mode)];
@@ -33,7 +33,7 @@ Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1),
 % Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
 % j_min = 250; j_max = 350;%size(Xtest, 1);
-j_min = 1; j_max = size(Xtest, 1);
+j_min = 1; j_max = 100;%size(Xtest, 1);
 Sr = Xtest(j_min:j_max,:);
 
 global W
@@ -47,11 +47,12 @@ clear Q D
 % x = Xtraining(tc, I.state_inx);
 % x_next = Xtraining(tc,I.state_nxt_inx);
 % 
-% a = [0 1];
-% x = [0.2 0.7];
-% x_next_pred = prediction(Xtraining, x, a, I, 1);
+% a = [1 1];
+% x = [0.5605 0.1456];
+% x_next = [0.5603 0.1463];
+% x_next_pred = prediction(Xtraining, x, a, I, 1)
 
-%% 
+%% open loop
 
 s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
@@ -59,7 +60,7 @@ S(1,:) = s;
 loss = 0;
 for i = 1:size(Sr,1)-1
     a = Sr(i, I.action_inx);
-    [s, s2] = prediction(Xtraining, s, a, I);
+    [s, s2] = prediction(Xtraining, s, a, I, 4);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
 end
@@ -80,7 +81,7 @@ loss = loss / size(Sr,1);
 % end
 
 %%
-% Open loop
+
 figure(1)
 clf
 plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');

@@ -22,10 +22,12 @@ function gprMdl = getPredictor(Xtraining, x, a, I, mode)
 data_nn = Xtraining(idx,:);
 
 gprMdl = cell(length(I.state_nxt_inx),1);
-parfor i = 1:length(I.state_nxt_inx)
+for i = 1:length(I.state_nxt_inx)
     
     if mode == 1
-        gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)),'Basis','linear','FitMethod','exact','PredictMethod','exact');
+        % gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)),'Basis','linear','FitMethod','exact','PredictMethod','exact');
+        gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)));
+        disp([i gprMdl{i}.Sigma gprMdl{i}.Beta]);
     else
         if mode == 2 % Squared kernel function
             gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)),'KernelFunction','squaredexponential');
