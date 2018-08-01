@@ -93,7 +93,7 @@ void gp_transition_model::predict(Vector state, Vector action) {
 void gp_transition_model::optimize_hparam() {
 
     Matrix XX, YY;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10000; i++) {
         XX.push_back(Xtraining_[i]);
         YY.push_back(Ytraining_[i]);
     }
@@ -101,36 +101,48 @@ void gp_transition_model::optimize_hparam() {
     SGMatrix<float64_t> X(state_dim_+action_dim_, XX.size());
     X = Matrix2SGMatrix(XX);
 
-    SGVector<float64_t> y(YY.size());
-    y = Vector2SGVector(get_column(YY, 0));
+    Vector Scales(state_dim_), Sigmas(state_dim_), Widths(state_dim_);
+    for (int i = 0; i < state_dim_; i++) {
 
-    // shogun representation 
-    CDenseFeatures<float64_t>* feat_train=new CDenseFeatures<float64_t>(X);
-    CRegressionLabels* label_train=new CRegressionLabels(y);
+        cout << "Optimizing for the " << i << "th dimension..." << endl;
 
-    // specity GPR with exact inference 
-    float64_t shogun_sigma=0.2; // <= width
-    CGaussianKernel* kernel=new CGaussianKernel(10, shogun_sigma);
-    CZeroMean* mean=new CZeroMean();
-    CGaussianLikelihood* lik=new CGaussianLikelihood();
+        SGVector<float64_t> y(YY.size());
+        y = Vector2SGVector(get_column(YY, i));
 
-    lik->set_sigma(1);
-    CExactInferenceMethod* inf=new CExactInferenceMethod(kernel, feat_train, mean, label_train, lik);
+        // shogun representation 
+        CDenseFeatures<float64_t>* feat_train=new CDenseFeatures<float64_t>(X);
+        CRegressionLabels* label_train=new CRegressionLabels(y);
 
-    CGaussianProcessRegression* gpr=new CGaussianProcessRegression(inf);
+        // specity GPR with exact inference 
+        float64_t shogun_sigma=0.2; // <= width
+        CGaussianKernel* kernel=new CGaussianKernel(10, shogun_sigma);
+        CZeroMean* mean=new CZeroMean();
+        CGaussianLikelihood* lik=new CGaussianLikelihood();
 
-    CGradientCriterion* crit = new CGradientCriterion();
-    CGradientEvaluation* grad=new CGradientEvaluation(gpr, feat_train, label_train, crit);
-    grad->set_function(inf);
-    // gpr->print_modsel_params();
-    CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
-    CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
-    best_combination->print_tree();
-    best_combination->apply_to_machine(gpr);
+        lik->set_sigma(1);
+        CExactInferenceMethod* inf=new CExactInferenceMethod(kernel, feat_train, mean, label_train, lik);
+        // inf->set_scale(0.8);
+        // kernel->set_width(0.3);
 
-    cout << inf->get_scale() << endl;
-    cout << kernel->get_width() << endl;
-    cout << lik->get_sigma() << endl;
+        CGaussianProcessRegression* gpr=new CGaussianProcessRegression(inf);
+
+        CGradientCriterion* crit = new CGradientCriterion();
+        CGradientEvaluation* grad=new CGradientEvaluation(gpr, feat_train, label_train, crit);
+        grad->set_function(inf);
+        // gpr->print_modsel_params();
+        CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
+        CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
+        best_combination->print_tree();
+        best_combination->apply_to_machine(gpr);
+
+        Scales[i] = inf->get_scale(); // set_scale
+        Widths[i] = kernel->get_width(); // set_width
+        Sigmas[i] = lik->get_sigma(); // set_sigma
+    }
+
+    cout << "Likelihood sigmas: "; printVector(Sigmas);
+    cout << "Kernel widths: "; printVector(Widths);
+    cout << "Inf. scales: "; printVector(Scales); 
 }
 
 void gp_transition_model::predict(Vector state) {
@@ -421,7 +433,7 @@ int main() {
 
     init_shogun_with_defaults();
 
-    int mode = 5;
+    int mode = 1;
     Vector state_dims = {2, 6, 10, 4, 4, 12, 14, 6};
 
     gp_transition_model gp(mode, state_dims[mode-1], 2);
