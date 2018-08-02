@@ -10,10 +10,10 @@ logging.basicConfig()
 
 K = 100 # Number of NN
 
-mode = 5
+mode = 8
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-Qtest = Qtest[:300,:]
+Qtest = Qtest[:450,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -39,6 +39,9 @@ if mode==6:
 if mode==7:
     state_action_dim = 16
     state_dim = 14
+if mode==8:
+    state_action_dim = 8
+    state_dim = 6
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]
@@ -67,29 +70,39 @@ for i in range(Ytrain.shape[1]):
     Ytest[:,i] = (Ytest[:,i]-x_min_Y[i])/(x_max_Y[i]-x_min_Y[i])
 
 
+W = np.array([np.sqrt(3.), np.sqrt(3.), 1., 1., 1., 1., 1., 1.]).T
+
 print("Loading data to kd-tree...")
-kdt = KDTree(Xtrain, leaf_size=10, metric='euclidean')
+Xtrain_nn = Xtrain * W
+kdt = KDTree(Xtrain_nn, leaf_size=10, metric='euclidean')
 
 #######
 
 def predict(query):
-    idx = kdt.query(sa.T, k=K, return_distance=False)
+    idx = kdt.query(sa.T*W, k=K, return_distance=False)
     X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
     Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
     y_pred = np.zeros(state_dim)
     for dim in range(state_dim):
-        model = pyGPs.GPR()      # specify model (GP regression)
+        model = pyGPs.GPR_FITC()      # specify model (GP regression)
+        
+        num_u = np.fix(10)
+        u = np.tile(np.linspace(0,1,num_u).T, (1, state_action_dim))
+        u = np.reshape(u,(int(num_u),state_action_dim))
+
+        # Nu = 10
+        # u = np.random.rand(Nu, state_action_dim)
 
         m = pyGPs.mean.Linear( D=X_nn.shape[1] )# + pyGPs.mean.Const()  
         k = pyGPs.cov.RBF(log_ell=5., log_sigma=-5)
-        model.setPrior(mean=m, kernel=k) 
+        model.setPrior(mean=m, kernel=k, inducing_points=u) 
 
-        model.getPosterior(X_nn, Y_nn[:,dim]) # fit default model (mean zero & rbf kernel) with data
-        
-        rand_inx = np.random.choice(K, 10)
-        model.optimize(X_nn[rand_inx,:], Y_nn[rand_inx,dim],numIterations=10)     # optimize hyperparamters (default optimizer: 40 runs minimize)
-        # model.optimize(X_nn, Y_nn[:,dim])     # optimize hyperparamters (default optimizer: single run minimize)
+        model.setData(X_nn, Y_nn[:,dim]) # fit default model (mean zero & rbf kernel) with data
+        model.getPosterior()
+        model.optimize(X_nn, Y_nn[:,dim])     # optimize hyperparamters (default optimizer: single run minimize)
+
+        # print(model.meanfunc.hyp, model.covfunc.hyp, model.likfunc.hyp)
 
         model.predict(sa.reshape(1,state_action_dim))         # predict test cases
         y_pred[dim] = model.ym
@@ -101,7 +114,7 @@ Ypred = s.reshape(1,state_dim)
 
 print("Running path...")
 for i in range(Xtest.shape[0]):
-    print(i)
+    print("Step ", i)
     a = Xtest[i,state_dim:state_action_dim]
     sa = np.concatenate((s,a)).reshape(-1,1)
     s_next = predict(sa)
@@ -113,6 +126,6 @@ plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('pyGPs (gp.py)')
+plt.title('pyGPs (gp_fitc.py)')
 plt.grid(True)
 plt.show()

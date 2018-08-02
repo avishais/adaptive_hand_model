@@ -1,16 +1,13 @@
-from __future__ import division, print_function, absolute_import
-
 import numpy as np
-import pyGPs
-from sklearn.neighbors import KDTree #pip install -U scikit-learn
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
-import logging
-logging.basicConfig()
+from sklearn.neighbors import KDTree #pip install -U scikit-learn
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import Matern, WhiteKernel, RBF, ConstantKernel as C
 
 K = 100 # Number of NN
 
-mode = 5
+mode = 1
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
 Qtest = Qtest[:300,:]
@@ -77,27 +74,31 @@ def predict(query):
     X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
     Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
+    # print(X_nn.shape, X_nn)
+    # print(Y_nn.shape, Y_nn)
+
     y_pred = np.zeros(state_dim)
+    sigma = np.zeros(state_dim)
     for dim in range(state_dim):
-        model = pyGPs.GPR()      # specify model (GP regression)
+        kernel = C(1.0, (1e-3, 1e3)) * RBF(10, (1e-2, 1e2))
+        # kernel = C(1.0, (1e-3, 1e3)) + Matern(length_scale=2, nu=3/2)
 
-        m = pyGPs.mean.Linear( D=X_nn.shape[1] )# + pyGPs.mean.Const()  
-        k = pyGPs.cov.RBF(log_ell=5., log_sigma=-5)
-        model.setPrior(mean=m, kernel=k) 
+        gp = GaussianProcessRegressor(kernel=kernel, n_restarts_optimizer=9)
 
-        model.getPosterior(X_nn, Y_nn[:,dim]) # fit default model (mean zero & rbf kernel) with data
-        
-        rand_inx = np.random.choice(K, 10)
-        model.optimize(X_nn[rand_inx,:], Y_nn[rand_inx,dim],numIterations=10)     # optimize hyperparamters (default optimizer: 40 runs minimize)
-        # model.optimize(X_nn, Y_nn[:,dim])     # optimize hyperparamters (default optimizer: single run minimize)
+        gp.fit(X_nn, Y_nn[:,dim])
 
-        model.predict(sa.reshape(1,state_action_dim))         # predict test cases
-        y_pred[dim] = model.ym
+        y_pred[dim], sigma[dim] = gp.predict(sa.reshape(1,state_action_dim), return_std=True)
 
     return y_pred
 
 s = Xtest[0,:state_dim]
 Ypred = s.reshape(1,state_dim)
+
+# s = np.array([0.54749736, 0.18103569])
+# a = Xtest[72,state_dim:state_action_dim]
+# sa = np.concatenate((s,a)).reshape(-1,1)
+# s_next = predict(sa)
+# print(s_next)
 
 print("Running path...")
 for i in range(Xtest.shape[0]):
@@ -105,14 +106,18 @@ for i in range(Xtest.shape[0]):
     a = Xtest[i,state_dim:state_action_dim]
     sa = np.concatenate((s,a)).reshape(-1,1)
     s_next = predict(sa)
+    print(s_next)
     s = s_next
     Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
+
+# print(Ypred)
 
 plt.figure(0)
 plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('pyGPs (gp.py)')
+plt.title('Scikit (gp_scikit.py)')
 plt.grid(True)
 plt.show()
+
