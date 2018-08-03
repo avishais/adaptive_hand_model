@@ -69,7 +69,7 @@ kdt = KDTree(Xtrain, leaf_size=10, metric='euclidean')
 
 #######
 
-def predict(query):
+def predict(sa):
     idx = kdt.query(sa.T, k=K, return_distance=False)
     X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
     Y_nn = Ytrain[idx,:].reshape(K, state_dim)
@@ -109,8 +109,6 @@ for i in range(Xtest.shape[0]):
     print(s_next)
     s = s_next
     Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
-
-# print(Ypred)
 
 plt.figure(0)
 plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
