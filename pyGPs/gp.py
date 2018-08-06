@@ -13,7 +13,7 @@ K = 100 # Number of NN
 mode = 5
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-Qtest = Qtest[:300,:]
+# Qtest = Qtest[:300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -39,6 +39,9 @@ if mode==6:
 if mode==7:
     state_action_dim = 16
     state_dim = 14
+if mode==8:
+    state_action_dim = 8
+    state_dim = 6
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]

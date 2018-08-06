@@ -3,13 +3,15 @@ from matplotlib import pyplot as plt
 
 from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import GPy
+import time
+
 
 K = 100 # Number of NN
 
 mode = 5
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-# Qtest = Qtest[:50,:]
+# Qtest = Qtest[:500,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -35,6 +37,9 @@ if mode==6:
 if mode==7:
     state_action_dim = 16
     state_dim = 14
+if mode==8:
+    state_action_dim = 8
+    state_dim = 6
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]
@@ -63,8 +68,12 @@ for i in range(Ytrain.shape[1]):
     Ytest[:,i] = (Ytest[:,i]-x_min_Y[i])/(x_max_Y[i]-x_min_Y[i])
 
 
+W = np.concatenate( ( np.array([np.sqrt(1.), np.sqrt(1.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
+W = W.reshape((W.shape[0],))
+
 print("Loading data to kd-tree...")
-kdt = KDTree(Xtrain, leaf_size=10, metric='euclidean')
+Xtrain_nn = Xtrain# * W
+kdt = KDTree(Xtrain_nn, leaf_size=10, metric='euclidean')
 
 ###
 
@@ -79,17 +88,19 @@ def predict(sa):
         kernel = GPy.kern.RBF(input_dim=state_action_dim, variance=1., lengthscale=1.)
         m = GPy.models.GPRegression(X_nn,Y_nn[:,dim].reshape(-1,1),kernel)
 
-        m.optimize(messages=True)
+        m.optimize(messages=False)
         # m.optimize_restarts(num_restarts = 10)
 
         y_pred[dim], sigma[dim] = m.predict(sa.reshape(1,state_action_dim))
 
     return y_pred
 
+start = time.time()
+
 s = Xtest[0,:state_dim]
 Ypred = s.reshape(1,state_dim)
 
-print("Running path...")
+print("Running (open loop) path...")
 for i in range(Xtest.shape[0]):
     print(i)
     a = Xtest[i,state_dim:state_action_dim]
@@ -99,11 +110,28 @@ for i in range(Xtest.shape[0]):
     s = s_next
     Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
 
+# print("Running (closed loop) path...")
+# for i in range(Xtest.shape[0]):
+#     print(i)
+#     s = Xtest[i,:state_dim]
+#     a = Xtest[i,state_dim:state_action_dim]
+#     sa = np.concatenate((s,a)).reshape(-1,1)
+#     s_next = predict(sa)
+#     print(s_next)
+#     # s = s_next
+#     Ypred = np.append(Ypred, s_next.reshape(1,state_dim), axis=0)
+
+end = time.time()
+
 plt.figure(0)
 plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
-plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
+plt.plot(Ypred[:,0], Ypred[i,1], 'r.-')
+# for i in range(Ypred.shape[0]-1):
+#     plt.plot(np.array([Xtest[i,0], Ypred[i,0]]), np.array([Xtest[i,1], Ypred[i,1]]), 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('Scikit (gp_scikit.py)')
+plt.title('GPy (gp_GPy.py) - ' + str(mode))
 plt.grid(True)
 plt.show()
+
+print("Calc. time: " + str(end - start) + " sec.")
