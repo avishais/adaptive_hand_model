@@ -6,10 +6,10 @@ import GPy
 
 K = 100 # Number of NN
 
-mode = 5
+mode = 8
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-# Qtest = Qtest[:50,:]
+# Qtest = Qtest[:450,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -35,6 +35,9 @@ if mode==6:
 if mode==7:
     state_action_dim = 16
     state_dim = 14
+if mode==8:
+    state_action_dim = 8
+    state_dim = 6
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]
@@ -73,18 +76,25 @@ def predict(sa):
     X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
     Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
-    y_pred = np.zeros(state_dim)
+    mu = np.zeros(state_dim)
     sigma = np.zeros(state_dim)
     for dim in range(state_dim):
         kernel = GPy.kern.RBF(input_dim=state_action_dim, variance=1., lengthscale=1.)
         m = GPy.models.GPRegression(X_nn,Y_nn[:,dim].reshape(-1,1),kernel)
 
-        m.optimize(messages=True)
+        m.optimize(messages=False)
         # m.optimize_restarts(num_restarts = 10)
 
-        y_pred[dim], sigma[dim] = m.predict(sa.reshape(1,state_action_dim))
+        mu[dim], sigma[dim] = m.predict(sa.reshape(1,state_action_dim))
 
-    return y_pred
+    return mu, sigma
+
+def propagate(sa):
+    mu, sigma = predict(sa)
+    s_next = np.random.normal(mu, sigma, state_dim)
+
+    return s_next
+
 
 s = Xtest[0,:state_dim]
 Ypred = s.reshape(1,state_dim)
@@ -94,7 +104,8 @@ for i in range(Xtest.shape[0]):
     print(i)
     a = Xtest[i,state_dim:state_action_dim]
     sa = np.concatenate((s,a)).reshape(-1,1)
-    s_next = predict(sa)
+    # s_next = predict(sa)
+    s_next = propagate(sa)
     print(s_next)
     s = s_next
     Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
@@ -104,6 +115,6 @@ plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('Scikit (gp_scikit.py)')
+plt.title('GPy (gp_GPy.py)')
 plt.grid(True)
 plt.show()
