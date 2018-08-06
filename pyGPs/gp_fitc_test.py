@@ -1,4 +1,5 @@
 from __future__ import division, print_function, absolute_import
+from past.utils import old_div
 
 import numpy as np
 import pyGPs
@@ -10,7 +11,7 @@ import pickle
 import logging
 logging.basicConfig()
 
-K = 120 # Number of NN
+K = 100 # Number of NN
 
 saved = False
 
@@ -18,7 +19,7 @@ mode = 8
 Q = loadmat('../data/data_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
 Qtest = Q['Xtest']
-Qtest = Qtest[:200,:]
+Qtest = Qtest[:180,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -86,20 +87,14 @@ if not saved:
 #######
 
 def predict(query):
-    idx = kdt.query(sa.T * W, k=K, return_distance=False)
-    # idx = kdt.query_radius(sa.T * W, r=0.2)
-    # k = len(idx[0])
-    # if k > 0:
-    #     idx = idx[0].reshape((1,k))
-    #     if k > K:
-    #         idx = idx[0,:K]
-    #         k = K
-    # else:
-    #     idx = kdt.query(sa.T * W, k=K, return_distance=False)   
-    #     k = K
-    
-    X_nn = Xtrain[idx,:].reshape(k, state_action_dim)
-    Y_nn = Ytrain[idx,:].reshape(k, state_dim)
+    # idx = kdt.query(sa.T * W, k=K, return_distance=False)
+
+    idx = kdt.query_radius(sa.T * W, r=0.15)
+    K = len(idx[0])
+    idx = idx[0].reshape((1,K))
+ 
+    X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
+    Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
     y_pred = np.zeros(state_dim)
     for dim in range(state_dim):
@@ -114,6 +109,11 @@ def predict(query):
 
         m = pyGPs.mean.Linear( D=X_nn.shape[1] )
         k = pyGPs.cov.RBF(log_ell=5., log_sigma=-5)
+        # k1 = pyGPs.cov.RBF(np.log(67.), np.log(66.))
+        # k2 = pyGPs.cov.Periodic(np.log(1.3), np.log(1.0), np.log(2.4)) * pyGPs.cov.RBF(np.log(90.), np.log(2.4))
+        # k3 = pyGPs.cov.RQ(np.log(1.2), np.log(0.66), np.log(0.78))
+        # k4 = pyGPs.cov.RBF(np.log(old_div(1.6,12.)), np.log(0.18)) + pyGPs.cov.Noise(np.log(0.19))
+        # k  = k1 + k2 + k3 + k4
         model.setPrior(mean=m, kernel=k, inducing_points=u) 
 
         model.setData(X_nn, Y_nn[:,dim]) # fit default model (mean zero & rbf kernel) with data
@@ -123,36 +123,56 @@ def predict(query):
         model.predict(sa.reshape(1,state_action_dim))         # predict test cases
         y_pred[dim] = model.ym
 
-    return y_pred
-
-if (saved):
-    print('Loading saved path...')
-    # Getting back the objects:
-    with open('objs.pkl') as f:  # Python 3: open(..., 'rb')
-        Xtest, Ypred = pickle.load(f)    
-else:
-    s = Xtest[0,:state_dim]
-    Ypred = s.reshape(1,state_dim)
-
-    print("Running path...")
-    for i in range(Xtest.shape[0]):
-        print("Step " + str(i))
-        a = Xtest[i,state_dim:state_action_dim]
-        sa = np.concatenate((s,a)).reshape(-1,1)
-        s_next = predict(sa)
-        print(s_next)
-        s = s_next
-        Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
-    
-    with open('objs.pkl', 'w') as f:  # Python 3: open(..., 'wb')
-        pickle.dump([Xtest, Ypred], f)
+    return y_pred, X_nn, Y_nn
 
 
-plt.figure(0)
-plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
-plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
-# plt.ylim([0, np.max(COSTS)])
-plt.axis('equal')
-plt.title('pyGPs (gp_fitc.py) - ' + str(mode))
-plt.grid(True)
+# print(Xtest[170:180,state_dim:state_action_dim])
+# s = np.array([0.48232082, 0.2534946 , 0.74887955, 0.70893628, 0.64893844, 0.86339834]) # 173
+s = np.array([0.4816169,  0.25428246, 0.74912899, 0.7094346,  0.64462934, 0.86463593]) #174
+a = Xtest[174,state_dim:state_action_dim]
+sa = np.concatenate((s,a)).reshape(-1,1)
+s_next, X_nn, Y_nn = predict(sa)
+
+def Action(a):
+    b = 100
+    if a[0]==0 and a[1]==0:
+        return np.array([0, -1])/b
+    if a[0]==1 and a[1]==1:
+        return np.array([0, 1])/b
+    if a[0]==1 and a[1]==0:
+        return np.array([-1, 0])/b
+    if a[0]==0 and a[1]==1:
+        return np.array([1, 0])/b
+
+
+plt.figure(1)
+# plt.plot(Xtest[170:180,0], Xtest[170:180,1], 'k.-')
+plt.plot(np.array([s[0], s_next[0]]), np.array([s[1], s_next[1]]), 'r.-')
+plt.plot(s[0], s[1], 'ko-')
+plt.plot(X_nn[:,0],X_nn[:,1], '.b')
+for i in range(X_nn.shape[0]-1):
+    a = X_nn[i,state_dim:state_action_dim]
+    a = Action(a)
+    plt.arrow(X_nn[i,0],X_nn[i,1],a[0], a[1])
+
+print(s)
+print(s_next)
+
 plt.show()
+
+
+
+# Ypred
+# [[0.48364569 0.25166836 0.74890212 0.70639912 0.65672628 0.86405539] #170
+#  [0.4831057  0.25198454 0.74974338 0.70599826 0.65333641 0.86447469]
+#  [0.48232372 0.25230764 0.75012168 0.71189113 0.65182271 0.8652735 ]
+#  [0.48232082 0.2534946  0.74887955 0.70893628 0.64893844 0.86339834]
+#  [0.4816169  0.25428246 0.74912899 0.7094346  0.64462934 0.86463593] #174
+#  [0.48982902 0.27224401 0.72785797 0.69430163 0.59900633 0.86527903]
+#  [0.48696039 0.27569339 0.72974499 0.69506306 0.57403011 0.86370339]
+#  [0.48525589 0.28231259 0.73030183 0.69838401 0.56255913 0.86549884]
+#  [0.48287428 0.28265431 0.72912038 0.70181762 0.49613564 0.87309222]
+#  [0.48278836 0.28379972 0.73076994 0.70045626 0.50249483 0.88785923]]
+
+# Xtest
+# [0.4873894  0.27369838 0.69141861 0.69586023 0.61143984 0.91044776 1.         0.        ]

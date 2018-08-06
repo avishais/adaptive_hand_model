@@ -4,13 +4,14 @@ from matplotlib import pyplot as plt
 from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import GPy
 import time
-
+from scipy.io import loadmat
 
 K = 100 # Number of NN
 
-mode = 8
-Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
-Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
+mode = 5
+Q = loadmat('../data/data_25_' + str(mode) + '.mat')
+Qtrain = Q['Xtraining']
+Qtest = Q['Xtest']
 # Qtest = Qtest[:500,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
@@ -133,7 +134,7 @@ end = time.time()
 
 plt.figure(0)
 plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
-plt.plot(Ypred[:,0], Ypred[i,1], 'r.-')
+plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # for i in range(Ypred.shape[0]-1):
 #     plt.plot(np.array([Xtest[i,0], Ypred[i,0]]), np.array([Xtest[i,1], Ypred[i,1]]), 'r.-')
 # plt.ylim([0, np.max(COSTS)])

@@ -1,5 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.io import loadmat
 
 from sklearn.neighbors import KDTree #pip install -U scikit-learn
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -8,9 +9,10 @@ from sklearn.gaussian_process.kernels import Matern, WhiteKernel, RBF, ConstantK
 K = 100 # Number of NN
 
 mode = 8
-Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
-Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-Qtest = Qtest[:100,:]
+Q = loadmat('../data/data_25_' + str(mode) + '.mat')
+Qtrain = Q['Xtraining']
+Qtest = Q['Xtest']
+Qtest = Qtest[:10,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')

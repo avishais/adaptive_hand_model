@@ -258,15 +258,14 @@ void gp_transition_model::predict(Vector state) {
         inf->set_scale(Scales_[i]);
 
         // Optimization
-        // CGradientCriterion* crit = new CGradientCriterion();
-        // CGradientEvaluation* grad=new CGradientEvaluation(gpr, feat_train, label_train, crit);
-        // grad->set_function(inf);
-        // // gpr->print_modsel_params();
-        // CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
-        // CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
-        // best_combination->print_tree();
-        // best_combination->apply_to_machine(gpr);
-        // Optimization
+        CGradientCriterion* crit = new CGradientCriterion();
+        CGradientEvaluation* grad=new CGradientEvaluation(gpr, feat_train, label_train, crit);
+        grad->set_function(inf);
+        // gpr->print_modsel_params();
+        CGradientModelSelection* grad_search=new CGradientModelSelection(grad);
+        CParameterCombination* best_combination=grad_search->select_model(print_opt_status);
+        best_combination->print_tree();
+        best_combination->apply_to_machine(gpr);
 
         // perform inference
         // CRegressionLabels* predictions=gpr->apply_regression(feat_test3);

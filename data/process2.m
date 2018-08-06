@@ -16,7 +16,7 @@ n = max(size(files));
 % 8 - state is object and actuator positions and actuator load
 
 % mode = 1;
-for mode = 1:8
+for mode = 1%:8
     
     Q = cell(n,1);
     P = [];
@@ -126,10 +126,11 @@ for mode = 1:8
     P(i_s1:i_e1,:) = [];
     Xtraining = P;
     
-    dlmwrite(['data_25_train_' num2str(mode) '.db'], P, ' ');
-    dlmwrite(['data_25_test_' num2str(mode) '.db'], Xtest, ' ');
-       
-    save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
+%     dlmwrite(['data_25_train_' num2str(mode) '.db'], P, ' ');
+%     dlmwrite(['data_25_test_' num2str(mode) '.db'], Xtest, ' ');
+% %     dlmwrite(['data_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
+%        
+%     save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
 end
 %%
 plot(P(:,1),P(:,2),'.');

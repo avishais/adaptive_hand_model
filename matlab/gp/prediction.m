@@ -17,7 +17,13 @@ end
 function gprMdl = getPredictor(kdtree, Xtraining, x, a, I, mode)
 
 [idx, d] = knnsearch(kdtree, [x a], 'K', 100);
-% [idx, d] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), [x a], 'K', 100, 'Distance',@distfun);
+% [idx, d] = rangesearch(kdtree, [x a], 0.03); idx = idx{1};
+% if length(idx) > 100
+%     idx = idx(1:100);
+% end
+% if isempty(idx) 
+%     [idx, d] = knnsearch(kdtree, [x a], 'K', 100);
+% end
 
 data_nn = Xtraining(idx,:);
 

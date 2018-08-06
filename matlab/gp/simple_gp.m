@@ -1,12 +1,12 @@
-% clear all
-% warning('off','all')
+clear all
+warning('off','all')
 
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-% mode = 5;
+mode = 8;
 file = ['../../data/data_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
@@ -51,10 +51,38 @@ clear Q D
 % x = Xtraining(tc, I.state_inx);
 % x_next = Xtraining(tc,I.state_nxt_inx);
 % 
-% a = [1 1];
-% x = [0.5605 0.1456];
-% % x_next = [0.5603 0.1463];
-% x_next_pred = prediction(Xtraining, x, a, I, 1)
+% a = [1 0];
+% x = [0.4816169,  0.25428246, 0.74912899, 0.7094346,  0.64462934, 0.86463593];
+% x_next_pred = prediction(kdtree, Xtraining, x, a, I, 1)
+% 
+% s0 = [0.48364569, 0.25166836, 0.74890212, 0.70639912, 0.65672628, 0.86405539];
+% S = s0;
+% s = s0;
+% for i = 1:4
+%     s = prediction(kdtree, Xtraining, s, a, I, 1);
+%     S = [S; s];
+% end
+% 
+% xnn = x;
+% % [idx, D] = knnsearch(kdtree, [xnn a], 'K', 100);
+% [idx, D] = rangesearch(kdtree, [xnn a], 0.025); idx = idx{1};
+% data_nn = Xtraining(idx,:);
+% 
+% figure(1)
+% plot([x(1) x_next_pred(1)],[x(2) x_next_pred(2)],'r-');
+% hold on
+% plot([x(1) 0.48982902],[x(2) 0.272244],'m-');
+% plot(xnn(1),xnn(2),'bo','markerfacecolor','c');
+% plot(S(:,1),S(:,2),'r.-');
+% 
+% plot(data_nn(:,1),data_nn(:,2),'bo','markerfacecolor','b');
+% for i = 1:size(data_nn,1)
+%     d = Action(data_nn(i,7:8));
+%     quiver(data_nn(i,1),data_nn(i,2),d(1), d(2),0.01,'k');
+% end
+% hold off
+% axis equal
+% legend('Matlab','pyGPs','nn point');
 
 %% open loop
 tic;
@@ -115,3 +143,20 @@ disp(['Loss: ' num2str(loss)]);
 % Mse = sqrt(sum);
 % disp(['Error: ' num2str(Mse)]);
 
+
+function d = Action(a)
+% a = (a+0.06)/0.12;
+if all(a==[0 0])
+    d = [0 -1];
+else if all(a==[1 1])
+        d = [0 1];
+    else if all(a==[1 0])
+            d = [-1 0];
+        else
+            if all(a==[0 1])
+                d = [1 0];
+            end
+        end
+    end
+end
+end

@@ -4,6 +4,7 @@ import numpy as np
 import pyGPs
 from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import matplotlib.pyplot as plt
+from scipy.io import loadmat
 
 import logging
 logging.basicConfig()
@@ -11,8 +12,9 @@ logging.basicConfig()
 K = 100 # Number of NN
 
 mode = 5
-Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
-Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
+Q = loadmat('../data/data_25_' + str(mode) + '.mat')
+Qtrain = Q['Xtraining']
+Qtest = Q['Xtest']
 # Qtest = Qtest[:300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
