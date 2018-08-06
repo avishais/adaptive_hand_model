@@ -13,7 +13,7 @@ K = 100 # Number of NN
 mode = 8
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-Qtest = Qtest[:450,:]
+# Qtest = Qtest[:3,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -70,16 +70,17 @@ for i in range(Ytrain.shape[1]):
     Ytest[:,i] = (Ytest[:,i]-x_min_Y[i])/(x_max_Y[i]-x_min_Y[i])
 
 
-W = np.array([np.sqrt(3.), np.sqrt(3.), 1., 1., 1., 1., 1., 1.]).T
+W = np.concatenate( ( np.array([np.sqrt(1.), np.sqrt(1.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
+W = W.reshape((W.shape[0],))
 
 print("Loading data to kd-tree...")
-Xtrain_nn = Xtrain * W
+Xtrain_nn = Xtrain# * W
 kdt = KDTree(Xtrain_nn, leaf_size=10, metric='euclidean')
 
 #######
 
 def predict(query):
-    idx = kdt.query(sa.T*W, k=K, return_distance=False)
+    idx = kdt.query(sa.T, k=K, return_distance=False)
     X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
     Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
@@ -114,7 +115,7 @@ Ypred = s.reshape(1,state_dim)
 
 print("Running path...")
 for i in range(Xtest.shape[0]):
-    print("Step ", i)
+    print("Step " + str(i))
     a = Xtest[i,state_dim:state_action_dim]
     sa = np.concatenate((s,a)).reshape(-1,1)
     s_next = predict(sa)
@@ -126,6 +127,6 @@ plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('pyGPs (gp_fitc.py)')
+plt.title('pyGPs (gp_fitc.py) - ' + str(mode))
 plt.grid(True)
 plt.show()

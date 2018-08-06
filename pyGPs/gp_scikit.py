@@ -7,10 +7,10 @@ from sklearn.gaussian_process.kernels import Matern, WhiteKernel, RBF, ConstantK
 
 K = 100 # Number of NN
 
-mode = 1
+mode = 8
 Qtrain = np.loadtxt('../data/data_25_train_' + str(mode) + '.db')
 Qtest = np.loadtxt('../data/data_25_test_' + str(mode) + '.db')
-Qtest = Qtest[:300,:]
+Qtest = Qtest[:100,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -36,6 +36,9 @@ if mode==6:
 if mode==7:
     state_action_dim = 16
     state_dim = 14
+if mode==8:
+    state_action_dim = 8
+    state_dim = 6
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]
@@ -102,7 +105,7 @@ Ypred = s.reshape(1,state_dim)
 
 print("Running path...")
 for i in range(Xtest.shape[0]):
-    print(i)
+    print("Step " + str(i))
     a = Xtest[i,state_dim:state_action_dim]
     sa = np.concatenate((s,a)).reshape(-1,1)
     s_next = predict(sa)
@@ -115,7 +118,7 @@ plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
-plt.title('Scikit (gp_scikit.py)')
+plt.title('Scikit (gp_scikit.py) - ' + str(mode))
 plt.grid(True)
 plt.show()
 

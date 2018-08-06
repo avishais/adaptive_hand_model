@@ -1,5 +1,5 @@
 clear all
-for mode = [4 5]%1:8
+for mode = 8%:8
     
     simple_gp;
 %     gp_gpml;
