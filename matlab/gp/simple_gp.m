@@ -6,8 +6,10 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-mode = 8;
-file = ['../../data/data_25_' num2str(mode)];
+UseToyData = false;
+
+mode = 5;
+file = ['../../data/Ca_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
 Q = D.Q;
@@ -16,9 +18,14 @@ I.state_inx = Q{1}.state_inx;
 I.state_nxt_inx = Q{1}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
 
-% Xtraining = load('../../data/toyData.db');
-Xtraining = D.Xtraining; 
-Xtest = D.Xtest;
+if UseToyData
+    Xtraining = load('../../data/toyData.db');
+    Xtest = load('../../data/toyDataPath.db');
+else
+    Xtraining = D.Xtraining; 
+    Xtest = D.Xtest;
+end
+
 
 xmax = max(Xtraining); 
 xmin = min(Xtraining); 
@@ -30,12 +37,7 @@ end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
 Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
-% Xtest = load('../../data/toyDataPath.db');
-% Xtest =  load('../../data/c_25_7_rerun_processed.txt');
-% Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-% j_min = 250; j_max = 350;%size(Xtest, 1);
-j_min = 1; j_max = size(Xtest, 1);
+j_min = 1; j_max = 1000;%size(Xtest, 1);
 Sr = Xtest(j_min:j_max,:);
 
 global W
@@ -45,7 +47,7 @@ W = diag([ones(1,2)*3 ones(1,I.state_dim)]);
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
 
 clear Q D
-%%
+%% Point validation
 % tc = 1000;
 % a = Xtraining(tc, I.action_inx);
 % x = Xtraining(tc, I.state_inx);

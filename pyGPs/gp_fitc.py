@@ -10,15 +10,15 @@ import pickle
 import logging
 logging.basicConfig()
 
-K = 120 # Number of NN
+K = 100 # Number of NN
 
 saved = False
 
-mode = 8
+mode = 5
 Q = loadmat('../data/data_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
 Qtest = Q['Xtest']
-Qtest = Qtest[:200,:]
+# Qtest = Qtest[:200,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -53,6 +53,9 @@ Ytrain = Qtrain[:,state_action_dim:]
 Xtest = Qtest[:,0:state_action_dim]
 Ytest = Qtest[:,state_action_dim:]
 
+# Xtrain = np.concatenate( (Xtrain, Xtest), axis=0 )
+# Ytrain = np.concatenate( (Ytrain, Ytest), axis=0 )
+
 # Normalize
 x_max_X = np.max(Xtrain, axis=0)
 x_min_X = np.min(Xtrain, axis=0)
@@ -75,7 +78,7 @@ for i in range(Ytrain.shape[1]):
     Ytest[:,i] = (Ytest[:,i]-x_min_Y[i])/(x_max_Y[i]-x_min_Y[i])
 
 
-W = np.concatenate( ( np.array([np.sqrt(3.), np.sqrt(3.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
+W = np.concatenate( ( np.array([np.sqrt(1.), np.sqrt(1.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
 W = W.reshape((W.shape[0],))
 
 if not saved:
@@ -98,14 +101,14 @@ def predict(query):
     #     idx = kdt.query(sa.T * W, k=K, return_distance=False)   
     #     k = K
     
-    X_nn = Xtrain[idx,:].reshape(k, state_action_dim)
-    Y_nn = Ytrain[idx,:].reshape(k, state_dim)
+    X_nn = Xtrain[idx,:].reshape(K, state_action_dim)
+    Y_nn = Ytrain[idx,:].reshape(K, state_dim)
 
     y_pred = np.zeros(state_dim)
     for dim in range(state_dim):
         model = pyGPs.GPR_FITC()      # specify model (GP regression)
         
-        num_u = np.fix(10)
+        num_u = np.fix(20)
         u = np.tile(np.linspace(0,1,num_u).T, (1, state_action_dim))
         u = np.reshape(u,(int(num_u),state_action_dim))
 

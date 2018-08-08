@@ -4,7 +4,7 @@ if 1
     % Clean 0's
     i = 1;
     while (i <= size(M,1))
-        if (sum(M(i,2:end)==0) > 7)
+        if (sum(M(i,2:end)==0) >= 4)
             M(i,:) = [];
             continue;
         end

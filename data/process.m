@@ -1,8 +1,8 @@
 clear all
 
-filename = 'c_25_7_rerun';
+filename = 'ca_25_30';
 
-M = dlmread([filename '.txt'],' ');
+M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 save2newFile = false;
@@ -24,7 +24,7 @@ save2newFile = false;
 % 12: finger pos x 2
 % 13: finger pos y 2
 % 14: finger pos x 3
-% 15: finger pos y 3
+% 15: finger pos y 1
 % 16: finger pos x 4
 % 17: finger pos y 4
 % 18: obj pos x
@@ -33,6 +33,8 @@ save2newFile = false;
 % 21: Base angle
 
 %% Clean
+
+% M = M(1:200,:);
 
 data = process_data(M);
 
@@ -66,15 +68,16 @@ ylim([-0.07 0.07]);
 grid
 title('Actuation inputs');
 
-figure(2)
-plot(data.T, data.act_load);
-xlabel('Time (sec)');
-ylabel('Load');
-legend('actuator 1','actuator 2');
+% figure(2)
+% plot(data.T, data.act_load);
+% xlabel('Time (sec)');
+% ylabel('Load');
+% legend('actuator 1','actuator 2');
 
 %%
 % for i = data.n-60:2:data.n
-for i = data.n%1:50:
+for i = data.n%[1:10:data.n ]%1:50:
+    i
     figure(3)
     clf
     circle(data.obj_pos(i,1),data.obj_pos(i,2),15,'r');

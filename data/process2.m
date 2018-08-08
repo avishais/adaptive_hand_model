@@ -1,5 +1,5 @@
 clear all
-files = dir(fullfile('./', '*.txt'));
+files = dir(fullfile('./ca/', '*.txt'));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
@@ -16,7 +16,7 @@ n = max(size(files));
 % 8 - state is object and actuator positions and actuator load
 
 % mode = 1;
-for mode = 1%:8
+for mode = 1:8
     
     Q = cell(n,1);
     P = [];
@@ -24,7 +24,7 @@ for mode = 1%:8
     for i = 1:n
         f = files{i,1};
         
-        D = dlmread(f, ' ');
+        D = dlmread(['./ca/' f], ' ');
         
         % Clean data
         data = process_data(D);
@@ -109,28 +109,31 @@ for mode = 1%:8
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
         end
-        if strcmp(f, 'c_25_7.txt') % test path
-            i_s1 = size(P,1)+1 + 340;
-            i_e1 = size(P,1)+size(M,1) - 350;
-        end 
-        if strcmp(f, 'c_25_69.txt') % Second test path
-            i_s2 = size(P,1)+1;
-            i_e2 = size(P,1)+size(M,1);
-        end 
-        P = [P; M]; 
+        %         if strcmp(f, 'c_25_7.txt') % test path
+        %             i_s1 = size(P,1)+1 + 340;
+        %             i_e1 = size(P,1)+size(M,1) - 350;
+        %         end
+        %         if strcmp(f, 'c_25_69.txt') % Second test path
+        %             i_s2 = size(P,1)+1;
+        %             i_e2 = size(P,1)+size(M,1);
+        %         end
+        if strcmp(f, 'ca_25_test.txt') % test path
+            Xtest = M;
+        end
+        P = [P; M];
     end
     
-    %%    
-    Xtest = P(i_s1:i_e1,:);
-    Xtest2 = P(i_s2:i_e2,:);
-    P(i_s1:i_e1,:) = [];
+    %%
+    %     Xtest = P(i_s1:i_e1,:);
+    %     Xtest2 = P(i_s2:i_e2,:);
+    %     P(i_s1:i_e1,:) = [];
     Xtraining = P;
     
-%     dlmwrite(['data_25_train_' num2str(mode) '.db'], P, ' ');
-%     dlmwrite(['data_25_test_' num2str(mode) '.db'], Xtest, ' ');
-% %     dlmwrite(['data_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
-%        
-%     save(['data_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
+    dlmwrite(['Ca_25_train_' num2str(mode) '.db'], P, ' ');
+    dlmwrite(['Ca_25_test_' num2str(mode) '.db'], Xtest, ' ');
+    % %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
+    
+    save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest');
 end
 %%
 plot(P(:,1),P(:,2),'.');
