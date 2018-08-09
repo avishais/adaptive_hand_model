@@ -16,7 +16,7 @@ n = max(size(files));
 % 8 - state is object and actuator positions and actuator load
 
 % mode = 1;
-for mode = 1:8
+for mode = 1%:8
     
     Q = cell(n,1);
     P = [];

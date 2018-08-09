@@ -1,6 +1,5 @@
-clear all
+% clear all
 warning('off','all')
-
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
@@ -8,7 +7,7 @@ ps.Pool.AutoCreate = false;
 
 UseToyData = false;
 
-mode = 5;
+% mode = 8;
 file = ['../../data/Ca_25_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
@@ -37,12 +36,12 @@ end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
 Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
 
-j_min = 1; j_max = 1000;%size(Xtest, 1);
+j_min = 270; j_max = 600;%size(Xtest, 1);
 Sr = Xtest(j_min:j_max,:);
 
 global W
 % W = diag([10 10 2 2 1 1]);
-W = diag([ones(1,2)*3 ones(1,I.state_dim)]);
+W = diag([ones(1,2)*1 ones(1,I.state_dim)]);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
 
@@ -145,6 +144,7 @@ disp(['Loss: ' num2str(loss)]);
 % Mse = sqrt(sum);
 % disp(['Error: ' num2str(Mse)]);
 
+%%
 
 function d = Action(a)
 % a = (a+0.06)/0.12;
