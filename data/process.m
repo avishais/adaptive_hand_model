@@ -1,8 +1,11 @@
 clear all
 
-M = dlmread('c_25_24.txt',' ');
+filename = 'ca_25_30';
+
+M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
+save2newFile = false;
 
 % The columns are in the following order:
 % 
@@ -21,7 +24,7 @@ M = dlmread('c_25_24.txt',' ');
 % 12: finger pos x 2
 % 13: finger pos y 2
 % 14: finger pos x 3
-% 15: finger pos y 3
+% 15: finger pos y 1
 % 16: finger pos x 4
 % 17: finger pos y 4
 % 18: obj pos x
@@ -31,7 +34,20 @@ M = dlmread('c_25_24.txt',' ');
 
 %% Clean
 
+% M = M(1:200,:);
+
 data = process_data(M);
+
+if save2newFile
+    
+    Q = [];
+    for i = 1:data.n-1
+        Q = [Q; data.obj_pos(i,1:2) data.act_load(i,1:2) data.ref_vel(i,:) data.obj_pos(i+1,1:2) data.act_load(i+1,1:2)];
+    end
+    
+    dlmwrite([filename '_processed.txt'],Q , ' ');
+    
+end
 
 %%
 figure(1)
@@ -52,15 +68,16 @@ ylim([-0.07 0.07]);
 grid
 title('Actuation inputs');
 
-figure(2)
-plot(data.T, data.act_load);
-xlabel('Time (sec)');
-ylabel('Load');
-legend('actuator 1','actuator 2');
+% figure(2)
+% plot(data.T, data.act_load);
+% xlabel('Time (sec)');
+% ylabel('Load');
+% legend('actuator 1','actuator 2');
 
 %%
 % for i = data.n-60:2:data.n
-for i = data.n%1:50:
+for i = data.n%[1:10:data.n ]%1:50:
+    i
     figure(3)
     clf
     circle(data.obj_pos(i,1),data.obj_pos(i,2),15,'r');
@@ -76,7 +93,7 @@ for i = data.n%1:50:
     hold off
     text(150, -50, num2str(data.ref_vel(i,:)));
     axis equal
-    axis([-200 300 -450 10]);
+%     axis([-200 300 -450 10]);
     
     drawnow;
 end

@@ -1,10 +1,14 @@
-function [W, b, x_max, x_min] = net_rep(num_net)
+function [W, b, x_max, x_min, activation] = net_rep(num_net, windowSize)
 
 if nargin == 0
     num_net = 1;
 end
 
-R = load(['../models/net' num2str(num_net) '.netxt']);
+if nargin > 1
+    R = load(['../models/net' num2str(num_net) '_w' num2str(windowSize) '.netxt']);
+else
+    R = load(['../models/net' num2str(num_net) '.netxt']);
+end
 n = R(1);
 activation = R(2);
 R(1:2) = [];

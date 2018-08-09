@@ -63,7 +63,7 @@ def normzG(x, mu, sigma):
     return x
 
 def denormzG(x, mu, sigma):
-    x = x.reshape(2,)
+    # x = x.reshape(2,)
     for i in range(x.shape[0]):
         x[i] = x[i]*sigma[i] + mu[i]
 
@@ -88,7 +88,7 @@ def next_batch(num, data, labels):
 
 # Compute L2 Regularization
 def computeReg(weights):
-    regularizer = 0;
+    regularizer = 0
 
     for i in range(1, len(weights)+1):
         sth = 'h' + str(i)

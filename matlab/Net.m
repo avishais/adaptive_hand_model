@@ -9,8 +9,17 @@ for i = 1:numel(W)
     
 %     T = tanh(T);
     if i < numel(W)
-%         T = sigmoid(T);
-        T = poslin(T);
+        
+        if activation==1
+            T = sigmoid(T);
+        else if activation==2
+                T = poslin(T);
+            else if activation==3
+                    T = tanh(T);
+                end
+            end
+        end
+        
     end
 end
 
