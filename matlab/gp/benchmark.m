@@ -10,20 +10,20 @@ for mode = ix
     
     F{mode} = S;
     L{mode} = loss;
-    
    
 end
 
 save(['gpBM.mat']);
 
+%%
 Legend = cell(length(ix)+1,1);
 figure(1)
 clf
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','--k');
+plot(Sr(:,1),Sr(:,2),'--b','linewidth',3,'markerfacecolor','k');
 Legend{1} = 'Ground truth';
 hold on
 for i = ix
-    plot(F{i}(:,1),F{i}(:,2));
+    plot(F{i}(:,1),F{i}(:,2),'linewidth',3);
     Legend{i+1} = num2str(i);
 end
 hold off

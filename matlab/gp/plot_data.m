@@ -2,28 +2,7 @@ clear all
 % close all
 
 mode = 5;
-file = ['../../data/data_25_' num2str(mode)];
-
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest');
-Q = D.Q;
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
-I.state_dim = length(I.state_inx);
-
-% Xtraining = load('../../data/toyData.db');
-Xtraining = D.Xtraining; %load([file '.db']);
-Xtest = D.Xtest;
-
-xmax = max(Xtraining); 
-xmin = min(Xtraining); 
-for i = 1:I.state_dim
-    id = [i i+I.state_dim+length(I.action_inx)];
-    xmax(id) = max(xmax(id));
-    xmin(id) = min(xmin(id));
-end
-Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+[Xtraining, Xtest, kdtree, I] = load_data(mode);
 
 K = load('gp_5.mat','S','Sr'); S = K.S; A = K.Sr(:,5:6);
 

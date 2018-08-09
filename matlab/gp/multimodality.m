@@ -4,42 +4,7 @@ warning('off','all')
 UseToyData = false;
 
 for mode = 5%:8
-    file = ['../../data/Ca_25_' num2str(mode)];
-    
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
-    Q = D.Q;
-    I.action_inx = Q{1}.action_inx;
-    I.state_inx = Q{1}.state_inx;
-    I.state_nxt_inx = Q{1}.state_nxt_inx;
-    I.state_dim = length(I.state_inx);
-    
-    if UseToyData
-        Xtraining = load('../../data/toyData.db');
-        Xtest = load('../../data/toyDataPath.db');
-    else
-        Xtraining = D.Xtraining;
-        Xtest = D.Xtest;
-    end
-    
-    
-    xmax = max(Xtraining);
-    xmin = min(Xtraining);
-    for i = 1:I.state_dim
-        id = [i i+I.state_dim+length(I.action_inx)];
-        xmax(id) = max(xmax(id));
-        xmin(id) = min(xmin(id));
-    end
-    Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-    Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-    
-    
-    global W
-    % W = diag([10 10 2 2 1 1]);
-    W = diag([ones(1,2)*1 ones(1,I.state_dim)]);
-    
-    kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
-    
-    clear Q D
+    [Xtraining, Xtest, kdtree, I] = load_data(mode);
     
     %%
     
