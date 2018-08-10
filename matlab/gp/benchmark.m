@@ -13,7 +13,7 @@ for mode = ix
    
 end
 
-save(['gpBM.mat']);
+save(['gpBM3.mat']);
 
 %%
 Legend = cell(length(ix)+1,1);
@@ -22,7 +22,7 @@ clf
 plot(Sr(:,1),Sr(:,2),'--b','linewidth',3,'markerfacecolor','k');
 Legend{1} = 'Ground truth';
 hold on
-for i = ix
+for i = 1:8%[1 5 8]
     plot(F{i}(:,1),F{i}(:,2),'linewidth',3);
     Legend{i+1} = num2str(i);
 end
@@ -32,5 +32,5 @@ legend(Legend);
 
 
 % drawnow;
-print('imBM.png','-dpng','-r150');
+% print('imBM.png','-dpng','-r150');
 

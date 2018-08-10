@@ -5,7 +5,7 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-for mode = 2:8
+for mode = 1:8
     [Xtraining, Xtest, kdtree, I] = load_data(mode);
     
     Sr = Xtest;

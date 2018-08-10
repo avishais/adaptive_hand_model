@@ -62,7 +62,7 @@ I.xmax = xmax;
 
 global W
 % W = diag([10 10 2 2 1 1]);
-W = diag([ones(1,2)*1 ones(1,I.state_dim)]);
+W = diag([ones(1,2)*3 ones(1,I.state_dim)]);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
 

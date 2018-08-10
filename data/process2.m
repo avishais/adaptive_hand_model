@@ -19,7 +19,7 @@ n = max(size(files));
 
 %%
 % mode = 1;
-for mode = 8
+for mode = 3%1:8
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -28,10 +28,6 @@ for mode = 8
         f = files{i,1};
                
         D = dlmread(['./ca/' f], ' ');
-        
-        if strcmp(f, 'ca_25_test2.txt') % test path
-            f;
-        end
         
         % Clean data
         data = process_data(D);
@@ -116,14 +112,7 @@ for mode = 8
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
         end
-        %         if strcmp(f, 'c_25_7.txt') % test path
-        %             i_s1 = size(P,1)+1 + 340;
-        %             i_e1 = size(P,1)+size(M,1) - 350;
-        %         end
-        %         if strcmp(f, 'c_25_69.txt') % Second test path
-        %             i_s2 = size(P,1)+1;
-        %             i_e2 = size(P,1)+size(M,1);
-        %         end
+
         if strcmp(f, 'ca_25_test.txt') % test path
             Xtest1.data = M;
             Xtest1.base_pos = data.base_pos;
@@ -147,17 +136,13 @@ for mode = 8
     end
        
     %%
-    %     Xtest = P(i_s1:i_e1,:);
-    %     Xtest2 = P(i_s2:i_e2,:);
-    %     P(i_s1:i_e1,:) = [];
     Xtraining = P;
-    
     
     %     dlmwrite(['Ca_25_train_' num2str(mode) '.db'], P, ' ');
     %     dlmwrite(['Ca_25_test_' num2str(mode) '.db'], Xtest, ' ');
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
-    save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
+%     save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
 end
 %%
 plot(P(:,1),P(:,2),'.k');
