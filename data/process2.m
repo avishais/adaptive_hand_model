@@ -19,7 +19,7 @@ n = max(size(files));
 
 %%
 % mode = 1;
-for mode = 3%1:8
+for mode = 1:8
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -28,6 +28,10 @@ for mode = 3%1:8
         f = files{i,1};
                
         D = dlmread(['./ca/' f], ' ');
+        
+        if strcmp(f, 'ca_25_test3.txt') % test path
+            f;
+        end
         
         % Clean data
         data = process_data(D);
@@ -39,18 +43,24 @@ for mode = 3%1:8
             
             % Check if there is contact/load and action
             if any(data.act_load(j,:)==0) || any(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2)
-                continue;
+                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                    continue;
+                end
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
             if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30
-                continue;
+                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                    continue;
+                end
             end
             
             % Just for checking
-            if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
-                continue;
-            end
+%             if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
+%                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+%                     continue;
+%                 end
+%             end
             
             % Currently take state as object position (no angle)
             % M = [(state,action), (state')];
