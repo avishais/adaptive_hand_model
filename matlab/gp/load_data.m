@@ -1,10 +1,15 @@
-function [Xtraining, Xtest, kdtree, I] = load_data(mode, test_num, UseToyData)
+function [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, UseToyData)
 
 if nargin==1
     UseToyData = false;
     test_num = 1;
+    w = 1;
 end
 if nargin==2
+    test_num = 1;
+    UseToyData = false;
+end
+if nargin==3
     UseToyData = false;
 end
 
@@ -27,7 +32,7 @@ else
         Xtest = D.Xtest1.data;
         I.base_pos = D.Xtest1.base_pos;
         I.theta = D.Xtest1.theta;
-        j_min = 270; j_max = 600;%size(Xtest, 1);
+        j_min = 350; j_max = 680;%size(Xtest, 1);
     else
         if test_num==2
             Xtest = D.Xtest2.data;
@@ -39,7 +44,7 @@ else
                 Xtest = D.Xtest3.data;
                 I.base_pos = D.Xtest3.base_pos;
                 I.theta = D.Xtest3.theta;
-                j_min = 1; j_max = size(Xtest,1);
+                j_min = 1038; j_max = size(Xtest,1);
             end
         end
     end
@@ -61,8 +66,8 @@ I.xmin = xmin;
 I.xmax = xmax;
 
 global W
-% W = diag([10 10 2 2 1 1]);
-W = diag([ones(1,2)*3 ones(1,I.state_dim)]);
+W = diag([ones(1,2)*w ones(1,I.state_dim)]);
+% W = diag([3 3 0.5 0.5 0.5 0.5 1 1]);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
 

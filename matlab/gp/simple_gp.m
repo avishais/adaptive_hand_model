@@ -1,12 +1,13 @@
-% clear all
+clear all
 warning('off','all')
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-% mode = 8;
-[Xtraining, Xtest, kdtree, I] = load_data(mode);
+mode = 7;
+w = 1000;
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w);
 
 Sr = Xtest;
 %% Point validation
@@ -54,13 +55,14 @@ s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
 S(1,:) = s;
 loss = 0;
-for i = 1:size(Sr,1)-1
+for i = 1:10%size(Sr,1)-1
     disp(['Step: ' num2str(i)]);
     a = Sr(i, I.action_inx);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
 end
+S = S(1:i+1,:);
 
 loss = loss / size(Sr,1);
 disp(toc)

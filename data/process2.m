@@ -29,10 +29,6 @@ for mode = 1:8
                
         D = dlmread(['./ca/' f], ' ');
         
-        if strcmp(f, 'ca_25_test3.txt') % test path
-            f;
-        end
-        
         % Clean data
         data = process_data(D);
         
@@ -49,7 +45,7 @@ for mode = 1:8
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
-            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30
+            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || 
                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
                     continue;
                 end
@@ -152,7 +148,7 @@ for mode = 1:8
     %     dlmwrite(['Ca_25_test_' num2str(mode) '.db'], Xtest, ' ');
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
-%     save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
+    save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
 end
 %%
 plot(P(:,1),P(:,2),'.k');

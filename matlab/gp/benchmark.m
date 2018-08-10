@@ -13,18 +13,23 @@ for mode = ix
    
 end
 
-save(['gpBM3.mat']);
+save(['gpBM4.mat']);
 
 %%
-Legend = cell(length(ix)+1,1);
+clear all
+load(['gpBM4.mat']);
+
+% Legend = cell(length(ix)+1,1);
 figure(1)
 clf
 plot(Sr(:,1),Sr(:,2),'--b','linewidth',3,'markerfacecolor','k');
 Legend{1} = 'Ground truth';
 hold on
-for i = 1:8%[1 5 8]
+j = 2;
+for i = [1 2 3 7 5]
     plot(F{i}(:,1),F{i}(:,2),'linewidth',3);
-    Legend{i+1} = num2str(i);
+    Legend{j} = num2str(i);
+    j = j + 1;
 end
 hold off
 axis equal
