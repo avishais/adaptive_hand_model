@@ -3,7 +3,7 @@ warning('off','all')
 
 UseToyData = false;
 
-for mode = 5%:8
+for mode = 1%:8
     [Xtraining, Xtest, kdtree, I] = load_data(mode);
     
     %%
@@ -12,7 +12,7 @@ for mode = 5%:8
     
 %     k = 68731;
 %     k = 70961;
-    k = 54824;randi(size(Xtraining,1));
+    k = randi(size(Xtraining,1));
     
     xa = Xtraining(k, [I.state_inx I.action_inx]);
     [idx, d] = knnsearch(kdtree, xa, 'K', 100+1);

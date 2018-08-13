@@ -9,9 +9,9 @@ from scipy.io import loadmat
 K = 100 # Number of NN
 
 mode = 5
-Q = loadmat('../data/data_25_' + str(mode) + '.mat')
+Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
-Qtest = Q['Xtest']
+Qtest = Q['Xtest3']['data'][0][0]
 # Qtest = Qtest[:500,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
