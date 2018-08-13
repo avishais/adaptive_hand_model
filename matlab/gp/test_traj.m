@@ -11,8 +11,8 @@ file_prefix = ['image_test' num2str(test_num) '_'];
 
 files = dir(fullfile(images_test_folder, '*.jpg'));
 
-mode = 8;
-w = 4;
+mode = 5;
+w = 10;
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
 
 %%
@@ -29,7 +29,7 @@ end
 
 %%
 if record
-    writerObj = VideoWriter(['test_traj_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
+    writerObj = VideoWriter(['/home/avishai/Dropbox/transfer/test_traj_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
     writerObj.FrameRate = 60;
     open(writerObj);
 end
