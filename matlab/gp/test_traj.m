@@ -12,7 +12,7 @@ file_prefix = ['image_test' num2str(test_num) '_'];
 files = dir(fullfile(images_test_folder, '*.jpg'));
 
 mode = 5;
-w = 10;
+w = 1;
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
 
 %%

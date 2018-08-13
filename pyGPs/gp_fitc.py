@@ -15,9 +15,9 @@ K = 100 # Number of NN
 saved = False
 
 mode = 5
-Q = loadmat('../data/data_25_' + str(mode) + '.mat')
+Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
-Qtest = Q['Xtest']
+Qtest = Q['Xtest3']['data'][0][0]
 # Qtest = Qtest[:200,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
@@ -83,13 +83,13 @@ W = W.reshape((W.shape[0],))
 
 if not saved:
     print("Loading data to kd-tree...")
-    Xtrain_nn = Xtrain * W
+    Xtrain_nn = Xtrain# * W
     kdt = KDTree(Xtrain_nn, leaf_size=10, metric='euclidean')
 
 #######
 
 def predict(query):
-    idx = kdt.query(sa.T * W, k=K, return_distance=False)
+    idx = kdt.query(sa.T, k=K, return_distance=False)
     # idx = kdt.query_radius(sa.T * W, r=0.2)
     # k = len(idx[0])
     # if k > 0:
@@ -108,7 +108,7 @@ def predict(query):
     for dim in range(state_dim):
         model = pyGPs.GPR_FITC()      # specify model (GP regression)
         
-        num_u = np.fix(20)
+        num_u = np.fix(15)
         u = np.tile(np.linspace(0,1,num_u).T, (1, state_action_dim))
         u = np.reshape(u,(int(num_u),state_action_dim))
 
