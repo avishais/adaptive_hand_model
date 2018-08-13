@@ -1,6 +1,6 @@
 clear all
 
-filename = 'ca_25_30';
+filename = 'ca_25_65';
 
 M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -87,7 +87,7 @@ for i = data.n%[1:10:data.n ]%1:50:
     circle(data.m4(i,1),data.m4(i,2),7,'m');
     circle(data.new_base_pos(1),data.new_base_pos(2),9,'c');
     hold on
-    plot(data.obj_pos(1:i,1),data.obj_pos(1:i,2),'-k');
+    plot(data.obj_pos(1:i,1),data.obj_pos(1:i,2),'.-k');
     quiver(data.obj_pos(i,1),data.obj_pos(i,2),cos(data.obj_pos(i,3)),sin(data.obj_pos(i,3)),50,'k');
     quiver(data.new_base_pos(1),data.new_base_pos(2),cos(data.new_base_pos(3)),sin(data.new_base_pos(3)),50,'k');
     hold off

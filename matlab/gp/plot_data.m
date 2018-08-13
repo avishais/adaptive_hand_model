@@ -1,51 +1,33 @@
 clear all
 % close all
 
-mode = 5;
-file = ['../../data/data_25_' num2str(mode)];
+test_num = 3;
+mode = 8;
+w = 3;
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
 
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest');
-Q = D.Q;
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
-I.state_dim = length(I.state_inx);
+K = load('gp_3_8.mat','Sp','Xtest'); S = K.Sp; A = K.Xtest(:,7:8);
 
-% Xtraining = load('../../data/toyData.db');
-Xtraining = D.Xtraining; %load([file '.db']);
-Xtest = D.Xtest;
-
-xmax = max(Xtraining); 
-xmin = min(Xtraining); 
-for i = 1:I.state_dim
-    id = [i i+I.state_dim+length(I.action_inx)];
-    xmax(id) = max(xmax(id));
-    xmin(id) = min(xmin(id));
-end
-Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-K = load('gp_5.mat','S','Sr'); S = K.S; A = K.Sr(:,5:6);
+S = Xtest(:,1:I.state_dim);%[0.724845286874666,0.116000788115349,0.201591703535542,0.687089480834778,0.704324343007844,0.115477572981077,0.712863793555764,0.133581563384035,0.674224457632048,0.0433210727238223,0.694514778939911,0.148183265454940,0.0564202334630350,0.771375464684015;0.725313069461594,0.116660522767802,0.196516440277519,0.613062583152103,0.704446154231111,0.115259734005574,0.713181543116117,0.134057489904292,0.675317285943447,0.0439325114432244,0.694910554898206,0.148389551974258,0.0634582582217720,0.773421302842006;0.727595615166419,0.116886614395934,0.151785897224143,0.949910183369991,0.706346852877747,0.118812016457294,0.715246296456624,0.135458079390010,0.677601538947581,0.0452839209324776,0.696922231745498,0.152002881084628,-0.0263274049594922,0.931216561824033;0.724753194380639,0.121560468735260,0.300551771684418,0.750358368083659,0.703258493614930,0.124546095822368,0.712634637535488,0.124586430985281,0.682685571815787,0.0421979343620430,0.693519108631232,0.153166319214048,-0.179725402967953,2.34827850600746;0.718301003192784,0.126276004162152,0.271476443075295,0.757975996712998,0.699797317968971,0.130884008435457,0.715032292694160,0.127462763158232,0.682715043618645,0.0160379708191202,0.688685459167160,0.140416273985721,0.252014148539246,1.80378638634237;0.714653171027897,0.121179297253845,0.321889642264319,0.748032854271835,0.696341387796127,0.116347200099871,0.722454489039801,0.121389999327476,0.672457655915871,0.0123794370237750,0.680360813764626,0.140679354026587,0.551290785167072,1.67494483717370;0.714790045203262,0.121699300427634,0.314145036233404,0.773869719169574,0.699984713132982,0.114395034883804,0.722554079836317,0.115516658081979,0.667465127839828,0.00791747488268717,0.681688440333889,0.140745607551890,0.562889634462024,1.17976941058778;0.715966309551989,0.121036226656140,0.316476310675970,0.770645250533136,0.701528776380723,0.116780387909397,0.722320656203669,0.115164159205054,0.667615723766605,0.00691060565157995,0.682532539751973,0.140383528420920,0.599524793478209,1.26522186537265;0.717944547712722,0.120883832319916,0.318258891662270,0.769352594592233,0.703565688630572,0.119090860038732,0.722559729690087,0.114985196835654,0.668265852949348,0.00565369114922409,0.683827482287625,0.140788702904368,0.601720512949833,1.29418502158852;0.718338598208808,0.119815860939770,0.319375016751705,0.769021997175914,0.704146274079534,0.120549103634236,0.721648321554381,0.113214058561827,0.667672073055453,0.00344699857319067,0.684063638508801,0.139910129616302,0.551468625777987,1.33539155967982;0.719914409447030,0.121226246212407,0.310621114966891,0.784869877392422,0.705658423165692,0.118336380908904,0.721202038069486,0.109200365897024,0.668000603149864,-0.00121679356193358,0.683486627866984,0.137097953264634,0.538383245803234,1.06731077937184];
 
 % writerObj=VideoWriter('vid_w1.avi'); %my preferred format
 % writerObj.FrameRate = 60;
 % open(writerObj);
 
-
-for j = 294:1:400
+%%
+for j = 50:5:160%size(S,1)
     j
     x = [S(j,:) A(j,:)];
     
-    [idx, ~] = knnsearch(Xtraining(:,[I.state_inx I.action_inx]), x([I.state_inx I.action_inx]), 'K', 100, 'Distance',@distfun);
-    % [idx, ~] = knnsearch(X(:,1:2), x(1:2), 'K', 100);
-    
+    [idx, d] = knnsearch(kdtree, x, 'K', 100);
+        
     data_nn = Xtraining(idx,:);
     
     %%
     % openfig('ol.fig');
     
     clf
-    subplot(121)
+%     subplot(121)
     plot(Xtest(:,1),Xtest(:,2));
     hold on
     plot(S(:,1),S(:,2));
@@ -57,28 +39,28 @@ for j = 294:1:400
         plot(data_nn(i,[I.state_inx(1) I.state_nxt_inx(1)]),data_nn(i,[I.state_inx(2) I.state_nxt_inx(2)]),'.-m');
     end
     hold off
-    axis([0.99*min(data_nn(:,1)) 1.01*max(data_nn(:,1)) 0.99*min(data_nn(:,2)) 1.01*max(data_nn(:,2))]);
-    legend('original path','predicted path','data seen','current point','action');
     axis equal
+    axis([0.9*min(data_nn(:,1)) 1.11*max(data_nn(:,1)) 0.9*min(data_nn(:,2)) 1.1*max(data_nn(:,2))]);
+    legend('original path','predicted path','data seen','current point','action');
     xlabel('object position - x');
     ylabel('object position - y');
     title('Object position');
     
-    subplot(122)
-    plot(Xtest(:,3),Xtest(:,4));
-    hold on
-    plot(S(:,3),S(:,4));
-    plot(x(3),x(4),'ok','markersize',10,'markerfacecolor','c');
-    plot(data_nn(:,3),data_nn(:,4),'.m','markersize',10)
-    axis([0.99*min(data_nn(:,3)) 1.01*max(data_nn(:,3)) 0.99*min(data_nn(:,4)) 1.01*max(data_nn(:,4))]);
-    hold on
-    axis equal
-    xlabel('actuator 1 load');
-    ylabel('actuator 2 load');
-    legend('original path','predicted path','data seen','current point');
-    title('Actuators load');
+%     subplot(122)
+%     plot(Xtest(:,3),Xtest(:,4));
+%     hold on
+%     plot(S(:,3),S(:,4));
+%     plot(x(3),x(4),'ok','markersize',10,'markerfacecolor','c');
+%     plot(data_nn(:,3),data_nn(:,4),'.m','markersize',10)
+% %     axis([0.99*min(data_nn(:,3)) 1.01*max(data_nn(:,3)) 0.99*min(data_nn(:,4)) 1.01*max(data_nn(:,4))]);
+%     hold on
+%     axis equal
+%     xlabel('actuator 1 load');
+%     ylabel('actuator 2 load');
+%     legend('original path','predicted path','data seen','current point');
+%     title('Actuators load');
     
-%     drawnow;
+    drawnow;
 %     frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
 %     writeVideo(writerObj, frame);
 end
@@ -101,16 +83,3 @@ else if all(a==[1 1])
 end
 end
 
-function D2 = distfun(ZI,ZJ)
-
-% W = diag([3 3 1 1 1.5 1.5]);
-W = diag([1 1 1 1 1 1]);
-
-n = size(ZJ,1);
-D2 = zeros(n,1);
-for i = 1:n
-    Z = ZI-ZJ(i,:);
-    D2(i) = Z*W*Z';
-end
-    
-end

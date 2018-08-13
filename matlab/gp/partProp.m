@@ -1,97 +1,75 @@
 clear all
 warning('off','all')
 
-
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-UseToyData = false;
-
-mode = 1;
-file = ['../../data/Ca_25_' num2str(mode)];
-
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
-Q = D.Q;
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
-I.state_dim = length(I.state_inx);
-
-if UseToyData
-    Xtraining = load('../../data/toyData.db');
-    Xtest = load('../../data/toyDataPath.db');
-else
-    Xtraining = D.Xtraining; 
-    Xtest = D.Xtest;
-end
-
-xmax = max(Xtraining); 
-xmin = min(Xtraining); 
-for i = 1:I.state_dim
-    id = [i i+I.state_dim+length(I.action_inx)];
-    xmax(id) = max(xmax(id));
-    xmin(id) = min(xmin(id));
-end
-Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-j_min = 270; j_max = 600;%size(Xtest, 1);
-Sr = Xtest(j_min:j_max,:);
-
-global W
-% W = diag([10 10 2 2 1 1]);
-W = diag([ones(1,2)*1 ones(1,I.state_dim)]);
-
-kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
-
-clear Q D
-
-%%
-Np = 10;
-
-s = Sr(1, I.state_inx);
-P_prev = repmat(s, Np, 1);
-
-figure(1)
-clf;
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
-axis equal
-
-hold on
-
-S = zeros(size(Sr,1)-1, I.state_dim);
-S(1,:) = mean(P_prev);
-for i = 1:size(S,1)-1
-    disp(['Step: ', num2str(i)]);
+w = 3;
+test_num = 2;
+for mode = 1:8
     
-    a = Sr(i, I.action_inx);
+    [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
     
-    P = zeros(Np, I.state_dim);
-    for k = 1:Np
-        s = P_prev(k,:);
-        [mu, sigma] = prediction(kdtree, Xtraining, s, a, I, 1);
-        for j = 1:I.state_dim
-            P(k,j) = normrnd(mu(j),sigma(j));
+    Sr = Xtest;
+    
+    %%
+    Np = 100;
+    
+    s = Sr(1, I.state_inx);
+    P_prev = repmat(s, Np, 1);
+    
+    S = zeros(size(Sr,1)-1, I.state_dim);
+    S(1,:) = mean(P_prev);
+    P = cell(50,1);
+    for i = 1:size(P,1)%size(S,1)-1
+        disp(['Step: ', num2str(i)]);
+        
+        a = Sr(i, I.action_inx);
+        
+        P{i} = zeros(Np, I.state_dim);
+        for k = 1:Np
+            s = P_prev(k,:);
+            [mu, sigma] = prediction(kdtree, Xtraining, s, a, I, 1);
+            for j = 1:I.state_dim
+                P{i}(k,j) = normrnd(mu(j),sigma(j));
+            end
         end
+        S(i+1,:) = mean(P{i});
+        
+        P_prev = P{i};
+        %     drawnow;
+        
     end
-    S(i+1,:) = mean(P);
     
-    ix = convhull(P(:,1),P(:,2));
-    patch(P(ix,1),P(ix,2),'y')
+    %%
+    figure(1)
+    clf;
+    plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
     
-    plot(P(:,1),P(:,2),'.k');
-    plot(S(1:i,1),S(1:i,2),'-r','markersize',4,'markerfacecolor','r');
+    hold on
     
-    P_prev = P;
-%     drawnow;
+    for i = 1:size(P,1)%size(S,1)-1
+        
+        ix = convhull(P{i}(:,1),P{i}(:,2));
+        patch(P{i}(ix,1),P{i}(ix,2),'y')
+        
+        plot(P{i}(:,1),P{i}(:,2),'.k');
+        plot(S(1:i,1),S(1:i,2),'-r','markersize',4,'markerfacecolor','r','linewidth',3);
+        
+    end
     
+    plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+    plot(S(1:i,1),S(1:i,2),'-r','markersize',4,'markerfacecolor','r','linewidth',3);
+    
+    title(['Feature conf. ' num2str(mode)]);
+    
+    hold off
+    axis equal
+    
+    print(['var_' num2str(mode) '.png'],'-dpng','-r150');
+    
+    clear P Sr S
 end
-
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
-plot(S(:,1),S(:,2),':r','linewidth',3,'markerfacecolor','r');
-
-hold off
-
 
 

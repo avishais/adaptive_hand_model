@@ -1,52 +1,16 @@
 clear all
 warning('off','all')
 
-
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-UseToyData = false;
-
+test_num = 3;
 mode = 5;
-file = ['../../data/Ca_25_' num2str(mode)];
+w = 1;
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
 
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest','Xtest2');
-Q = D.Q;
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
-I.state_dim = length(I.state_inx);
-
-if UseToyData
-    Xtraining = load('../../data/toyData.db');
-    Xtest = load('../../data/toyDataPath.db');
-else
-    Xtraining = D.Xtraining; 
-    Xtest = D.Xtest;
-end
-
-
-xmax = max(Xtraining); 
-xmin = min(Xtraining); 
-for i = 1:I.state_dim
-    id = [i i+I.state_dim+length(I.action_inx)];
-    xmax(id) = max(xmax(id));
-    xmin(id) = min(xmin(id));
-end
-Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-j_min = 1; j_max = 1000;%size(Xtest, 1);
-Sr = Xtest(j_min:j_max,:);
-
-global W
-% W = diag([10 10 2 2 1 1]);
-W = diag([ones(1,2)*3 ones(1,I.state_dim)]);
-
-kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
-
-clear Q D
+Sr = Xtest;
 %% Point validation
 % tc = 1000;
 % a = Xtraining(tc, I.action_inx);
@@ -92,13 +56,14 @@ s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
 S(1,:) = s;
 loss = 0;
-for i = 1:size(Sr,1)-1
+for i = 1:200%size(Sr,1)-1
     disp(['Step: ' num2str(i)]);
     a = Sr(i, I.action_inx);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
 end
+S = S(1:i+1,:);
 
 loss = loss / size(Sr,1);
 disp(toc)
@@ -145,6 +110,7 @@ disp(['Loss: ' num2str(loss)]);
 % Mse = sqrt(sum);
 % disp(['Error: ' num2str(Mse)]);
 
+%%
 
 function d = Action(a)
 % a = (a+0.06)/0.12;

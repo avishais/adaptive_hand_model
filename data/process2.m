@@ -3,6 +3,8 @@ files = dir(fullfile('./ca/', '*.txt'));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
+% files(32:50,:) = [];
+
 n = max(size(files));
 
 % mode:
@@ -15,15 +17,16 @@ n = max(size(files));
 % 7 - state is object, gripper and actuator positions, and load
 % 8 - state is object and actuator positions and actuator load
 
+%%
 % mode = 1;
 for mode = 1:8
-    
+    disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
     DT = [];
     for i = 1:n
         f = files{i,1};
-        
+               
         D = dlmread(['./ca/' f], ' ');
         
         % Clean data
@@ -36,18 +39,24 @@ for mode = 1:8
             
             % Check if there is contact/load and action
             if any(data.act_load(j,:)==0) || any(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2)
-                continue;
+                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                    continue;
+                end
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
-            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30
-                continue;
+            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || 
+                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                    continue;
+                end
             end
             
             % Just for checking
-            if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
-                continue;
-            end
+%             if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
+%                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+%                     continue;
+%                 end
+%             end
             
             % Currently take state as object position (no angle)
             % M = [(state,action), (state')];
@@ -109,32 +118,45 @@ for mode = 1:8
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
         end
-        %         if strcmp(f, 'c_25_7.txt') % test path
-        %             i_s1 = size(P,1)+1 + 340;
-        %             i_e1 = size(P,1)+size(M,1) - 350;
-        %         end
-        %         if strcmp(f, 'c_25_69.txt') % Second test path
-        %             i_s2 = size(P,1)+1;
-        %             i_e2 = size(P,1)+size(M,1);
-        %         end
+
         if strcmp(f, 'ca_25_test.txt') % test path
-            Xtest = M;
+            Xtest1.data = M;
+            Xtest1.base_pos = data.base_pos;
+            Xtest1.theta = data.theta;
+        else
+            if strcmp(f, 'ca_25_test2.txt') % test path
+                Xtest2.data = M;
+                Xtest2.base_pos = data.base_pos;
+                Xtest2.theta = data.theta;            
+            else
+                if strcmp(f, 'ca_25_test3.txt') % test path
+                    Xtest3.data = M;
+                    Xtest3.base_pos = data.base_pos;
+                    Xtest3.theta = data.theta;                
+                else
+                    P = [P; M];
+                end
+                
+            end
         end
-        P = [P; M];
     end
-    
+       
     %%
-    %     Xtest = P(i_s1:i_e1,:);
-    %     Xtest2 = P(i_s2:i_e2,:);
-    %     P(i_s1:i_e1,:) = [];
     Xtraining = P;
     
-    dlmwrite(['Ca_25_train_' num2str(mode) '.db'], P, ' ');
-    dlmwrite(['Ca_25_test_' num2str(mode) '.db'], Xtest, ' ');
-    % %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
+    %     dlmwrite(['Ca_25_train_' num2str(mode) '.db'], P, ' ');
+    %     dlmwrite(['Ca_25_test_' num2str(mode) '.db'], Xtest, ' ');
+    %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
-    save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest');
+    save(['Ca_25_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
 end
 %%
-plot(P(:,1),P(:,2),'.');
+plot(P(:,1),P(:,2),'.k');
+hold on
+plot(Xtest1.data(:,1),Xtest1.data(:,2),'-r','linewidth',4);
+plot(Xtest2.data(:,1),Xtest2.data(:,2),'-g','linewidth',4);
+plot(Xtest3.data(:,1),Xtest3.data(:,2),'-b','linewidth',4);
+hold off
+legend('training','test_1','test_2','test_3');
+
 
