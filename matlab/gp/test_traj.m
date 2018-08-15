@@ -29,7 +29,7 @@ end
 
 %%
 if record
-    writerObj = VideoWriter(['test_traj_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
+    writerObj = VideoWriter(['/home/avishai/Dropbox/transfer/test_traj_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
     writerObj.FrameRate = 60;
     open(writerObj);
 end
