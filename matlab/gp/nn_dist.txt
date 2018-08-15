@@ -1,0 +1,8 @@
+.
+.
+.
+Step: 10000
+
+Average number of nn: 265.9457
+Max. number of nn: 2330
+Min. number of nn: 1
