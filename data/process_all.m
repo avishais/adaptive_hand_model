@@ -3,27 +3,33 @@ files = dir(fullfile('./ca/', '*.txt'));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
-n = max(size(files));
+n = size(files,1);
 
 % mode:
 % 1 - state is only object position
-% 2 - state is object and gripper tips positions
-% 3 - state is object and all gripper positions
+% 2 - state is object and gripper tips positions (markers 1 & 2)
+% 3 - state is object and all gripper positions (markers 1, 2, 3, 4)
 % 4 - state is object and actuator positions
 % 5 - state is object position and actuator load
 % 6 - state is object, gripper and actuator positions
 % 7 - state is object, gripper and actuator positions, and load
 % 8 - state is object and actuator positions and actuator load
+% 9 - state is object position, gripper load and gripper tips position (markers 1 & 2)
+% 10 - state is object position, gripper load and all gripper positions (markers 1, 2, 3, 4)
 
 %%
 % mode = 1;
-for mode = 1:8
+for mode = 1%:10
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
     DT = [];
     for i = 1:n
         f = files{i,1};
+        
+        if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt') && ~strcmp(f, 'ca_35_test1.txt')
+            continue;
+        end
                
         D = dlmread(['./ca/' f], ' ');
         
@@ -37,14 +43,14 @@ for mode = 1:8
             
             % Check if there is contact/load and action
             if any(data.act_load(j,:)==0) || any(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2)
-                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
                     continue;
                 end
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
             if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || 
-                if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
                     continue;
                 end
             end
@@ -75,6 +81,10 @@ for mode = 1:8
                     M = [M; [data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.act_load(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:), data.act_load(j+1,:)]];
                 case 8
                     M = [M; [data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:)]];
+                case 9
+                    M = [M; [data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)]];
+                case 10
+                    M = [M; [data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)]];                                    
             end
             
         end
@@ -115,6 +125,14 @@ for mode = 1:8
                 Q{i}.action_inx = 7:8;
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
+            case 9
+                Q{i}.action_inx = 9:10;
+                Q{i}.state_inx = 1:8;
+                Q{i}.state_nxt_inx = 11:18;
+            case 10
+                Q{i}.action_inx = 13:14;
+                Q{i}.state_inx = 1:12;
+                Q{i}.state_nxt_inx = 15:26;
         end
 
         if strcmp(f, 'ca_25_test.txt') % test path

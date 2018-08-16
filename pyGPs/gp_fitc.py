@@ -6,6 +6,7 @@ from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import pickle
+import math
 
 import logging
 logging.basicConfig()
@@ -18,7 +19,7 @@ mode = 5
 Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
 Qtest = Q['Xtest3']['data'][0][0]
-# Qtest = Qtest[:200,:]
+Qtest = Qtest[1038:1038+300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -88,7 +89,7 @@ if not saved:
 
 #######
 
-def predict(query):
+def predict(sa):
     idx = kdt.query(sa.T, k=K, return_distance=False)
     # idx = kdt.query_radius(sa.T * W, r=0.2)
     # k = len(idx[0])
@@ -128,6 +129,40 @@ def predict(query):
 
     return y_pred
 
+obj_pos = np.array([504, 101])
+base_pos = np.array([396, 512])
+base_theta = math.pi - 0.0124993490194
+load = np.array([35.0, -67.0]).reshape((1,2))
+cur = np.array([505., 102.])
+# S = [498.85152694  99.7773701;
+#     498.92590975  99.6589929;
+#     498.91640462  99.62592367]
+A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06]])
+
+obj_pos = obj_pos - base_pos
+R = np.array([[math.cos(base_theta), -math.sin(base_theta)], [math.sin(base_theta), math.cos(base_theta)]])
+obj_pos = np.matmul(R, obj_pos.T).reshape((1,2))
+
+for i in range(3):
+    a = A[i,:].reshape((1,2))
+    sa = np.concatenate((obj_pos, load, a), axis=1)
+    sa = (sa-x_min_X)/(x_max_X-x_min_X)
+    sa = sa.reshape(-1,1)
+
+    s_next = predict(sa)
+
+    s_next = s_next*(x_max_Y-x_min_Y) + x_min_Y
+    s_next = s_next[:2]
+
+    s_next = np.matmul(R.T, s_next.T)
+    s_next += base_pos
+
+    print(s_next.reshape((1,2)), np.linalg.norm(cur-s_next))
+
+exit(1)
+
+
+
 if (saved):
     print('Loading saved path...')
     # Getting back the objects:
@@ -139,7 +174,7 @@ else:
 
     print("Running path...")
     for i in range(Xtest.shape[0]):
-        print("Step " + str(i))
+        print("Step " + str(i) + " of " + str(Xtest.shape[0]))
         a = Xtest[i,state_dim:state_action_dim]
         sa = np.concatenate((s,a)).reshape(-1,1)
         s_next = predict(sa)
@@ -147,7 +182,7 @@ else:
         s = s_next
         Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
     
-    with open('objs.pkl', 'w') as f:  # Python 3: open(..., 'wb')
+    with open('saved_pyGPs.pkl', 'w') as f:  # Python 3: open(..., 'wb')
         pickle.dump([Xtest, Ypred], f)
 
 

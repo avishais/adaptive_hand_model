@@ -4,7 +4,7 @@ X = Xtraining(:,[I.state_inx I.action_inx]);
 r = 0.05;
 
 %%
-for i = 1:100
+for i = 1:0
     
     [x,y] = ginput(1);
     idx = knnsearch(X(:,3:4), [x y]);
@@ -36,13 +36,14 @@ end
 
 %% Find average neighbors in data
 
-N = 1e4;
+N = 1e2;
 L = zeros(N,1);
 max_nn = 0;
 min_nn = 1e5;
-for i = 1:N
+for i = 1:1%N
     disp(['Step: ' num2str(i)]);
-    x = X(randi(size(X,1)),:);
+    k = randi(size(X,1));
+    x = X(k,:);
     
     id = rangesearch(X, x, r); id = id{1};
     L(i) = length(id)-1;
@@ -53,7 +54,7 @@ disp(['Min. number of nn: ' num2str(min(L))]);
 
 figure(1)
 clf
-hist(L,100);
+hist(L, 100);
 
 
 

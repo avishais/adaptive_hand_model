@@ -1,19 +1,23 @@
-function [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, UseToyData)
+function [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source)
 
 if nargin==1
     UseToyData = false;
     test_num = 1;
     w = 1;
+    data_source = '25';
 end
 if nargin==2
     test_num = 1;
     UseToyData = false;
+    data_source = '25';
 end
 if nargin==3
-    UseToyData = false;
+    data_source = '25';
 end
 
-file = ['../../data/Ca_25_' num2str(mode)];
+UseToyData = 0;
+
+file = ['../../data/Ca_' data_source '_' num2str(mode)];
 
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1','Xtest2', 'Xtest3');
 Q = D.Q;

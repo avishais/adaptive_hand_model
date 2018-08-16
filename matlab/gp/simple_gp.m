@@ -56,7 +56,7 @@ s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
 S(1,:) = s;
 loss = 0;
-for i = 1:size(Sr,1)-1
+for i = 1:100%size(Sr,1)-1
     disp(['Step: ' num2str(i)]);
     a = Sr(i, I.action_inx);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
