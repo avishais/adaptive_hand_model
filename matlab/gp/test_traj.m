@@ -4,23 +4,24 @@ record = 1;
 
 warning('off','all')
 
+source_set = '15';
 test_num = 3;
-folder_prefix = ['ca_25_test' num2str(test_num)];
+folder_prefix = ['ca_' source_set '_test' num2str(test_num)];
 images_test_folder = ['../../data/test_images/' folder_prefix '/'];
 file_prefix = ['image_test' num2str(test_num) '_'];
 
 files = dir(fullfile(images_test_folder, '*.jpg'));
 
-mode = 8;
+mode = 5;
 w = 1;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num,'all');
 
 %%
 s = Xtest(1,I.state_inx);
 sp = s;
 Sp = sp;
 for i = 1:size(Xtest,1)
-    disp(['Step: ' num2str(i)]);
+    disp(['Step: ' num2str(i) ' out of ' num2str(size(Xtest,1))]);
     a = Xtest(i, I.action_inx);
     [sp, s2] = prediction(kdtree, Xtraining, sp, a, I, 1);
     Sp = [Sp; sp];
@@ -34,13 +35,7 @@ if record
     open(writerObj);
 end
 
-if test_num==2
-    ix = 386;
-end
-if test_num==3
-%     ix = 381;
-    ix = 1419;
-end
+ix = I.im_min;
 
 Sd = [];
 Spd = [];

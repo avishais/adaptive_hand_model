@@ -43,14 +43,14 @@ for mode = 1:10
             
             % Check if there is contact/load and action
             if any(data.act_load(j,:)==0) || any(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2)
-                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
+                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_15_test3.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
                     continue;
                 end
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
             if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 ||
-                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
+                if ~strcmp(f, 'ca_15_test1.txt') && ~strcmp(f, 'ca_15_test2.txt') && ~strcmp(f, 'ca_15_test3.txt') && ~strcmp(f, 'ca_30_test1.txt') && ~strcmp(f, 'ca_30_test2.txt')
                     continue;
                 end
             end
@@ -150,6 +150,13 @@ for mode = 1:10
             Xtest_15_2.file = f;
             flag = 0;
         end
+        if strcmp(f, 'ca_15_test3.txt') % test path
+            Xtest_15_3.data = M;
+            Xtest_15_3.base_pos = data.base_pos;
+            Xtest_15_3.theta = data.theta;
+            Xtest_15_3.file = f;
+            flag = 0;
+        end
         if strcmp(f, 'ca_30_test1.txt') % test path
             Xtest_30_1.data = M;
             Xtest_30_1.base_pos = data.base_pos;
@@ -172,13 +179,14 @@ for mode = 1:10
     %%
     Xtraining = P;
     
-    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2','Xtest_30_1','Xtest_30_2');
+    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2', 'Xtest_15_3','Xtest_30_1','Xtest_30_2');
 end
 %%
 plot(P(:,1),P(:,2),'.k');
 hold on
 plot(Xtest_15_1.data(:,1),Xtest_15_1.data(:,2),'-r','linewidth',4);
 plot(Xtest_15_2.data(:,1),Xtest_15_2.data(:,2),'-g','linewidth',4);
+plot(Xtest_15_3.data(:,1),Xtest_15_3.data(:,2),'-g','linewidth',4);
 plot(Xtest_30_1.data(:,1),Xtest_30_1.data(:,2),'-b','linewidth',4);
 plot(Xtest_30_2.data(:,1),Xtest_30_2.data(:,2),'-y','linewidth',4);
 hold off

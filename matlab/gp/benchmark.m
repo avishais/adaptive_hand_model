@@ -1,6 +1,6 @@
 clear all
 
-ix = [1 5 8 9 10];
+ix = [5 8];
 
 F = cell(length(ix),1);
 L = cell(length(ix),1);
@@ -27,7 +27,7 @@ plot(Sr(:,1),Sr(:,2),'--b','linewidth',3,'markerfacecolor','k');
 Legend{1} = 'Ground truth';
 hold on
 j = 2;
-for i = [1 5 8]
+for i = [5 8]
     plot(F{i}(:,1),F{i}(:,2),'linewidth',3);
     Legend{j} = num2str(i);
     j = j + 1;
