@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/c++,matlab,python
 
+
+*.jpg
+
 ### C++ ###
 # Prerequisites
 *.d
@@ -36,6 +39,9 @@
 *.app
 
 ### Matlab ###
+
+*.mat
+
 # Windows default autosave extension
 *.asv
 

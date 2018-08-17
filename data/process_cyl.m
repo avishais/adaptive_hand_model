@@ -1,9 +1,12 @@
 clear all
-files = dir(fullfile('./ca/', 'ca_35_*.txt'));
+
+data_source = '25';
+
+files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
-n = max(size(files));
+n = size(files,1);
 
 % mode:
 % 1 - state is only object position
@@ -17,14 +20,14 @@ n = max(size(files));
 
 %%
 % mode = 1;
-for mode = 1:8
+for mode = 1:10
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
     DT = [];
     for i = 1:n
         f = files{i,1};
-               
+        
         D = dlmread(['./ca/' f], ' ');
         
         % Clean data
@@ -43,18 +46,18 @@ for mode = 1:8
             end
             
             % Check if there is change, if not, move on, or check if transition is corrupt seen as jump in state
-            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 || 
+            if norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) > 30 % norm(data.obj_pos(j,1:2)-data.obj_pos(j+1,1:2)) < 1e-4 ||
                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
                     continue;
                 end
             end
             
             % Just for checking
-%             if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
-%                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
-%                     continue;
-%                 end
-%             end
+            %             if all(data.ref_vel(j,:)==0.06) && data.obj_pos(j,2) > data.obj_pos(j+1,2)
+            %                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
+            %                     continue;
+            %                 end
+            %             end
             
             % Currently take state as object position (no angle)
             % M = [(state,action), (state')];
@@ -75,6 +78,10 @@ for mode = 1:8
                     M = [M; [data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.act_load(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:), data.act_load(j+1,:)]];
                 case 8
                     M = [M; [data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:)]];
+                case 9
+                    M = [M; [data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)]];
+                case 10
+                    M = [M; [data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)]];
             end
             
         end
@@ -115,30 +122,41 @@ for mode = 1:8
                 Q{i}.action_inx = 7:8;
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
+            case 9
+                Q{i}.action_inx = 9:10;
+                Q{i}.state_inx = 1:8;
+                Q{i}.state_nxt_inx = 11:18;
+            case 10
+                Q{i}.action_inx = 13:14;
+                Q{i}.state_inx = 1:12;
+                Q{i}.state_nxt_inx = 15:26;
         end
-
+        
+        flag = 1;
         if strcmp(f, 'ca_25_test.txt') % test path
             Xtest1.data = M;
             Xtest1.base_pos = data.base_pos;
             Xtest1.theta = data.theta;
-        else
-            if strcmp(f, 'ca_25_test2.txt') % test path
-                Xtest2.data = M;
-                Xtest2.base_pos = data.base_pos;
-                Xtest2.theta = data.theta;            
-            else
-                if strcmp(f, 'ca_25_test3.txt') % test path
-                    Xtest3.data = M;
-                    Xtest3.base_pos = data.base_pos;
-                    Xtest3.theta = data.theta;                
-                else
-                    P = [P; M];
-                end
-                
-            end
+            flag = 0;
         end
+        if strcmp(f, 'ca_25_test2.txt') % test path
+            Xtest2.data = M;
+            Xtest2.base_pos = data.base_pos;
+            Xtest2.theta = data.theta;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_25_test3.txt') % test path
+            Xtest3.data = M;
+            Xtest3.base_pos = data.base_pos;
+            Xtest3.theta = data.theta;
+            flag = 0;
+        end
+        if flag
+            P = [P; M];
+        end
+        
     end
-       
+    
     %%
     Xtraining = P;
     
@@ -147,9 +165,9 @@ for mode = 1:8
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') && exist('Xtest2') && exist('Xtest3')
-        save(['Ca_35_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
+        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
     else
-        save(['Ca_35_' num2str(mode) '.mat'], 'Q', 'Xtraining');
+        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end
 end
 %%

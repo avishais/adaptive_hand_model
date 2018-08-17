@@ -1,6 +1,6 @@
 clear all
 
-filename = 'ca_35_18';
+filename = 'ca_30_test2';
 
 M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -73,6 +73,19 @@ title('Actuation inputs');
 % xlabel('Time (sec)');
 % ylabel('Load');
 % legend('actuator 1','actuator 2');
+
+% figure(4)
+% clf
+% hold on
+% plot(data.T, data.obj_pos(:,1), '-c',data.T, data.obj_pos(:,2), '--c');
+% plot(data.T, data.m1(:,1),'-r',data.T, data.m1(:,2),'--r');
+% plot(data.T, data.m2(:,1),'-g',data.T, data.m2(:,2),'--g');
+% plot(data.T, data.m3(:,1),'-b',data.T, data.m3(:,2),'--b');
+% plot(data.T, data.m4(:,1),'-k',data.T, data.m4(:,2),'--k');
+% hold off
+% xlabel('Time (sec)');
+% ylabel('Position');
+% legend('obj - x','obj - y','marker 1 - x','marker 1 - y','marker 2 - x','marker 2 - y','marker 3 - x','marker 3 - y','marker 4 - x','marker 4 - y');
 
 %%
 % for i = data.n-60:2:data.n

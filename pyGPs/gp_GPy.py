@@ -5,14 +5,18 @@ from sklearn.neighbors import KDTree #pip install -U scikit-learn
 import GPy
 import time
 from scipy.io import loadmat
+import pickle
+import math
 
 K = 100 # Number of NN
+
+saved = False
 
 mode = 5
 Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
 Qtest = Q['Xtest3']['data'][0][0]
-# Qtest = Qtest[:500,:]
+Qtest = Qtest[1038:1038+300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -98,26 +102,72 @@ def predict(sa):
 
 def propagate(sa):
     mu, sigma = predict(sa)
-    s_next = np.random.normal(mu, sigma, state_dim)
+    # s_next = np.random.normal(mu, sigma, state_dim)
 
-    return s_next
+    return mu#s_next
 
+
+obj_pos = np.array([569, 126])
+base_pos = np.array([396, 512])
+base_theta = 0.0124993490194
+load = np.array([168.0, -28.0]).reshape((1,2))
+cur = np.array([570., 126.])
+A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06]])
+
+obj_pos = obj_pos - base_pos
+R = np.array([[math.cos(base_theta), -math.sin(base_theta)], [math.sin(base_theta), math.cos(base_theta)]])
+obj_pos = np.matmul(R, obj_pos.T)
+obj_pos = obj_pos.reshape((1,2))
+
+for i in range(1,2):
+    a = A[i,:].reshape((1,2))
+    sa = np.concatenate((obj_pos, load, a), axis=1)
+    print('raw sa ' + str(sa))
+    sa = (sa-x_min_X)/(x_max_X-x_min_X)
+    print('normz sa ' + str(sa))
+    sa = sa.reshape(-1,1)
+
+    s_next = propagate(sa)
+
+    print('b4 de ' + str(s_next))
+
+    s_next = s_next*(x_max_Y-x_min_Y) + x_min_Y
+    print('de ' + str(s_next))
+    s_next = s_next[:2]
+
+    s_next = np.matmul(R.T, s_next.T)
+    s_next += base_pos
+
+    print('in image space ' + str(s_next))
+
+    print(s_next.reshape((1,2)), np.linalg.norm(cur-s_next))
+
+exit(1)
 
 start = time.time()
 
-s = Xtest[0,:state_dim]
-Ypred = s.reshape(1,state_dim)
+if (saved):
+    print('Loading saved path...')
+    # Getting back the objects:
+    with open('saved_GPy.pkl') as f:  
+        Xtest, Ypred = pickle.load(f)   
+else:
+    s = Xtest[0,:state_dim]
+    Ypred = s.reshape(1,state_dim)
 
-print("Running (open loop) path...")
-for i in range(Xtest.shape[0]):
-    print(i)
-    a = Xtest[i,state_dim:state_action_dim]
-    sa = np.concatenate((s,a)).reshape(-1,1)
-    # s_next = predict(sa)
-    s_next = propagate(sa)
-    print(s_next)
-    s = s_next
-    Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
+    print("Running (open loop) path...")
+    for i in range(Xtest.shape[0]):
+        print("Step " + str(i) + " of " + str(Xtest.shape[0]))
+        a = Xtest[i,state_dim:state_action_dim]
+        sa = np.concatenate((s,a)).reshape(-1,1)
+        # s_next = predict(sa)
+        s_next = propagate(sa)
+        print(s_next)
+        s = s_next
+        Ypred = np.append(Ypred, s.reshape(1,state_dim), axis=0)
+
+    with open('saved_GPy.pkl', 'w') as f:  # Python 3: open(..., 'wb')
+        pickle.dump([Xtest, Ypred], f)
 
 # print("Running (closed loop) path...")
 # for i in range(Xtest.shape[0]):
