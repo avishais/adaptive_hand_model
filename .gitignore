@@ -40,7 +40,7 @@
 
 ### Matlab ###
 
-*.mat
+Ca_all_*.mat
 
 # Windows default autosave extension
 *.asv

@@ -19,9 +19,6 @@ UseToyData = 0;
 
 file = ['../../data/Ca_' data_source '_' num2str(mode)];
 
-
-
-
 %% Toy Data
 
 if strcmp(data_source, 'toy')
@@ -50,17 +47,19 @@ if strcmp(data_source, '25')
             I.base_pos = D.Xtest2.base_pos;
             I.theta = D.Xtest2.theta;
             j_min = 1; j_max = size(Xtest,1);
+            I.im_min = 386;
         case 3
             Xtest = D.Xtest3.data;
             I.base_pos = D.Xtest3.base_pos;
             I.theta = D.Xtest3.theta;
             j_min = 1038; j_max = size(Xtest,1);
+            I.im_min = 1419;
     end
 end
 
 %%
 if strcmp(data_source, 'all')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2', 'Xtest_30_1','Xtest_30_2');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2');
     Q = D.Q;
     
     Xtraining = D.Xtraining;
@@ -69,22 +68,32 @@ if strcmp(data_source, 'all')
             Xtest = D.Xtest_15_1.data;
             I.base_pos = D.Xtest_15_1.base_pos;
             I.theta = D.Xtest_15_1.theta;
-            j_min = 1; j_max = size(Xtest, 1);
+            j_min = 362; j_max = size(Xtest, 1);
+            I.im_min = 461+j_min-1;
         case 2
             Xtest = D.Xtest_15_2.data;
             I.base_pos = D.Xtest_15_2.base_pos;
             I.theta = D.Xtest_15_2.theta;
             j_min = 1; j_max = size(Xtest,1);
+            I.im_min = 455;
         case 3
+            Xtest = D.Xtest_15_2.data;
+            I.base_pos = D.Xtest_15_2.base_pos;
+            I.theta = D.Xtest_15_2.theta;
+            j_min = 1; j_max = size(Xtest,1);
+            I.im_min = 1840;
+        case 4
             Xtest = D.Xtest_30_1.data;
             I.base_pos = D.Xtest_30_1.base_pos;
             I.theta = D.Xtest_30_1.theta;
             j_min = 1; j_max = size(Xtest, 1);
-        case 4
+            I.im_min = 630;
+        case 5
             Xtest = D.Xtest_30_2.data;
             I.base_pos = D.Xtest_30_2.base_pos;
             I.theta = D.Xtest_30_2.theta;
             j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 481;
     end
 end
 
