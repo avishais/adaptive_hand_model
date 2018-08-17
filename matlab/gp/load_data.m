@@ -59,7 +59,7 @@ end
 
 %%
 if strcmp(data_source, 'all')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_srp_1');
     Q = D.Q;
     
     Xtraining = D.Xtraining;
@@ -77,11 +77,11 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest,1);
             I.im_min = 455;
         case 3
-            Xtest = D.Xtest_15_2.data;
-            I.base_pos = D.Xtest_15_2.base_pos;
-            I.theta = D.Xtest_15_2.theta;
-            j_min = 1; j_max = size(Xtest,1);
-            I.im_min = 1840;
+            Xtest = D.Xtest_15_3.data;
+            I.base_pos = D.Xtest_15_3.base_pos;
+            I.theta = D.Xtest_15_3.theta;
+            j_min = 50; j_max = size(Xtest,1);
+            I.im_min = 1840+j_min-1;
         case 4
             Xtest = D.Xtest_30_1.data;
             I.base_pos = D.Xtest_30_1.base_pos;
@@ -94,6 +94,12 @@ if strcmp(data_source, 'all')
             I.theta = D.Xtest_30_2.theta;
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 481;
+        case 6
+            Xtest = D.Xtest_srp_1.data;
+            I.base_pos = D.Xtest_srp_1.base_pos;
+            I.theta = D.Xtest_srp_1.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 660;
     end
 end
 
@@ -106,6 +112,10 @@ I.state_dim = length(I.state_inx);
 
 xmax = max(Xtraining);
 xmin = min(Xtraining);
+if mode==11 % So it is possible to extrapolate on the objects diameter
+    xmin(I.state_dim+length(I.action_inx)) = 0;
+end
+
 for i = 1:I.state_dim
     id = [i i+I.state_dim+length(I.action_inx)];
     xmax(id) = max(xmax(id));
@@ -120,7 +130,7 @@ I.xmin = xmin;
 I.xmax = xmax;
 
 global W
-W = diag([ones(1,2)*w ones(1,I.state_dim)]);
+W = diag(w);%diag([ones(1,2)*w ones(1,I.state_dim)]);
 % W = diag([3 3 0.5 0.5 0.5 0.5 1 1]);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);

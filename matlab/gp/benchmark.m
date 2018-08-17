@@ -1,9 +1,12 @@
 clear all
 
+is_nm = true;
+
 ix = [5 8];
 
 F = cell(length(ix),1);
 L = cell(length(ix),1);
+
 for mode = ix
     disp(mode);
     
@@ -14,11 +17,11 @@ for mode = ix
    
 end
 
-save(['gpBMall.mat']);
+save(['gpBMall-30.mat']);
 
 %%
 clear all
-load(['gpBMall.mat']);
+load(['gpBMall-30.mat']);
 
 % Legend = cell(length(ix)+1,1);
 figure(1)
@@ -40,3 +43,4 @@ legend(Legend);
 % drawnow;
 % print('imBM.png','-dpng','-r150');
 
+is_nm = false;
