@@ -1,6 +1,6 @@
 function [sp, sigma_p] = prediction(kdtree, Xtraining, s, a, I, mode)
 
-if nargin == 4
+if nargin == 5
     mode = 1;
 end
 

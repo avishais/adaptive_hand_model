@@ -2,18 +2,20 @@ clear all
 
 is_nm = true;
 
-ix = [5 8];
+modes = [5 8 11];
 
-F = cell(length(ix),1);
-L = cell(length(ix),1);
+F = cell(length(modes),1);
+L = cell(length(modes),1);
 
-for mode = ix
-    disp(mode);
+for ai = 1:length(modes)
+    disp(modes(ai));
+    
+    mode = modes(ai);
     
     simple_gp_all;
     
-    F{mode} = S;
-    L{mode} = loss;
+    F{ai} = S;
+    L{ai} = loss;
    
 end
 
@@ -29,11 +31,9 @@ clf
 plot(Sr(:,1),Sr(:,2),'--b','linewidth',3,'markerfacecolor','k');
 Legend{1} = 'Ground truth';
 hold on
-j = 2;
-for i = [5 8]
+for i = 1:length(modes)-1
     plot(F{i}(:,1),F{i}(:,2),'linewidth',3);
-    Legend{j} = num2str(i);
-    j = j + 1;
+    Legend{i+1} = num2str(modes(i));
 end
 hold off
 axis equal

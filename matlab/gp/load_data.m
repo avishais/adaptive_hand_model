@@ -112,9 +112,9 @@ I.state_dim = length(I.state_inx);
 
 xmax = max(Xtraining);
 xmin = min(Xtraining);
-if mode==11 % So it is possible to extrapolate on the objects diameter
-    xmin(I.state_dim+length(I.action_inx)) = 0;
-end
+% if mode==11 % So it is possible to extrapolate on the objects diameter
+%     xmin(I.state_dim+length(I.action_inx)) = 0;
+% end
 
 for i = 1:I.state_dim
     id = [i i+I.state_dim+length(I.action_inx)];
@@ -133,6 +133,7 @@ global W
 W = diag(w);%diag([ones(1,2)*w ones(1,I.state_dim)]);
 % W = diag([3 3 0.5 0.5 0.5 0.5 1 1]);
 
-kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]),'Distance',@distfun);
+% kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
+kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
 
 clear Q D

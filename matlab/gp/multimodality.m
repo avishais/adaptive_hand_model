@@ -4,7 +4,7 @@ warning('off','all')
 UseToyData = false;
 
 for mode = 5%:8
-    w = ones(1,6);
+    w = [1 1 1 1 1 1];
     test_num = 3;
     [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, 'all');
     
@@ -17,7 +17,7 @@ for mode = 5%:8
 %     k = randi(size(Xtraining,1));
     
 %     xa = Xtraining(k, [I.state_inx I.action_inx]);
-    xa = [0.716011445495388,0.309581851049670,0.0552719660002668,0.665567263771630, 0, 1];
+    xa = [0.3528    0.0508    0.1590    0.7792    0.0000    1.0000];
     [idx, d] = knnsearch(kdtree, xa, 'K', 100+1);
     
     dnn = Xtraining(idx(2:end),:);
@@ -57,6 +57,8 @@ for mode = 5%:8
     hold off
     title('Obj. space');
     axis equal
+%     axis([0 1 0 1]);
+    
     
     if mode==5 || mode==7 || mode==8
         if mode==5
