@@ -15,11 +15,11 @@ K = 100 # Number of NN
 
 saved = False
 
-mode = 5
-Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
+mode = 8
+Q = loadmat('../data/Ca_all_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
-Qtest = Q['Xtest3']['data'][0][0]
-Qtest = Qtest[1038:1038+300,:]
+Qtest = Q['Xtest_30_2']['data'][0][0]
+# Qtest = Qtest[1038:1038+300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')

@@ -13,10 +13,10 @@ K = 100 # Number of NN
 saved = False
 
 mode = 5
-Q = loadmat('../data/Ca_25_' + str(mode) + '.mat')
+Q = loadmat('../data/Ca_all_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
-Qtest = Q['Xtest3']['data'][0][0]
-Qtest = Qtest[1038:1038+300,:]
+Qtest = Q['Xtest_30_1']['data'][0][0]
+# Qtest = Qtest[1038:1038+300,:]
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -45,6 +45,9 @@ if mode==7:
 if mode==8:
     state_action_dim = 8
     state_dim = 6
+if mode==11:
+    state_action_dim = 7
+    state_dim = 5
 
 Xtrain = Qtrain[:,0:state_action_dim]
 Ytrain = Qtrain[:,state_action_dim:]
@@ -107,43 +110,6 @@ def propagate(sa):
     return mu#s_next
 
 
-obj_pos = np.array([569, 126])
-base_pos = np.array([396, 512])
-base_theta = 0.0124993490194
-load = np.array([168.0, -28.0]).reshape((1,2))
-cur = np.array([570., 126.])
-A = np.array([[0.06, 0.06], [-0.06, 0.06], [0.06, -0.06]])
-
-obj_pos = obj_pos - base_pos
-R = np.array([[math.cos(base_theta), -math.sin(base_theta)], [math.sin(base_theta), math.cos(base_theta)]])
-obj_pos = np.matmul(R, obj_pos.T)
-obj_pos = obj_pos.reshape((1,2))
-
-for i in range(1,2):
-    a = A[i,:].reshape((1,2))
-    sa = np.concatenate((obj_pos, load, a), axis=1)
-    print('raw sa ' + str(sa))
-    sa = (sa-x_min_X)/(x_max_X-x_min_X)
-    print('normz sa ' + str(sa))
-    sa = sa.reshape(-1,1)
-
-    s_next = propagate(sa)
-
-    print('b4 de ' + str(s_next))
-
-    s_next = s_next*(x_max_Y-x_min_Y) + x_min_Y
-    print('de ' + str(s_next))
-    s_next = s_next[:2]
-
-    s_next = np.matmul(R.T, s_next.T)
-    s_next += base_pos
-
-    print('in image space ' + str(s_next))
-
-    print(s_next.reshape((1,2)), np.linalg.norm(cur-s_next))
-
-exit(1)
-
 start = time.time()
 
 if (saved):
@@ -187,7 +153,6 @@ plt.plot(Xtest[:,0], Xtest[:,1], 'k.-')
 plt.plot(Ypred[:,0], Ypred[:,1], 'r.-')
 # for i in range(Ypred.shape[0]-1):
 #     plt.plot(np.array([Xtest[i,0], Ypred[i,0]]), np.array([Xtest[i,1], Ypred[i,1]]), 'r.-')
-# plt.ylim([0, np.max(COSTS)])
 plt.axis('equal')
 plt.title('GPy (gp_GPy.py) - ' + str(mode))
 plt.grid(True)

@@ -8,7 +8,7 @@ ps.Pool.AutoCreate = false;
 test_num = 3;
 mode = 5;
 w = 1;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num);
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
 
 Sr = Xtest;
 %% Point validation

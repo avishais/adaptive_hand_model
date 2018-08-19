@@ -13,8 +13,8 @@ file_prefix = ['image_test' num2str(test_num) '_'];
 files = dir(fullfile(images_test_folder, '*.jpg'));
 
 mode = 5;
-w = 1;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num,'all');
+w = 3;
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, 'all');
 
 %%
 s = Xtest(1,I.state_inx);
@@ -30,7 +30,7 @@ end
 
 %%
 if record
-    writerObj = VideoWriter(['/home/avishai/Dropbox/transfer/test_traj_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
+    writerObj = VideoWriter(['/home/avishai/Dropbox/transfer/test_traj2_' source_set '_' num2str(test_num) '_' num2str(mode) '.avi']); %my preferred format
     writerObj.FrameRate = 60;
     open(writerObj);
 end
@@ -62,12 +62,12 @@ for i = 1:speed:size(Sp,1)-1
     plot(sd(1),sd(2),'ok','markerfacecolor','y','markersize',10);
     plot(spd(1),spd(2),'pk','markerfacecolor','c','markersize',10);
     hold off
-    legend('Actual','Predicted');
+%     legend('Actual','Predicted');
     
     drawnow;
     if record
         frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-        frame.cdata = imcrop(frame.cdata, [290 1 880-290 602]);
+        frame.cdata = imcrop(frame.cdata, [280 1 880-220 600-1]);
         writeVideo(writerObj, frame);
     end
 end
