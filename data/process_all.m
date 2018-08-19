@@ -145,7 +145,7 @@ for mode = 11%[5 8 9 10 11]
                 Q{i}.action_inx = 13:14;
                 Q{i}.state_inx = 1:12;
                 Q{i}.state_nxt_inx = 15:26;
-%             case 11
+            case 11
 %                 Q{i}.action_inx = 6:7;
 %                 Q{i}.state_inx = 1:5;
 %                 Q{i}.state_nxt_inx = 8:12;

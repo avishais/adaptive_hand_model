@@ -1,6 +1,6 @@
 clear all
 
-data_source = '20';
+data_source = '25';
 
 files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
 files = struct2cell(files)';
@@ -20,7 +20,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = [5 8]
+for mode = 5
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -171,7 +171,7 @@ for mode = [5 8]
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
-        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1');%, 'Xtest2','Xtest3');
+        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
     else
         save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end

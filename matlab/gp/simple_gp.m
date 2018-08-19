@@ -5,12 +5,14 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 3;
+test_num = 2;
 mode = 5;
-w = 1;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
+w = 10;
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '25');
 
 Sr = Xtest;
+
+% Sr(:,5:6) = fliplr(Sr(:,5:6));
 %% Point validation
 % tc = 1000;
 % a = Xtraining(tc, I.action_inx);
@@ -51,19 +53,31 @@ Sr = Xtest;
 % legend('Matlab','pyGPs','nn point');
 
 %% open loop
+figure(2)
+clf
+plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+hold on
+axis equal
+
 tic;
 s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
 S(1,:) = s;
 loss = 0;
-for i = 1:100%size(Sr,1)-1
+for i = 1:size(Sr,1)-1
     disp(['Step: ' num2str(i)]);
     a = Sr(i, I.action_inx);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
+    
+    if ~mod(i, 10)
+        plot(S(1:i,1),S(1:i,2),'.-r');
+        drawnow;
+    end
 end
 S = S(1:i+1,:);
+hold off
 
 loss = loss / size(Sr,1);
 disp(toc)
