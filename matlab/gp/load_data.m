@@ -54,6 +54,8 @@ if strcmp(data_source, '25')
             I.theta = D.Xtest3.theta;
             j_min = 1038; j_max = size(Xtest,1);
             I.im_min = 1419;
+        otherwise
+            Xtest = [];            
     end
 end
 
@@ -104,10 +106,10 @@ if strcmp(data_source, 'all')
 end
 
 %%
-
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
+igx = 1;
+I.action_inx = Q{igx}.action_inx;
+I.state_inx = Q{igx}.state_inx;
+I.state_nxt_inx = Q{igx}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
 
 xmax = max(Xtraining);
@@ -122,18 +124,19 @@ for i = 1:I.state_dim
     xmin(id) = min(xmin(id));
 end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-Xtest = Xtest(j_min:j_max,:);
+if ~isempty(Xtest)
+    Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+    Xtest = Xtest(j_min:j_max,:);
+end
 
 I.xmin = xmin;
 I.xmax = xmax;
 
 global W
-W = diag(w);%diag([ones(1,2)*w ones(1,I.state_dim)]);
+W = diag([ones(1,2)*w ones(1,I.state_dim)]);
 % W = diag([3 3 0.5 0.5 0.5 0.5 1 1]);
 
-% kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
-kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
+kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
+% kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
 
 clear Q D

@@ -1,11 +1,11 @@
 clear all
 
-record = 1;
+record = 0;
 
 warning('off','all')
 
-source_set = '15';
-test_num = 3;
+source_set = '25';
+test_num = 2;
 folder_prefix = ['ca_' source_set '_test' num2str(test_num)];
 images_test_folder = ['../../data/test_images/' folder_prefix '/'];
 file_prefix = ['image_test' num2str(test_num) '_'];
@@ -14,13 +14,13 @@ files = dir(fullfile(images_test_folder, '*.jpg'));
 
 mode = 5;
 w = 3;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, 'all');
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, source_set);
 
 %%
 s = Xtest(1,I.state_inx);
 sp = s;
 Sp = sp;
-for i = 1:size(Xtest,1)
+for i = 1:788%size(Xtest,1)
     disp(['Step: ' num2str(i) ' out of ' num2str(size(Xtest,1))]);
     a = Xtest(i, I.action_inx);
     [sp, s2] = prediction(kdtree, Xtraining, sp, a, I, 1);

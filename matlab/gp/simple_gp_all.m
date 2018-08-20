@@ -3,7 +3,7 @@ warning('off','all')
 if ~exist('is_nm','var')
     clear all
     
-    mode = 8;
+    mode = 11;
 end
 
 ps = parallel.Settings;
