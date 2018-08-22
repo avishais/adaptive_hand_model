@@ -113,32 +113,56 @@ figure(1)
 clf
 hold on
 for i = 1:n
-    plot(data{i}.obj_pos(:,1), data{i}.obj_pos(:,2), '-k');
+    plot(data{i}.obj_pos(:,1), data{i}.obj_pos(:,2), '-k','linewidth',3);
     plot(data{i}.obj_pos(1,1), data{i}.obj_pos(1,2), 'ok','markerfacecolor','r');
     plot(data{i}.obj_pos(end,1), data{i}.obj_pos(end,2), 'ok','markerfacecolor','y');
 end
 plot(e1(1), e1(2), 'pk','markerfacecolor','r','markersize',14);
 plot(e2(1), e2(2), 'pk','markerfacecolor','y','markersize',14);
-for i = [1:2 4:10]
-    plot(S{i}(:,1), S{i}(:,2), '--k');
+for i = [1 4:6 8 9:10]
+    plot(S{i}(:,1), S{i}(:,2), '--m','linewidth',3);
+    plot(S{i}(end,1), S{i}(end,2), 'sk','markerfacecolor','c');
 end
 hold off
 axis equal
 
 
 %%
+Sx = []; Sy = [];
+for i = [1 2 4:6 7 8 9:10]
+    Sx = [Sx S{i}(:,1)];
+    Sy = [Sy S{i}(:,2)];
+end
+
+Sm = [mean(Sx')' mean(Sy')'];
+Ss = [std(Sx')' std(Sy')'];
+Sx = [Sm(:,1)-Ss(:,1) Sm(:,1)+Ss(:,1)];
+Sy = [Sm(:,2)-Ss(:,2) Sm(:,2)+Ss(:,2)];
+% Sx = [min(Sx')' max(Sx')'];
+% Sy = [min(Sy')' max(Sy')'];
+    
+    
 
 figure(2)
 clf
 hold on
+fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
+fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
+plot(data{1}.T,Sm(:,1),':r',data{1}.T,Sm(:,2),':b','linewidth',2.5);
+% errorbar(data{1}.T,Sm(:,1),Ss(:,1),':r');
 for i = 1:n
     plot(data{i}.T, data{i}.obj_pos(:,1), '-r', data{i}.T, data{i}.obj_pos(:,2), '-b');
 end
+% for i = [1 4:6 8 9:10]
+%     plot(data{1}.T, S{i}(:,1), '--m', data{1}.T, S{i}(:,2), '--m');
+% end
 hold off
 xlabel('Time (sec)');
 ylabel('Position');
-legend('x','y');
+legend('pred. std','','pred. mean - x','pred. mean - y','test set - x','test set - y');
+xlim([0 max(data{1}.T)-2]);
 
+% print(['distributions25.png'],'-dpng','-r150');
 
 %%
 

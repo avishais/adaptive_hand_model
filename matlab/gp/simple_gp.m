@@ -5,30 +5,30 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 2;
+test_num = 1;
 mode = 5;
 w = 40;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '25');
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
 
 Sr = Xtest;
 
 % Sr(:,5:6) = fliplr(Sr(:,5:6));
 %% Point validation
-tc = 50;
-a = [1 0];%Xtest(tc, I.action_inx);
-x = Xtest(tc, I.state_inx);
-x_next = Xtest(tc,I.state_nxt_inx);
+% tc = 50;
+% a = [1 0];%Xtest(tc, I.action_inx);
+% x = Xtest(tc, I.state_inx);
+% x_next = Xtest(tc,I.state_nxt_inx);
+% % 
 % 
-
-x_next_pred = prediction(kdtree, Xtraining, x, a, I, 1);
-
-figure(2)
-clf
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
-hold on
-axis equal
-plot([x(1) x_next_pred(1)],[x(2) x_next_pred(2)],'.-r');
-plot(x(1),x(2),'or','markerfacecolor','m');
+% x_next_pred = prediction(kdtree, Xtraining, x, a, I, 1);
+% 
+% figure(2)
+% clf
+% plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+% hold on
+% axis equal
+% plot([x(1) x_next_pred(1)],[x(2) x_next_pred(2)],'.-r');
+% plot(x(1),x(2),'or','markerfacecolor','m');
 
 
 % s0 = [0.48364569, 0.25166836, 0.74890212, 0.70639912, 0.65672628, 0.86405539];
@@ -38,7 +38,6 @@ plot(x(1),x(2),'or','markerfacecolor','m');
 %     s = prediction(kdtree, Xtraining, s, a, I, 1);
 %     S = [S; s];
 % end
-
 
 %% open loop
 figure(2)
