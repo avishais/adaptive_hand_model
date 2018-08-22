@@ -4,21 +4,22 @@ warning('off','all')
 UseToyData = false;
 
 for mode = 5%:8
-    w = [1 1 1 1 1 1];
+    w = 10000;
     test_num = 3;
-    [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, 'all');
+    [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
     
     %%
     
     % A = [0 0; 1 1; 1 0; 0 1];
     
 %     k = 226589;
-    k = 504022;
+%     k = 10000;
 %     k = randi(size(Xtraining,1));
     
 %     xa = Xtraining(k, [I.state_inx I.action_inx]);
-    xa = [0.3528    0.0508    0.1590    0.7792    0.0000    1.0000];
+    xa = [[0.513707242697626,0.00462040346077596,0.0959183673469388,0.869346733668342]    1.0000    1.0000];
     [idx, d] = knnsearch(kdtree, xa, 'K', 100+1);
+    min(d)
     
     dnn = Xtraining(idx(2:end),:);
     

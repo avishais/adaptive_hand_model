@@ -151,7 +151,7 @@ for mode = 5%[1 5 8]
             Xtest3.theta = data.theta;
             flag = 0;
         end
-        if strcmp(f, 'ca_20_30.txt') % test path
+        if strcmp(f, 'ca_20_25.txt') % test path
             Xtest1.data = M;
             Xtest1.base_pos = data.base_pos;
             Xtest1.theta = data.theta;
@@ -171,7 +171,7 @@ for mode = 5%[1 5 8]
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
-        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
+        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1')%, 'Xtest2','Xtest3');
     else
         save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end
@@ -179,7 +179,7 @@ end
 %%
 plot(P(:,1),P(:,2),'.k');
 hold on
-if exist('Xtest1') && exist('Xtest2') && exist('Xtest3')
+if exist('Xtest1')% && exist('Xtest2') && exist('Xtest3')
     plot(Xtest1.data(:,1),Xtest1.data(:,2),'-r','linewidth',4);
     plot(Xtest2.data(:,1),Xtest2.data(:,2),'-g','linewidth',4);
     plot(Xtest3.data(:,1),Xtest3.data(:,2),'-b','linewidth',4);
