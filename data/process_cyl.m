@@ -1,8 +1,8 @@
 clear all
 
-data_source = '20';
+data_source = '25';
 
-files = dir(fullfile('./cb/', ['cb_' data_source '_*.txt']));
+files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
@@ -20,7 +20,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = [1 5 8]
+for mode = 5%[1 5 8]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -28,7 +28,7 @@ for mode = [1 5 8]
     for i = 1:n
         f = files{i,1};
         
-        D = dlmread(['./cb/' f], ' ');
+        D = dlmread(['./ca/' f], ' ');
         
         % Clean data
         data = process_data(D);
@@ -173,7 +173,7 @@ for mode = [1 5 8]
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
         save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
     else
-        save(['Cb_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
+        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end
 end
 %%

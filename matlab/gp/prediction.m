@@ -8,7 +8,7 @@ gprMdl = getPredictor(kdtree, Xtraining, s, a, I, mode);
 
 sp = zeros(1, length(I.state_nxt_inx));
 sigma_p = zeros(1, length(I.state_nxt_inx));
-parfor i = 1:length(I.state_nxt_inx)
+for i = 1:length(I.state_nxt_inx)
     [sp(i), sigma_p(i)] = predict(gprMdl{i}, [s a]);
 end
 
@@ -28,7 +28,7 @@ function gprMdl = getPredictor(kdtree, Xtraining, x, a, I, mode)
 data_nn = Xtraining(idx,:);
 
 gprMdl = cell(length(I.state_nxt_inx),1);
-parfor i = 1:length(I.state_nxt_inx)
+for i = 1:length(I.state_nxt_inx)
     
     if mode == 1
         gprMdl{i} = fitrgp(data_nn(:,[I.state_inx I.action_inx]), data_nn(:,I.state_nxt_inx(i)),'Basis','linear','FitMethod','exact','PredictMethod','exact');
