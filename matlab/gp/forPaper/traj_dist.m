@@ -25,7 +25,6 @@ hold on
 E1 = [];
 E2 = [];
 data = cell(n,1);
-S = cell(n,1);
 for i = 1:n
     f = files{i,1};
     
@@ -65,17 +64,20 @@ start_mean = mean(E1);
 start_std = std(E1);
 
 %%
+
+k = data{1}.n;
+A = data{1}.ref_vel;
+A = (A-repmat(I.xmin(I.action_inx),k,1))./repmat(I.xmax(I.action_inx)-I.xmin(I.action_inx),k,1);
+
 % hold on
-for i = 1:20
+S = cell(10,1);
+for i = 1:10
     %%
-    k = data{i}.n;
-    A = data{i}.ref_vel;
-    A = (A-repmat(I.xmin(I.action_inx),k,1))./repmat(I.xmax(I.action_inx)-I.xmin(I.action_inx),k,1);
     
     % Sample from distribution
     s = zeros(1, length(start_mean));
-    for i = 1:length(start_mean)
-        s(i) = normrnd(start_mean(i),start_std(i));
+    for ia = 1:length(start_mean)
+        s(ia) = normrnd(start_mean(ia),start_std(ia));
     end
     s = (s-I.xmin(I.state_inx))./(I.xmax(I.state_inx)-I.xmin(I.state_inx));
     
@@ -105,6 +107,23 @@ for i = 1:20
     
     
 end
+
+%%
+figure(1)
+clf
+hold on
+for i = 1:n
+    plot(data{i}.obj_pos(:,1), data{i}.obj_pos(:,2), '-k');
+    plot(data{i}.obj_pos(1,1), data{i}.obj_pos(1,2), 'ok','markerfacecolor','r');
+    plot(data{i}.obj_pos(end,1), data{i}.obj_pos(end,2), 'ok','markerfacecolor','y');
+end
+plot(e1(1), e1(2), 'pk','markerfacecolor','r','markersize',14);
+plot(e2(1), e2(2), 'pk','markerfacecolor','y','markersize',14);
+for i = [1:2 4:10]
+    plot(S{i}(:,1), S{i}(:,2), '--k');
+end
+hold off
+axis equal
 
 
 %%
