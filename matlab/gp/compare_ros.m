@@ -131,3 +131,5 @@ hold off
 %     drawnow;
 % end
 
+hold off
+axis equal

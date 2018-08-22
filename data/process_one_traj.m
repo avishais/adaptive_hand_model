@@ -1,8 +1,8 @@
 clear all
 
-filename = 'cb_20_25';
+filename = 'ca_25_27';
 
-M = dlmread(['./cb/' filename '.txt'],' ');
+M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 save2newFile = false;

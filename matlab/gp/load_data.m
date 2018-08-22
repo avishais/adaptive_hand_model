@@ -17,7 +17,7 @@ end
 
 UseToyData = 0;
 
-file = ['../../data/Ca_' data_source '_' num2str(mode)];
+file = ['../../../data/Ca_' data_source '_' num2str(mode)];
 
 %% Toy Data
 
@@ -57,6 +57,20 @@ if strcmp(data_source, '25')
         otherwise
             Xtest = [];            
     end
+end
+
+if strcmp(data_source, '20')
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1');
+    Q = D.Q;
+    
+    Xtraining = D.Xtraining;
+%     switch test_num
+%         case 1
+            Xtest = D.Xtest1.data;
+            I.base_pos = D.Xtest1.base_pos;
+            I.theta = D.Xtest1.theta;
+            j_min = 100; j_max = 500;%size(Xtest, 1);
+%     end
 end
 
 %%
@@ -133,8 +147,8 @@ I.xmin = xmin;
 I.xmax = xmax;
 
 global W
-W = diag([ones(1,2)*w ones(1,I.state_dim)]);
-% W = diag([3 3 0.5 0.5 0.5 0.5 1 1]);
+% W = diag([ones(1,2)*w ones(1,I.state_dim)]);
+W = diag([1.05 1.05 1 1 2 2 3 3]);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
 % kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');

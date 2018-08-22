@@ -5,9 +5,9 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 1;
+test_num = 2;
 mode = 5;
-w = 100;
+w = 40;
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '25');
 
 Sr = Xtest;
@@ -53,8 +53,8 @@ S = zeros(size(Sr,1), I.state_dim);
 S(1,:) = s;
 loss = 0;
 for i = 1:size(Sr,1)-1
-    disp(['Step: ' num2str(i)]);
     a = Sr(i, I.action_inx);
+    disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
