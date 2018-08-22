@@ -54,6 +54,8 @@ if strcmp(data_source, '25')
             I.theta = D.Xtest3.theta;
             j_min = 1038; j_max = size(Xtest,1);
             I.im_min = 1419;
+        otherwise
+            Xtest = [];            
     end
 end
 
@@ -118,10 +120,10 @@ if strcmp(data_source, 'all')
 end
 
 %%
-
-I.action_inx = Q{1}.action_inx;
-I.state_inx = Q{1}.state_inx;
-I.state_nxt_inx = Q{1}.state_nxt_inx;
+igx = 1;
+I.action_inx = Q{igx}.action_inx;
+I.state_inx = Q{igx}.state_inx;
+I.state_nxt_inx = Q{igx}.state_nxt_inx;
 I.state_dim = length(I.state_inx);
 
 xmax = max(Xtraining);
@@ -136,9 +138,10 @@ for i = 1:I.state_dim
     xmin(id) = min(xmin(id));
 end
 Xtraining = (Xtraining-repmat(xmin, size(Xtraining,1), 1))./repmat(xmax-xmin, size(Xtraining,1), 1);
-Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
-
-Xtest = Xtest(j_min:j_max,:);
+if ~isempty(Xtest)
+    Xtest = (Xtest-repmat(xmin, size(Xtest,1), 1))./repmat(xmax-xmin, size(Xtest,1), 1);
+    Xtest = Xtest(j_min:j_max,:);
+end
 
 I.xmin = xmin;
 I.xmax = xmax;
