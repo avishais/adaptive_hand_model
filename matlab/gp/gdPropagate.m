@@ -1,6 +1,6 @@
-function s_next = gdPropagate(s, a, data, I)
+function s_next = gdPropagate(s, a, kdtree, data, I)
 
-[mu, sigma] = prediction(data, s, a, I);
+[mu, sigma] = prediction(kdtree, data, s, a, I, 1);
 
 s_next = zeros(1, length(mu));
 for i = 1:length(mu)

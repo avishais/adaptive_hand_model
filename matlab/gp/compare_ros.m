@@ -66,14 +66,14 @@ s = (R*s')';
 s = [s, load];
 s_start = (s-I.xmin(I.state_inx)) ./ (I.xmax(I.state_inx)-I.xmin(I.state_inx));
 
-figure(1)
+figure(2)
 clf
 hold on
-plot(s_start(1), s_start(2),'or');
+plot(obj_pos(1), obj_pos(2),'or');
 
 s = s_start;
-S(1,:) = s;%obj_pos;
-for i = 1:10
+S(1,:) = obj_pos;
+for i = 1:3
     a = [1 1];
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
 
@@ -84,15 +84,15 @@ for i = 1:10
     si = (R' * si')';
     si = si + base_pos(1:2);
     
-    S(i+1,:) = s;
+    S(i+1,:) = si;
     
     plot(S(1:i,1),S(1:i,2),'.-g');
     drawnow;
 end
 
 s = s_start;
-S(1,:) = s;%obj_pos;
-for i = 1:10
+S(1,:) = obj_pos;
+for i = 1:3
     a = [0 1];
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
 
@@ -103,15 +103,15 @@ for i = 1:10
     si = (R' * si')';
     si = si + base_pos(1:2);
     
-    S(i+1,:) = s;
+    S(i+1,:) = si;
     
     plot(S(1:i,1),S(1:i,2),'.-b');
     drawnow;
 end
 
 s = s_start;
-S(1,:) = s;%obj_pos;
-for i = 1:10
+S(1,:) = obj_pos;
+for i = 1:3
     a = [1 0];
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
 
@@ -122,9 +122,11 @@ for i = 1:10
     si = (R' * si')';
     si = si + base_pos(1:2);
     
-    S(i+1,:) = s;
+    S(i+1,:) = si;
     
     plot(S(1:i,1),S(1:i,2),'.-k');
     drawnow;
 end
 
+hold off
+axis equal
