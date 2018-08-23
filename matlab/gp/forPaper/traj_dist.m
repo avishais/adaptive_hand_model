@@ -4,17 +4,24 @@ warning('off','all')
 addpath('../');
 addpath('../../../data/');
 
-files = dir(fullfile('../../../data/misc', ['*_seq_*.txt']));
+% files = dir(fullfile('../../../data/misc', ['*_seq_*.txt']));
+files = dir(fullfile('../../../data/misc', ['ca_replay_20_test1_*.txt']));
+
 files = struct2cell(files)';
 files = sortrows(files, 1);
+files = files(:,1);
+
+files = [files; 'ca_20_test1.txt'];
 
 n = size(files,1);
 
 %%
 
 mode = 8;
-w = 10;
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, 1, '25');
+w = [5 5 1 1 2 2 3 3];
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, 1, '20');
+
+st_inx = 700;
 
 %%
 
@@ -25,6 +32,8 @@ hold on
 E1 = [];
 E2 = [];
 data = cell(n,1);
+
+it = 1;
 for i = 1:n
     f = files{i,1};
     
@@ -32,6 +41,12 @@ for i = 1:n
     
     % Clean data
     data{i} = process_data(D);
+    
+    data{i}.obj_pos = data{i}.obj_pos(st_inx:end,:);
+    data{i}.act_load = data{i}.act_load(st_inx:end,:);
+    data{i}.act_pos = data{i}.act_pos(st_inx:end,:);
+    data{i}.T = data{i}.T(st_inx:end); data{i}.T = data{i}.T - data{i}.T(1);
+    data{i}.n = length(st_inx:data{i}.n);
     
     %         j = 1;
     %         while data{i}.ref_vel
@@ -48,6 +63,10 @@ for i = 1:n
     end
             
     E2 = [E2; data{i}.obj_pos(end,1:2)];
+    
+    if data{i}.n < data{it}.n
+        it = i;
+    end
 end
 
 e1 = mean(E1);
@@ -59,20 +78,29 @@ plot(e2(1), e2(2), 'pk','markerfacecolor','y','markersize',14);
 hold off
 axis equal
 
-
 start_mean = mean(E1);
 start_std = std(E1);
+
+Rx = []; Ry = [];
+for i = 1:n
+    Rx = [Rx data{i}.obj_pos(1:data{it}.n,1)];
+    Ry = [Ry data{i}.obj_pos(1:data{it}.n,2)];
+end
+Rm = [mean(Rx')' mean(Ry')'];
+Rs = [std(Rx')' std(Ry')'];
+Rx = [Rm(:,1)-Rs(:,1) Rm(:,1)+Rs(:,1)];
+Ry = [Rm(:,2)-Rs(:,2) Rm(:,2)+Rs(:,2)];
 
 %%
 
 k = data{1}.n;
-A = data{1}.ref_vel;
+A = data{1}.ref_vel(st_inx:end,:);
 A = (A-repmat(I.xmin(I.action_inx),k,1))./repmat(I.xmax(I.action_inx)-I.xmin(I.action_inx),k,1);
 
-% hold on
+hold on
 S = cell(10,1);
-for i = 1:10
-    %%
+for i = 1%:10
+    %
     
     % Sample from distribution
     s = zeros(1, length(start_mean));
@@ -88,21 +116,21 @@ for i = 1:10
         a = A(j,:);
         disp(['Step: ' num2str([i j]) ', action: ' num2str(a)]);
         
-        [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
-%         s_next = gdPropagate(s, a, kdtree, Xtraining, I);
+%         [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+        s = gdPropagate(s, a, kdtree, Xtraining, I);
         
         S{i}(j+1,:) = s;  
         
-%         if ~mod(j, 10)
-%             F = S{i}(1:j,:).*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),j,1) + repmat(I.xmin(I.state_inx),j,1);
-%             plot(F(:,1),F(:,2),'.-m');
-%             drawnow;
-%         end
+        if ~mod(j, 10)
+            F = S{i}(1:j,:).*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),j,1) + repmat(I.xmin(I.state_inx),j,1);
+            plot(F(:,1),F(:,2),'.-m');
+            drawnow;
+        end
     end
     
     S{i} = S{i}.*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),k,1) + repmat(I.xmin(I.state_inx),k,1);
     
-    %%
+    %
     plot(S{i}(:,1), S{i}(:,2), '--k');
     
     
@@ -127,7 +155,6 @@ hold off
 axis equal
 
 
-%%
 Sx = []; Sy = [];
 for i = [1 2 4:6 7 8 9:10]
     Sx = [Sx S{i}(:,1)];
@@ -141,18 +168,24 @@ Sy = [Sm(:,2)-Ss(:,2) Sm(:,2)+Ss(:,2)];
 % Sx = [min(Sx')' max(Sx')'];
 % Sy = [min(Sy')' max(Sy')'];
     
-    
+%%    
 
 figure(2)
 clf
 hold on
-fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
-fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
-plot(data{1}.T,Sm(:,1),':r',data{1}.T,Sm(:,2),':b','linewidth',2.5);
+% fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
+% fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
+% plot(data{1}.T,Sm(:,1),':r',data{1}.T,Sm(:,2),':k','linewidth',2.5);
+
+fill([data{it}.T; flipud(data{it}.T)], [Rx(:,1); flipud(Rx(:,2))],'b');
+fill([data{it}.T; flipud(data{it}.T)], [Ry(:,1); flipud(Ry(:,2))],'b');
+plot(data{it}.T,Rm(:,1),':r',data{it}.T,Rm(:,2),'-k','linewidth',2.5);
+
+
 % errorbar(data{1}.T,Sm(:,1),Ss(:,1),':r');
-for i = 1:n
-    plot(data{i}.T, data{i}.obj_pos(:,1), '-r', data{i}.T, data{i}.obj_pos(:,2), '-b');
-end
+% for i = 1:n
+%     plot(data{i}.T, data{i}.obj_pos(:,1), '-r', data{i}.T, data{i}.obj_pos(:,2), '-b');
+% end
 % for i = [1 4:6 8 9:10]
 %     plot(data{1}.T, S{i}(:,1), '--m', data{1}.T, S{i}(:,2), '--m');
 % end
