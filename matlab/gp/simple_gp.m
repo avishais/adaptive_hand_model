@@ -6,8 +6,9 @@ ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
 test_num = 1;
-mode = 5;
-w = 40;
+mode = 8;
+% w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
+w = [5 5 1 1 2 2 3 3];
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
 
 Sr = Xtest;
