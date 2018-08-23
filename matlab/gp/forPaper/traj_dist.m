@@ -97,9 +97,9 @@ k = data{1}.n;
 A = data{1}.ref_vel(st_inx:end,:);
 A = (A-repmat(I.xmin(I.action_inx),k,1))./repmat(I.xmax(I.action_inx)-I.xmin(I.action_inx),k,1);
 
-hold on
-S = cell(10,1);
-for i = 1%:10
+% hold on
+S = cell(100,1);
+for i = 1:100
     %
     
     % Sample from distribution
@@ -121,17 +121,19 @@ for i = 1%:10
         
         S{i}(j+1,:) = s;  
         
-        if ~mod(j, 10)
-            F = S{i}(1:j,:).*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),j,1) + repmat(I.xmin(I.state_inx),j,1);
-            plot(F(:,1),F(:,2),'.-m');
-            drawnow;
-        end
+%         if ~mod(j, 10)
+%             F = S{i}(1:j,:).*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),j,1) + repmat(I.xmin(I.state_inx),j,1);
+%             plot(F(:,1),F(:,2),'.-m');
+%             drawnow;
+%         end
     end
     
     S{i} = S{i}.*repmat(I.xmax(I.state_inx)-I.xmin(I.state_inx),k,1) + repmat(I.xmin(I.state_inx),k,1);
     
     %
-    plot(S{i}(:,1), S{i}(:,2), '--k');
+%     plot(S{i}(:,1), S{i}(:,2), '--k');
+
+    save('traj_dist_20');
     
     
 end
@@ -199,4 +201,4 @@ xlim([0 max(data{1}.T)-2]);
 
 %%
 
-save('traj_dist_01');
+save('traj_dist_20');
