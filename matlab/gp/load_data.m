@@ -60,17 +60,31 @@ if strcmp(data_source, '25')
 end
 
 if strcmp(data_source, '20')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1','Xtest2', 'Xtest3');
     Q = D.Q;
     
     Xtraining = D.Xtraining;
-%     switch test_num
-%         case 1
+    switch test_num
+        case 1
             Xtest = D.Xtest1.data;
             I.base_pos = D.Xtest1.base_pos;
             I.theta = D.Xtest1.theta;
-            j_min = 100; j_max = 500;%size(Xtest, 1);
-%     end
+            j_min = 1; j_max = size(Xtest, 1);
+        case 2
+            Xtest = D.Xtest2.data;
+            I.base_pos = D.Xtest2.base_pos;
+            I.theta = D.Xtest2.theta;
+            j_min = 1; j_max = size(Xtest,1);
+            I.im_min = 386;
+        case 3
+            Xtest = D.Xtest3.data;
+            I.base_pos = D.Xtest3.base_pos;
+            I.theta = D.Xtest3.theta;
+            j_min = 1; j_max = size(Xtest,1);
+            I.im_min = 1419;
+        otherwise
+            Xtest = [];            
+    end
 end
 
 %%
@@ -148,7 +162,7 @@ I.xmax = xmax;
 
 global W
 % W = diag([ones(1,2)*w ones(1,I.state_dim)]);
-W = diag([1.05 1.05 1 1 2 2 3 3]);
+W = diag(w);
 
 kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
 % kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
