@@ -3,9 +3,16 @@ warning('off','all')
 
 UseToyData = false;
 
-for mode = 5%:8
-    w = 10000;
-    test_num = 3;
+for mode = 8%:8
+    switch mode
+        case 1
+            w = [];
+        case 5
+            w = [60 60 1 1 3 3];
+        case 8
+            w = [];%[5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
+    end
+    test_num = 1;
     [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
     
     %%
@@ -14,14 +21,13 @@ for mode = 5%:8
     
 %     k = 226589;
 %     k = 10000;
-%     k = randi(size(Xtraining,1));
+    k = randi(size(Xtest,1));
     
-%     xa = Xtraining(k, [I.state_inx I.action_inx]);
-    xa = [[0.513707242697626,0.00462040346077596,0.0959183673469388,0.869346733668342]    1.0000    1.0000];
-    [idx, d] = knnsearch(kdtree, xa, 'K', 100+1);
-    min(d)
+    xa = Xtest(k, [I.state_inx I.action_inx]);
+
+    [idx, d] = knnsearch(kdtree, xa, 'K', 300+1);
     
-    dnn = Xtraining(idx(2:end),:);
+    dnn = Xtraining(idx(1:end),:);
     
     G = zeros(size(dnn,1),1);
     N = zeros(size(dnn,1),1);
@@ -32,6 +38,8 @@ for mode = 5%:8
     end
     
     G(G<0) = G(G<0) + 360;
+    
+    G(G==0) = [];
     
     %%
     figure(1)

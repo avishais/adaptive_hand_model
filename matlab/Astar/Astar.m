@@ -1,4 +1,4 @@
-function path = Astar(start, goal)
+function [path, action_path, tree] = Astar(start, goal)
 
 properties;
 
@@ -8,6 +8,7 @@ properties;
 do_plot = true;
 
 path = [];
+action_path = [];
 
 tree(1e6).state = [-1 -1];
 tree(1).state = start;
@@ -28,7 +29,7 @@ while ~isempty(openSet)
 
     [current, indexInOpenSet] = get_best_from_openset(openSet);
     
-    if heuristicCost(tree(current).state, goal) < 1
+    if heuristicCost(tree(current).state, goal) < 0.5
         path = reconstruct_path(tree, current);
         plotTree(start, goal, tree, tree_index, path)
         return;
@@ -69,7 +70,7 @@ while ~isempty(openSet)
         tree(neighbor_index).gCost = tentative_gCost;
         tree(neighbor_index).fCost = tentative_gCost + heuristicCost(neighbors(i,:), goal);
         
-        if do_plot && ~mod(iter, 100)
+        if do_plot && ~mod(iter, 1000)
             plotTree(start, goal, tree, tree_index)
             drawnow;
         end
@@ -177,8 +178,6 @@ end
 figure(1)
 clf
 hold on
-plot(start(:,1),start(:,2),'sr');
-plot(goal(:,1),goal(:,2),'sr');
 
 for i = 2:tree_size
     j = tree(i).parent;
@@ -189,10 +188,13 @@ if ~isempty(path)
     plot(path(:,1),path(:,2),'-m');
 end
 
+plot(start(:,1),start(:,2),'sk','markerfacecolor','r');
+plot(goal(:,1),goal(:,2),'sk','markerfacecolor','g');
+
 hold off
 axis equal
 % axis([25 125 -420 -380]);
-axis([60 90 -420 -390]);
+axis([80 130 -430 -390]);
 grid on
 
 end

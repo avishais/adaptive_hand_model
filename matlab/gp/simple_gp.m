@@ -5,52 +5,48 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
+data_source = '20';
 test_num = 1;
-mode = 8;
+mode = 2;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
-w = [5 5 1 1 2 2 3 3];
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, '20');
+switch mode
+    case 1
+        w = [3 3 1 1];
+    case 2
+        w = [3 3 1 1 1 1 1 1];
+    case 3
+        w = [60 60 1 1 1 1 1 1 1 1 3 3];
+    case 5
+        w = [60 60 1 1 3 3];
+    case 8
+        w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
+end
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
 Sr = Xtest;
 
-% Sr(:,5:6) = fliplr(Sr(:,5:6));
-%% Point validation
-% tc = 50;
-% a = [1 0];%Xtest(tc, I.action_inx);
-% x = Xtest(tc, I.state_inx);
-% x_next = Xtest(tc,I.state_nxt_inx);
-% % 
-% 
-% x_next_pred = prediction(kdtree, Xtraining, x, a, I, 1);
-% 
-% figure(2)
-% clf
-% plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
-% hold on
-% axis equal
-% plot([x(1) x_next_pred(1)],[x(2) x_next_pred(2)],'.-r');
-% plot(x(1),x(2),'or','markerfacecolor','m');
-
-
-% s0 = [0.48364569, 0.25166836, 0.74890212, 0.70639912, 0.65672628, 0.86405539];
-% S = s0;
-% s = s0;
-% for i = 1:4
-%     s = prediction(kdtree, Xtraining, s, a, I, 1);
-%     S = [S; s];
-% end
-
 %% open loop
+SRI = zeros(size(Sr,1), 2);
+for i = 1:size(Sr,1)
+    SRI(i,:) = project2image(Sr(i,1:2), I);
+end
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+files = dir(fullfile(file));
+IM = imread([files.folder '/' files.name]);
+    
 figure(2)
 clf
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+imshow(IM);
 hold on
+plot(SRI(:,1),SRI(:,2),'-b','linewidth',3,'markerfacecolor','y');
 axis equal
 
 tic;
 s = Sr(1,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
+SI = zeros(size(Sr,1), 2);
 S(1,:) = s;
+SI(1,:) = project2image(s(1:2), I);
 loss = 0;
 for i = 1:size(Sr,1)-1
     a = Sr(i, I.action_inx);
@@ -59,8 +55,10 @@ for i = 1:size(Sr,1)-1
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
     
+    SI(i+1,:) = project2image(s(1:2), I);
+    
     if ~mod(i, 10)
-        plot(S(1:i,1),S(1:i,2),'.-r');
+        plot(SI(1:i,1),SI(1:i,2),'.-m');
         drawnow;
     end
 end
@@ -69,6 +67,9 @@ hold off
 
 loss = loss / size(Sr,1);
 disp(toc)
+
+% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+
 %% Closed loop
 
 % sum = 0;
@@ -97,6 +98,27 @@ legend('ground truth','predicted path');
 title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
+%%
+% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+files = dir(fullfile(file));
+IM = imread([files.folder '/' files.name]);
+
+figure(2)
+clf
+imshow(IM);
+hold on
+plot(SRI(:,1),SRI(:,2),'-b','linewidth',3,'markerfacecolor','y');
+plot(SI(:,1),SI(:,2),'.-m');
+hold off
+frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
+% frame.cdata = imcrop(frame.cdata, [300 64 680-300 307-64]);
+frame.cdata = imcrop(frame.cdata, [390 80 820-390 390-80]);
+imshow(frame.cdata);
+
+
+%%
 % figure(2)
 % clf
 % hold on
@@ -112,21 +134,25 @@ disp(['Loss: ' num2str(loss)]);
 % Mse = sqrt(sum);
 % disp(['Error: ' num2str(Mse)]);
 
-%%
+%% Functions
 
-function d = Action(a)
-% a = (a+0.06)/0.12;
-if all(a==[0 0])
-    d = [0 -1];
-else if all(a==[1 1])
-        d = [0 1];
-    else if all(a==[1 0])
-            d = [-1 0];
-        else
-            if all(a==[0 1])
-                d = [1 0];
-            end
-        end
-    end
+function sd = denormz(s, I)
+
+xmin = I.xmin(1:length(s));
+xmax = I.xmax(1:length(s));
+
+sd = s .* (xmax-xmin) + xmin;
+
 end
+
+function sd = project2image(s, I)
+
+s = denormz(s, I);
+
+R = [cos(I.theta) -sin(I.theta); sin(I.theta) cos(I.theta)];
+s = (R' * s')';
+
+sd = s + I.base_pos(1:2);
+
 end
+

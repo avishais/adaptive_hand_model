@@ -1,6 +1,6 @@
 clear all
 
-data_source = '20';
+data_source = '25';
 
 files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
 files = struct2cell(files)';
@@ -20,7 +20,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = 1%[1 5 8]
+for mode = 8%[1 5 8]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];

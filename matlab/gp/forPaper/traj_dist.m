@@ -139,6 +139,9 @@ for i = 1:100
 end
 
 %%
+
+K = [1:12 14:23 25:31 33:35 37:41 43:48 51:58 61:63 65:66 68:69 71:75];
+
 figure(1)
 clf
 hold on
@@ -149,7 +152,7 @@ for i = 1:n
 end
 plot(e1(1), e1(2), 'pk','markerfacecolor','r','markersize',14);
 plot(e2(1), e2(2), 'pk','markerfacecolor','y','markersize',14);
-for i = [1 4:6 8 9:10]
+for i = K
     plot(S{i}(:,1), S{i}(:,2), '--m','linewidth',3);
     plot(S{i}(end,1), S{i}(end,2), 'sk','markerfacecolor','c');
 end
@@ -158,7 +161,7 @@ axis equal
 
 
 Sx = []; Sy = [];
-for i = [1 2 4:6 7 8 9:10]
+for i = K
     Sx = [Sx S{i}(:,1)];
     Sy = [Sy S{i}(:,2)];
 end
@@ -170,19 +173,35 @@ Sy = [Sm(:,2)-Ss(:,2) Sm(:,2)+Ss(:,2)];
 % Sx = [min(Sx')' max(Sx')'];
 % Sy = [min(Sy')' max(Sy')'];
     
-%%    
+%%
 
 figure(2)
 clf
+subplot(211)
 hold on
-% fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
-% fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
-% plot(data{1}.T,Sm(:,1),':r',data{1}.T,Sm(:,2),':k','linewidth',2.5);
+fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
+fill([data{it}.T; flipud(data{it}.T)], [Rx(:,1); flipud(Rx(:,2))],'-b');
+plot(data{1}.T,Sm(:,1),':k','linewidth',2.5);
+plot(data{it}.T,Rm(:,1),'-k','linewidth',2.5);
+% plot([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'-k','linewidth',4);
+hold off
+xlabel('Time (sec)','fontsize', 14);
+ylabel('Position - x axis','fontsize', 14);
+legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',12);
+xlim([0 max(data{it}.T)-2]);
 
-fill([data{it}.T; flipud(data{it}.T)], [Rx(:,1); flipud(Rx(:,2))],'b');
+subplot(212)
+hold on
+fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
 fill([data{it}.T; flipud(data{it}.T)], [Ry(:,1); flipud(Ry(:,2))],'b');
-plot(data{it}.T,Rm(:,1),':r',data{it}.T,Rm(:,2),'-k','linewidth',2.5);
-
+plot(data{1}.T,Sm(:,2),':k','linewidth',2.5);
+plot(data{it}.T,Rm(:,2),'-k','linewidth',2.5);
+% plot([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'-k','linewidth',3);
+hold off
+xlabel('Time (sec)','fontsize', 14);
+ylabel('Position - y axis','fontsize', 14);
+legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',12);
+xlim([0 max(data{it}.T)-2]);
 
 % errorbar(data{1}.T,Sm(:,1),Ss(:,1),':r');
 % for i = 1:n
@@ -191,13 +210,9 @@ plot(data{it}.T,Rm(:,1),':r',data{it}.T,Rm(:,2),'-k','linewidth',2.5);
 % for i = [1 4:6 8 9:10]
 %     plot(data{1}.T, S{i}(:,1), '--m', data{1}.T, S{i}(:,2), '--m');
 % end
-hold off
-xlabel('Time (sec)');
-ylabel('Position');
-legend('pred. std','','pred. mean - x','pred. mean - y','test set - x','test set - y');
-xlim([0 max(data{1}.T)-2]);
 
-% print(['distributions25.png'],'-dpng','-r150');
+
+print(['distributions20.png'],'-dpng','-r150');
 
 %%
 

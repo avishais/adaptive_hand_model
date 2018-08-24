@@ -6,7 +6,7 @@ A = [1, 1; 0, 1; 1, 0; 0, 0];
 
 
 % For GP
-Mode = 5;
+Mode = 1;
 switch Mode
     case 1
         w = [1 1 1 1];

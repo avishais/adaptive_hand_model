@@ -5,7 +5,7 @@ addpath('../gp');
 start = [71 -410 70 -70];
 goal = [80 -400];
 
-[path, action_path] = RRT(start, goal, 1e5);
+[path, action_path, tree] = RRT(start, goal, 1e5);
 
 figure(2)
 clf
