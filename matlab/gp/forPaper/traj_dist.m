@@ -175,32 +175,40 @@ Sy = [Sm(:,2)-Ss(:,2) Sm(:,2)+Ss(:,2)];
     
 %%
 
+px2mm = 0.2621;
+
+U = repmat(I.base_pos*px2mm, data{1}.n, 1);
+Ut = repmat(I.base_pos*px2mm, data{it}.n, 1);
+
+
 figure(2)
 clf
 subplot(211)
 hold on
-fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'y');
-fill([data{it}.T; flipud(data{it}.T)], [Rx(:,1); flipud(Rx(:,2))],'-b');
-plot(data{1}.T,Sm(:,1),':k','linewidth',2.5);
-plot(data{it}.T,Rm(:,1),'-k','linewidth',2.5);
+fill([data{1}.T; flipud(data{1}.T)], [Sx(:,1)*px2mm+U(:,1); flipud(Sx(:,2)*px2mm+U(:,1))],'y');
+fill([data{it}.T; flipud(data{it}.T)], [Rx(:,1)*px2mm+Ut(:,1); flipud(Rx(:,2)*px2mm+Ut(:,1))],'-b');
+plot(data{1}.T,Sm(:,1)*px2mm+U(:,1),':k','linewidth',2.5);
+plot(data{it}.T,Rm(:,1)*px2mm+Ut(:,1),'-k','linewidth',2.5);
 % plot([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'-k','linewidth',4);
 hold off
-xlabel('Time (sec)','fontsize', 14);
-ylabel('Position - x axis','fontsize', 14);
-legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',12);
+set(gca, 'FontSize', 12)
+xlabel('Time (sec)','fontsize', 17);
+ylabel('Position - x axis (mm)','fontsize', 17);
+% legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',14);
 xlim([0 max(data{it}.T)-2]);
 
 subplot(212)
 hold on
-fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'y');
-fill([data{it}.T; flipud(data{it}.T)], [Ry(:,1); flipud(Ry(:,2))],'b');
-plot(data{1}.T,Sm(:,2),':k','linewidth',2.5);
-plot(data{it}.T,Rm(:,2),'-k','linewidth',2.5);
+fill([data{1}.T; flipud(data{1}.T)], [Sy(:,1)*px2mm+U(:,2); flipud(Sy(:,2)*px2mm+U(:,2))],'y');
+fill([data{it}.T; flipud(data{it}.T)], [Ry(:,1)*px2mm+Ut(:,2); flipud(Ry(:,2)*px2mm+Ut(:,2))],'b');
+plot(data{1}.T,Sm(:,2)*px2mm+U(:,2),':k','linewidth',2.5);
+plot(data{it}.T,Rm(:,2)*px2mm+Ut(:,2),'-k','linewidth',2.5);
 % plot([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'-k','linewidth',3);
 hold off
-xlabel('Time (sec)','fontsize', 14);
-ylabel('Position - y axis','fontsize', 14);
-legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',12);
+set(gca, 'FontSize', 12)
+xlabel('Time (sec)','fontsize', 17);
+ylabel('Position - y axis (mm)','fontsize', 17);
+legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',14);
 xlim([0 max(data{it}.T)-2]);
 
 % errorbar(data{1}.T,Sm(:,1),Ss(:,1),':r');

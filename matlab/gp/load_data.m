@@ -75,8 +75,8 @@ if strcmp(data_source, '20')
             Xtest = D.Xtest2.data;
             I.base_pos = D.Xtest2.base_pos;
             I.theta = D.Xtest2.theta;
-            j_min = 1; j_max = size(Xtest,1);
-            I.im_min = 0;
+            j_min = 700; j_max = size(Xtest,1);
+            I.im_min = 2427+j_min;
         case 3
             Xtest = D.Xtest3.data;
             I.base_pos = D.Xtest3.base_pos;

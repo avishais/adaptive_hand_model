@@ -1,17 +1,20 @@
 function [total_score, CumSum, d] = compare_paths(Sr, S, I)
 
-mse = MSE(Sr,S);
+SRI = zeros(size(Sr,1),2);
+SI = zeros(size(S,1),2);
+for i = 1:size(Sr,1)
+    SRI(i,:) = project2image(Sr(i,1:2), I);
+    SI(i,:) = project2image(S(i,1:2), I);
+end
+
+mse = MSE(SRI,SI);
 % mse = dtw(Sr,S);
 
-SI = zeros(size(Sr,1),2);
-for i = 1:size(Sr,1)
-    SI(i,:) = project2image(Sr(i,1:2), I);
-end
-d = zeros(size(SI,1),1);
-for i = 2:size(SI,1)
-    d(i) = d(i-1) + norm(SI(i,:)-SI(i-1,:));    
-end
 
+d = zeros(size(SRI,1),1);
+for i = 2:size(SRI,1)
+    d(i) = d(i-1) + norm(SRI(i,:)-SRI(i-1,:));    
+end
 
 total_score = mse(end);
 

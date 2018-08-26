@@ -6,8 +6,8 @@ ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
 data_source = '20';
-test_num = 1;
-mode = 2;
+test_num = 2;
+mode = 7;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
     case 1
@@ -15,9 +15,13 @@ switch mode
     case 2
         w = [3 3 1 1 1 1 1 1];
     case 3
-        w = [60 60 1 1 1 1 1 1 1 1 3 3];
+        w = [3 3 1 1 1 1 1 1 1 1 3 3];
+    case 4
+        w = [];
     case 5
         w = [60 60 1 1 3 3];
+    case 7
+        w = [10 10 ones(1,14)];
     case 8
         w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
 end
@@ -25,12 +29,13 @@ end
 
 Sr = Xtest;
 
+
 %% open loop
 SRI = zeros(size(Sr,1), 2);
 for i = 1:size(Sr,1)
     SRI(i,:) = project2image(Sr(i,1:2), I);
 end
-file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
 IM = imread([files.folder '/' files.name]);
     
@@ -101,7 +106,7 @@ disp(['Loss: ' num2str(loss)]);
 %%
 % load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
 
-file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
 IM = imread([files.folder '/' files.name]);
 
@@ -109,13 +114,14 @@ figure(2)
 clf
 imshow(IM);
 hold on
-plot(SRI(:,1),SRI(:,2),'-b','linewidth',3,'markerfacecolor','y');
-plot(SI(:,1),SI(:,2),'.-m');
+plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
+plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
-frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-% frame.cdata = imcrop(frame.cdata, [300 64 680-300 307-64]);
-frame.cdata = imcrop(frame.cdata, [390 80 820-390 390-80]);
-imshow(frame.cdata);
+% frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
+% frame.cdata = imcrop(frame.cdata, [200 80 431 311]);
+% imshow(frame.cdata);
+
+% imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
 
 
 %%

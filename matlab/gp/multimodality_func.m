@@ -1,4 +1,4 @@
-function multimodality_func(Xtraining, kdtree, I, xa)
+function dnn = multimodality_func(Xtraining, kdtree, I, xa)
 
 [idx, d] = knnsearch(kdtree, xa, 'K', 150+1);
 
