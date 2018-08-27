@@ -17,7 +17,7 @@ end
 
 UseToyData = 0;
 
-file = ['../../../data/Ca_' data_source '_' num2str(mode)];
+file = ['../../data/Ca_' data_source '_' num2str(mode)];
 
 %% Toy Data
 
@@ -47,7 +47,7 @@ if strcmp(data_source, '25')
             I.base_pos = D.Xtest2.base_pos;
             I.theta = D.Xtest2.theta;
             j_min = 1; j_max = size(Xtest,1);
-            I.im_min = 386;
+           c
         case 3
             Xtest = D.Xtest3.data;
             I.base_pos = D.Xtest3.base_pos;
@@ -69,19 +69,20 @@ if strcmp(data_source, '20')
             Xtest = D.Xtest1.data;
             I.base_pos = D.Xtest1.base_pos;
             I.theta = D.Xtest1.theta;
-            j_min = 1; j_max = size(Xtest, 1);
+            j_min = 700; j_max = size(Xtest, 1);
+            I.im_min = 719;
         case 2
             Xtest = D.Xtest2.data;
             I.base_pos = D.Xtest2.base_pos;
             I.theta = D.Xtest2.theta;
-            j_min = 1; j_max = size(Xtest,1);
-            I.im_min = 386;
+            j_min = 700; j_max = size(Xtest,1);
+            I.im_min = 2427+j_min;
         case 3
             Xtest = D.Xtest3.data;
             I.base_pos = D.Xtest3.base_pos;
             I.theta = D.Xtest3.theta;
             j_min = 1; j_max = size(Xtest,1);
-            I.im_min = 1419;
+            I.im_min = 0;
         otherwise
             Xtest = [];            
     end
@@ -160,11 +161,13 @@ end
 I.xmin = xmin;
 I.xmax = xmax;
 
-global W
-% W = diag([ones(1,2)*w ones(1,I.state_dim)]);
-W = diag(w);
-
-kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
-% kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
+if isempty(w)
+    kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
+else
+    global W
+    % W = diag([ones(1,2)*w ones(1,I.state_dim)]);
+    W = diag(w);
+    kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
+end
 
 clear Q D

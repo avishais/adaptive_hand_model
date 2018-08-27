@@ -1,6 +1,6 @@
 clear all
 
-data_source = '20';
+data_source = '25';
 
 files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
 files = struct2cell(files)';
@@ -20,7 +20,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = [1 5 8]%[1 5 8]
+for mode = 8%[1 5 8]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -83,7 +83,6 @@ for mode = [1 5 8]%[1 5 8]
                 case 10
                     M = [M; [data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)]];
             end
-            
         end
         
         Q{i}.data = M;

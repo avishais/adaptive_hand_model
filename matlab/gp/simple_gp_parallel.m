@@ -1,0 +1,157 @@
+clear all
+warning('off','all')
+
+ps = parallel.Settings;
+ps.Pool.AutoCreate = false;
+% poolobj = gcp; % If no pool, do not create new one.
+
+data_source = '20';
+test_num = 1;
+mode = 3;
+% w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
+switch mode
+    case 3
+        w = [60 60 1 1 1 1 1 1 1 1 3 3];
+    case 5
+        w = [60 60 1 1 3 3]; % Last best: [60 60 1 1 3 3];
+    case 8
+        w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
+end
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
+
+Sr = Xtest;
+
+% Sr(:,5:6) = fliplr(Sr(:,5:6));
+
+%% open loop
+SRI = zeros(size(Sr,1), 2);
+for i = 1:size(Sr,1)
+    SRI(i,:) = project2image(Sr(i,1:2), I);
+end
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+files = dir(fullfile(file));
+IM = imread([files.folder '/' files.name]);
+    
+figure(2)
+clf
+imshow(IM);
+hold on
+plot(SRI(:,1),SRI(:,2),'-b','linewidth',3,'markerfacecolor','y');
+axis equal
+
+tic;
+s = Sr(1,I.state_inx);
+S = zeros(size(Sr,1), I.state_dim);
+SI = zeros(size(Sr,1), 2);
+S(1,:) = s;
+SI(1,:) = project2image(s(1:2), I);
+loss = 0;
+for i = 1:size(Sr,1)-1
+    a = Sr(i, I.action_inx);
+    disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
+    [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+    S(i+1,:) = s;
+    loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
+    
+    SI(i+1,:) = project2image(s(1:2), I);
+    
+    if ~mod(i, 10)
+        plot(SI(1:i,1),SI(1:i,2),'.-m');
+        legend('par');
+        drawnow;
+    end
+end
+S = S(1:i+1,:);
+hold off
+
+loss = loss / size(Sr,1);
+disp(toc)
+
+% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+
+%% Closed loop
+
+% sum = 0;
+% Sp = zeros(size(Sr,1),I.state_dim);
+% for i = 1:size(Sr,1)
+%     s = Sr(i,I.state_inx);
+%     a = Sr(i, I.action_inx);
+%     sr = Sr(i,I.state_nxt_inx);
+%     sp = prediction(Xtraining, s, a, I);
+%     Sp(i,:) = sp;
+%     sum = sum + norm(sp(1:2)-sr(1:2))^2;
+% %     drawnow;
+% end
+
+%%
+
+figure(1)
+clf
+plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
+hold on
+plot(S(:,1),S(:,2),'.-r');
+plot(S(1,1),S(1,2),'or','markerfacecolor','r');
+hold off
+axis equal
+legend('ground truth','predicted path');
+title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
+disp(['Loss: ' num2str(loss)]);
+
+%%
+% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+
+file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+files = dir(fullfile(file));
+IM = imread([files.folder '/' files.name]);
+
+figure(2)
+clf
+imshow(IM);
+hold on
+plot(SRI(:,1),SRI(:,2),'-y','linewidth',3);
+plot(SI(:,1),SI(:,2),'-c','linewidth',2.7);
+hold off
+frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
+% frame.cdata = imcrop(frame.cdata, [300 64 680-300 307-64]);
+frame.cdata = imcrop(frame.cdata, [390 80 820-390 390-80]);
+imshow(frame.cdata);
+
+% imwrite(frame.cdata, 'test1_20.png');
+%%
+% figure(2)
+% clf
+% hold on
+% plot(Sr(:,1),Sr(:,2),'o-b','linewidth',3,'markerfacecolor','k');
+% for i = 1:size(Sr,1)
+%         plot([Sr(i,1) Sp(i,1)],[Sr(i,2) Sp(i,2)],'.-');
+% end
+% plot(Sr(1,1),Sr(1,2),'or','markerfacecolor','m');
+% hold off
+% axis equal
+% legend('original path');
+% title('Closed loop');
+% Mse = sqrt(sum);
+% disp(['Error: ' num2str(Mse)]);
+
+%% Functions
+
+function sd = denormz(s, I)
+
+xmin = I.xmin(1:length(s));
+xmax = I.xmax(1:length(s));
+
+sd = s .* (xmax-xmin) + xmin;
+
+end
+
+function sd = project2image(s, I)
+
+s = denormz(s, I);
+
+R = [cos(I.theta) -sin(I.theta); sin(I.theta) cos(I.theta)];
+s = (R' * s')';
+
+sd = s + I.base_pos(1:2);
+
+end
+
