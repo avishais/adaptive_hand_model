@@ -2,7 +2,7 @@ clear all
 warning('off','all')
 
 data_source = '20';
-test_num = 2;
+test_num = 3;
 mode = 8;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
@@ -39,9 +39,9 @@ id = id(1:1e5);
 DX = DX(id,:);
 
 K0 = [100, 100];
-K = fminsearch(@(x)objfunc(x, DX),K0);
+% K = fminsearch(@(x)objfunc(x, DX),K0);
 
-% K = [-1.00623980020688,1.49934686818620];
+K = [-1.00623980020688,1.49934686818620];
 %%
 
 px2mm = 0.2621;
