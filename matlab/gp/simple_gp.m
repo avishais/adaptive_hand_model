@@ -9,7 +9,7 @@ ps.Pool.AutoCreate = false;
 
 data_source = '20';
 test_num = 3;
-mode = 8;
+mode = 7;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
     case 1
@@ -25,7 +25,7 @@ switch mode
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [7 7 2 2 1 1 1 1];%[10 10 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+        w = [5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
 end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
