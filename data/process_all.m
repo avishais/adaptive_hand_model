@@ -21,7 +21,7 @@ n = size(files,1);
 % mode = 1;
 vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 18, 26, 14]+1;
 
-for mode = 11%[5 8 9 10 11]
+for mode = 1:8%[5 8 9 10 11]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -31,9 +31,9 @@ for mode = 11%[5 8 9 10 11]
         
         cyl_diameter = str2num(f(4:5));
         
-        if strcmp(f, 'ca_25_test2.txt') && strcmp(f, 'ca_25_test3.txt') && strcmp(f, 'ca_35_test1.txt')
-            continue;
-        end
+%         if strcmp(f, 'ca_25_test2.txt') && strcmp(f, 'ca_25_test3.txt') && strcmp(f, 'ca_35_test1.txt')
+%             continue;
+%         end
         
         D = dlmread(['./ca/' f], ' ');
         
@@ -208,8 +208,10 @@ for mode = 11%[5 8 9 10 11]
     
     %%
     if 1
-        N = 1e5;
         C = unique(P(:,1));
+        h = hist(P(:,1));
+        h(h==0) = [];
+        N = min(h);
         P_new = [];
         for i = 1:length(C)
             G = P(P(:,1)==C(i),2:end);

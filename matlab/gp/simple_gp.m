@@ -1,5 +1,3 @@
-% function simple_gp(mode)
-
 clear all
 warning('off','all')
 
@@ -9,7 +7,7 @@ ps.Pool.AutoCreate = false;
 
 data_source = '20';
 test_num = 3;
-mode = 7;
+mode = 8;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
     case 1
@@ -75,7 +73,7 @@ hold off
 loss = loss / size(Sr,1);
 disp(toc)
 
-save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 %% Closed loop
 
@@ -120,8 +118,8 @@ plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
 plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
 frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-frame.cdata = imcrop(frame.cdata, [200 80 431 311]);
-imshow(frame.cdata);
+% frame.cdata = imcrop(frame.cdata, [50 80 431+432 311]);
+% imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
 
