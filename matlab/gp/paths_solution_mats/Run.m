@@ -8,7 +8,7 @@ CumSumAll = [];
 L = cell(length(K),1);
 for k = 1:length(K)
     
-load(['pred_20_' num2str(K(k)) '_2.mat']);
+load(['pred_20_' num2str(K(k)) '_3.mat']);
 
 [total_score, CumSum, d] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
 
@@ -30,4 +30,4 @@ xlabel('Traversed path (mm)','fontsize',17);
 ylabel('Mean-Squared Error (mm)','fontsize',17);
 xlim([0 d(end)]);
 
-% print(['cumsum_test_20_1.png'],'-dpng','-r150');
+print(['cumsum_test_20_1.png'],'-dpng','-r150');
