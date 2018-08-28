@@ -1,53 +1,51 @@
-clear all
 warning('off','all')
+
+if ~exist('is_nm','var')
+    clear all
+    
+    mode = 8;
+end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-data_source = '20';
-test_num = 1;
-mode = 3;
-% w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
-switch mode
-    case 3
-        w = [60 60 1 1 1 1 1 1 1 1 3 3];
-    case 5
-        w = [60 60 1 1 3 3]; % Last best: [60 60 1 1 3 3];
-    case 8
-        w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
-end
+test_num = 8;
+% w = [10 10 1 1 1 1 10 10];
+w = [];
+data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
 Sr = Xtest;
-
-% Sr(:,5:6) = fliplr(Sr(:,5:6));
 
 %% open loop
 SRI = zeros(size(Sr,1), 2);
 for i = 1:size(Sr,1)
     SRI(i,:) = project2image(Sr(i,1:2), I);
 end
-file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+file = ['../../data/test_images/ca_' I.test_data_source{1} '_test' I.test_data_source{2} '/image_test' I.test_data_source{3} '_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
 IM = imread([files.folder '/' files.name]);
-    
+ 
 figure(2)
 clf
 imshow(IM);
 hold on
 plot(SRI(:,1),SRI(:,2),'-b','linewidth',3,'markerfacecolor','y');
 axis equal
+title('parallel');
+
+offset = 0;
 
 tic;
-s = Sr(1,I.state_inx);
+s = Sr(1+offset,I.state_inx);
 S = zeros(size(Sr,1), I.state_dim);
 SI = zeros(size(Sr,1), 2);
 S(1,:) = s;
 SI(1,:) = project2image(s(1:2), I);
 loss = 0;
 for i = 1:size(Sr,1)-1
-    a = Sr(i, I.action_inx);
+    a = Sr(i+offset, I.action_inx);
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
@@ -57,7 +55,6 @@ for i = 1:size(Sr,1)-1
     
     if ~mod(i, 10)
         plot(SI(1:i,1),SI(1:i,2),'.-m');
-        legend('par');
         drawnow;
     end
 end
@@ -67,24 +64,10 @@ hold off
 loss = loss / size(Sr,1);
 disp(toc)
 
-% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+% save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
-%% Closed loop
-
-% sum = 0;
-% Sp = zeros(size(Sr,1),I.state_dim);
-% for i = 1:size(Sr,1)
-%     s = Sr(i,I.state_inx);
-%     a = Sr(i, I.action_inx);
-%     sr = Sr(i,I.state_nxt_inx);
-%     sp = prediction(Xtraining, s, a, I);
-%     Sp(i,:) = sp;
-%     sum = sum + norm(sp(1:2)-sr(1:2))^2;
-% %     drawnow;
-% end
 
 %%
-
 figure(1)
 clf
 plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','k');
@@ -100,7 +83,7 @@ disp(['Loss: ' num2str(loss)]);
 %%
 % load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
 
-file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+1424) '*.jpg'];
+file = ['../../data/test_images/ca_' I.test_data_source{1} '_test' I.test_data_source{2} '/image_test' I.test_data_source{3} '_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
 IM = imread([files.folder '/' files.name]);
 
@@ -108,15 +91,45 @@ figure(2)
 clf
 imshow(IM);
 hold on
-plot(SRI(:,1),SRI(:,2),'-y','linewidth',3);
-plot(SI(:,1),SI(:,2),'-c','linewidth',2.7);
+plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
+plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
-frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-% frame.cdata = imcrop(frame.cdata, [300 64 680-300 307-64]);
-frame.cdata = imcrop(frame.cdata, [390 80 820-390 390-80]);
-imshow(frame.cdata);
+title('parallel');
 
-% imwrite(frame.cdata, 'test1_20.png');
+% frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
+% frame.cdata = imcrop(frame.cdata, [50 80 431+432 311]);
+% imshow(frame.cdata);
+
+% imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
+
+%% Closed loop
+
+% figure(2)
+% clf
+% hold on
+% plot(Sr(:,1),Sr(:,2),'o-b','linewidth',2,'markerfacecolor','k');
+% 
+% Sp = zeros(size(Sr,1),I.state_dim);
+% for i = 1:size(Sr,1)
+%     disp(['Step: ' num2str(i)]);
+%     
+%     s = Sr(i,I.state_inx);
+%     a = Sr(i, I.action_inx);
+%     sr = Sr(i,I.state_nxt_inx);
+%     sp = prediction(kdtree, Xtraining, s, a, I);
+%     Sp(i,:) = sp;
+% %     drawnow;
+% 
+%     if ~mod(i, 10)
+%         for j = 1:i
+%             plot([Sr(j,1) Sp(j,1)],[Sr(j,2) Sp(j,2)],'.-r');
+%         end
+%         drawnow;
+%     end
+% end
+% 
+% hold off
+
 %%
 % figure(2)
 % clf
@@ -130,8 +143,7 @@ imshow(frame.cdata);
 % axis equal
 % legend('original path');
 % title('Closed loop');
-% Mse = sqrt(sum);
-% disp(['Error: ' num2str(Mse)]);
+
 
 %% Functions
 
@@ -154,4 +166,3 @@ s = (R' * s')';
 sd = s + I.base_pos(1:2);
 
 end
-

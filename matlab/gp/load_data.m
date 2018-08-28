@@ -90,7 +90,7 @@ end
 
 %%
 if strcmp(data_source, 'all')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2');
     Q = D.Q;
     
     Xtraining = D.Xtraining;
@@ -101,42 +101,56 @@ if strcmp(data_source, 'all')
             I.theta = D.Xtest_15_1.theta;
             j_min = 362; j_max = size(Xtest, 1);
             I.im_min = 461+j_min-1;
-            I.test_data_source = {'15', '1'};
+            I.test_data_source = {'15', '1', '1'};
         case 2
             Xtest = D.Xtest_15_2.data;
             I.base_pos = D.Xtest_15_2.base_pos;
             I.theta = D.Xtest_15_2.theta;
             j_min = 1; j_max = size(Xtest,1);
             I.im_min = 455;
-            I.test_data_source = {'15', '2'};
+            I.test_data_source = {'15', '2', '2'};
         case 3
             Xtest = D.Xtest_15_3.data;
             I.base_pos = D.Xtest_15_3.base_pos;
             I.theta = D.Xtest_15_3.theta;
             j_min = 50; j_max = size(Xtest,1);
             I.im_min = 1840+j_min-1;
-            I.test_data_source = {'15','3'};
+            I.test_data_source = {'15','3', '3'};
         case 4
             Xtest = D.Xtest_30_1.data;
             I.base_pos = D.Xtest_30_1.base_pos;
             I.theta = D.Xtest_30_1.theta;
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 630;
-            I.test_data_source = {'30','1'};
+            I.test_data_source = {'30','1','1'};
         case 5
             Xtest = D.Xtest_30_2.data;
             I.base_pos = D.Xtest_30_2.base_pos;
             I.theta = D.Xtest_30_2.theta;
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 481;
-            I.test_data_source = {'30','2'};
+            I.test_data_source = {'30','2','2'};
         case 6
             Xtest = D.Xtest_11_1.data;
             I.base_pos = D.Xtest_11_1.base_pos;
             I.theta = D.Xtest_11_1.theta;
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 660;
-            I.test_data_source = {'11','1'};
+            I.test_data_source = {'11','1', '3'}; 
+        case 7
+            Xtest = D.Xtest_31_1.data;
+            I.base_pos = D.Xtest_31_1.base_pos;
+            I.theta = D.Xtest_31_1.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 76;
+            I.test_data_source = {'31','1','3'};
+        case 8
+            Xtest = D.Xtest_31_2.data;
+            I.base_pos = D.Xtest_31_2.base_pos;
+            I.theta = D.Xtest_31_2.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 2019;
+            I.test_data_source = {'31','2','3'};
     end
 end
 
