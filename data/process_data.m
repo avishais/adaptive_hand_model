@@ -66,11 +66,11 @@ y = x;
 
 w = floor(windowSize/2);
 for j = 1:size(x,2)
-for i = w+1:size(x,1)-w-1
+    for i = w+1:size(x,1)-w-1
+        
+        y(i,j) = sum(x(i-w:i+w,j))/length(i-w:i+w);
+        
+    end
     
-    y(i,j) = sum(x(i-w:i+w,j))/length(i-w:i+w);    
-    
-end
-
 end
 end

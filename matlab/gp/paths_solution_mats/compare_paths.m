@@ -11,9 +11,11 @@ mse = MSE(SRI,SI);
 % mse = dtw(Sr,S);
 
 
-d = zeros(size(SRI,1),1);
-for i = 2:size(SRI,1)
-    d(i) = d(i-1) + norm(SRI(i,:)-SRI(i-1,:));    
+Ssm = MovingAvgFilter(SRI(:,1:2));
+
+d = zeros(size(Ssm,1),1);
+for i = 2:size(Ssm,1)
+    d(i) = d(i-1) + norm(Ssm(i,:)-Ssm(i-1,:));    
 end
 
 total_score = mse(end);
@@ -62,4 +64,24 @@ s = (R' * s')';
 
 sd = s + I.base_pos(1:2);
 
+end
+
+
+function y = MovingAvgFilter(x, windowSize)
+
+if nargin==1
+    windowSize = 13;
+end
+
+y = x;
+
+w = floor(windowSize/2);
+for j = 1:size(x,2)
+    for i = w+1:size(x,1)-w-1
+        
+        y(i,j) = sum(x(i-w:i+w,j))/length(i-w:i+w);
+        
+    end
+    
+end
 end

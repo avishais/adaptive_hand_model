@@ -1,6 +1,6 @@
 clear all
 
-K = [1 2 3 4 5 8]% 7];
+K = [1 2 3 4 5 8 7];
 
 px2mm = 0.2621;
 
@@ -30,4 +30,4 @@ xlabel('Traversed path (mm)','fontsize',17);
 ylabel('Mean-Squared Error (mm)','fontsize',17);
 xlim([0 d(end)]);
 
-print(['cumsum_test_20_1.png'],'-dpng','-r150');
+% print(['cumsum_test_20_1.png'],'-dpng','-r150');
