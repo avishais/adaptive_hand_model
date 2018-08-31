@@ -10,9 +10,9 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 8;
-% w = [10 10 1 1 1 1 10 10];
-w = [];
+test_num = 11;
+% w = [100 100 3 3 1 1 3 3];
+% w = [];
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 

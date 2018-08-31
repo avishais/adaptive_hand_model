@@ -1,18 +1,35 @@
+for mode = 8%[1 2 3 4 5 7]
 warning('off','all')
 
-if ~exist('is_nm','var')
-    clear all
+% if ~exist('is_nm','var')
+%     clear all
     
-    mode = 11;
-end
+% mode = 8;
+% end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 5;
-% w = [100 100 1 1 1 1 1 1 1];
-w = [];
+test_num = 9;
+% w = [1 1 10 10 10 10 1 1 1];
+% w = [];
+switch mode
+    case 1
+        w = [3 3 1 1];
+    case 2
+        w = [3 3 1 1 1 1 1 1];
+    case 3
+        w = [3 3 1 1 1 1 1 1 1 1 3 3];
+    case 4
+        w = [];
+    case 5
+        w = [60 60 1 1 3 3];
+    case 7
+        w = [10 10 ones(1,14)];
+    case 8
+        w = [3 3 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+end
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
@@ -63,7 +80,7 @@ hold off
 loss = loss / size(Sr,1);
 disp(toc)
 
-% save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 
 %%
@@ -98,7 +115,7 @@ hold off
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-
+end
 %% Closed loop
 
 % figure(2)
