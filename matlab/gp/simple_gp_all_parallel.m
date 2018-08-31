@@ -1,18 +1,25 @@
+for jj = 1:500
+
 warning('off','all')
 
-if ~exist('is_nm','var')
-    clear all
+% if ~exist('is_nm','var')
+%     clear all
     
     mode = 8;
-end
+% end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 11;
+test_num = 9;
 % w = [100 100 3 3 1 1 3 3];
-% w = [];
+w = randi(12,1,8);
+for i = 1:2:8
+    w(i+1) = w(i);
+end
+
+
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
@@ -53,6 +60,10 @@ for i = 1:size(Sr,1)-1
     
     SI(i+1,:) = project2image(s(1:2), I);
     
+    if loss/i > 0.15
+        break;
+    end
+    
     if ~mod(i, 10)
         plot(SI(1:i,1),SI(1:i,2),'.-m');
         drawnow;
@@ -64,7 +75,8 @@ hold off
 loss = loss / size(Sr,1);
 disp(toc)
 
-% save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+max_iter = i;
+save(['./paths_solution_mats/test/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '_rand_' num2str(jj) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest','max_iter');
 
 
 %%
@@ -101,7 +113,7 @@ title('parallel');
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-
+end
 %% Closed loop
 
 % figure(2)

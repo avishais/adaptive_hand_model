@@ -21,7 +21,7 @@ n = size(files,1);
 % mode = 1;
 vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 22, 26, 16]+1;
 
-for mode = 8%[5 8 9 10 11]
+for mode = 7%[5 8 9 10 11]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];

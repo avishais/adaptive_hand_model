@@ -1,4 +1,4 @@
-for mode = 8%[1 2 3 4 5 7]
+for mode = [1 2 3 4 5 7 8]
 warning('off','all')
 
 % if ~exist('is_nm','var')
