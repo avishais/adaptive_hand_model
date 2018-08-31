@@ -5,7 +5,7 @@ files = sortrows(files, 1);
 
 n = size(files,1);
 
-source2remove = [35];
+source2remove = [];
 
 % mode:
 % 1 - state is only object position
@@ -108,7 +108,7 @@ for mode = 11%[5 8 9 10 11]
                 case 11
 %                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:))];
 %                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), norm(data.m3(j,:)-data.m4(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:)), norm(data.m3(j+1,:)-data.m4(j+1,:))];
-                    M(k,:) = [cyl_diameter, norm(data.m1(150,:)-data.m2(150,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j,:)];         
+                    M(k,:) = [cyl_diameter, norm(data.m1(250,:)-data.m2(250,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j,:)];         
             end
             
             k = k + 1;
