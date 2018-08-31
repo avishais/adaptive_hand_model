@@ -90,10 +90,10 @@ end
 
 %%
 if strcmp(data_source, 'all')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2');
     Q = D.Q;
     
-    Xtraining = D.Xtraining;
+    Xtraining = D.Xtraining;    
     switch test_num
         case 1
             Xtest = D.Xtest_15_1.data;
@@ -172,7 +172,31 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 71;
             I.test_data_source = {'45','1','3'};
+        case 12 % Butter can
+            Xtest = D.Xtest_26_1.data;
+            I.base_pos = D.Xtest_26_1.base_pos;
+            I.theta = D.Xtest_26_1.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 59;
+            I.test_data_source = {'26','1','3'};
+        case 13 % Hair-spary
+            Xtest = D.Xtest_36_1.data;
+            I.base_pos = D.Xtest_36_1.base_pos;
+            I.theta = D.Xtest_36_1.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 1996;
+            I.test_data_source = {'36','1','3'};
+        case 14 % Hair-spary - same traj as previous but up-side down
+            Xtest = D.Xtest_36_2.data;
+            I.base_pos = D.Xtest_36_2.base_pos;
+            I.theta = D.Xtest_36_2.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 3856;
+            I.test_data_source = {'36','2','3'};
     end
+    
+    Xtraining;
+    
 end
 
 %%

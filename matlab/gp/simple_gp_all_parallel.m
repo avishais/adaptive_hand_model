@@ -1,23 +1,24 @@
-for jj = 1:500
+for jj = 1%:500
 
 warning('off','all')
 
 % if ~exist('is_nm','var')
 %     clear all
     
-    mode = 8;
+    mode = 5;
 % end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 9;
-% w = [100 100 3 3 1 1 3 3];
-w = randi(12,1,8);
-for i = 1:2:8
-    w(i+1) = w(i);
-end
+test_num = 14;
+% w = [5 5 3 3 1 1 3 3];
+w = [];
+% w = randi(12,1,8);
+% for i = 1:2:8
+%     w(i+1) = w(i);
+% end
 
 
 data_source = 'all';

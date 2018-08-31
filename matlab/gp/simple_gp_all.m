@@ -1,17 +1,17 @@
-for mode = [1 2 3 4 5 7 8]
+% for mode = [1 2 3 4 5 7 8]
 warning('off','all')
 
 % if ~exist('is_nm','var')
 %     clear all
     
-% mode = 8;
+mode = 11;
 % end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 9;
+test_num = 14;
 % w = [1 1 10 10 10 10 1 1 1];
 % w = [];
 switch mode
@@ -24,11 +24,13 @@ switch mode
     case 4
         w = [];
     case 5
-        w = [60 60 1 1 3 3];
+        w = [];%[60 60 1 1 3 3];
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [3 3 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+        w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+    case 11
+        w = [1 1 1 1 0.1 1 1];
 end
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
@@ -60,10 +62,12 @@ SI = zeros(size(Sr,1), 2);
 S(1,:) = s;
 SI(1,:) = project2image(s(1:2), I);
 loss = 0;
+cyl = s(I.state_dim);
 for i = 1:size(Sr,1)-1
     a = Sr(i+offset, I.action_inx);
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+    s(I.state_dim) = cyl;
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
     
@@ -115,7 +119,7 @@ hold off
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-end
+% end
 %% Closed loop
 
 % figure(2)
