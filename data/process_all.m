@@ -19,9 +19,9 @@ n = size(files,1);
 
 %%
 % mode = 1;
-vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 18, 26, 14]+1;
+vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 22, 26, 16]+1;
 
-for mode = [1 5 8]%[5 8 9 10 11]
+for mode = 7%[5 8 9 10 11]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -87,13 +87,13 @@ for mode = [1 5 8]%[5 8 9 10 11]
                 case 8
                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:)];
                 case 9
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)];
+                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)];
                 case 10
                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];
                 case 11
-%                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:))];
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), norm(data.m3(j,:)-data.m4(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:)), norm(data.m3(j+1,:)-data.m4(j+1,:))];
-%                     M(k,:) = [cyl_diameter data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), cyl_diameter, data.obj_pos(j+1,1:2), data.act_load(j+1,:)];         
+                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:))];
+%                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), norm(data.m3(j,:)-data.m4(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:)), norm(data.m3(j+1,:)-data.m4(j+1,:))];
+%                     M(k,:) = [cyl_diameter data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), cyl_diameter, data.obj_pos(j+1,1:2), data.act_pos(j,:), data.act_load(j+1,:)];         
             end
             
             k = k + 1;
@@ -138,23 +138,23 @@ for mode = [1 5 8]%[5 8 9 10 11]
                 Q{i}.state_inx = 1:6;
                 Q{i}.state_nxt_inx = 9:14;
             case 9
-                Q{i}.action_inx = 9:10;
-                Q{i}.state_inx = 1:8;
-                Q{i}.state_nxt_inx = 11:18;
+                Q{i}.action_inx = 11:12;
+                Q{i}.state_inx = 1:10;
+                Q{i}.state_nxt_inx = 13:22;
             case 10
                 Q{i}.action_inx = 13:14;
                 Q{i}.state_inx = 1:12;
                 Q{i}.state_nxt_inx = 15:26;
             case 11
-%                 Q{i}.action_inx = 6:7;
-%                 Q{i}.state_inx = 1:5;
-%                 Q{i}.state_nxt_inx = 8:12;
-                Q{i}.action_inx = 7:8;
-                Q{i}.state_inx = 1:6;
-                Q{i}.state_nxt_inx = 9:14;
-%                 Q{i}.action_inx = 5:7;
-%                 Q{i}.state_inx = 1:4;
-%                 Q{i}.state_nxt_inx = 8:11;
+                Q{i}.action_inx = 8:9;
+                Q{i}.state_inx = 1:7;
+                Q{i}.state_nxt_inx = 10:16;
+%                 Q{i}.action_inx = 7:8;
+%                 Q{i}.state_inx = 1:6;
+%                 Q{i}.state_nxt_inx = 9:14;
+%                 Q{i}.action_inx = 7:9;
+%                 Q{i}.state_inx = 1:6;
+%                 Q{i}.state_nxt_inx = 10:15;
         end
         
         flag = 1;
@@ -193,11 +193,46 @@ for mode = [1 5 8]%[5 8 9 10 11]
             Xtest_30_2.file = f;
             flag = 0;
         end
-        if strcmp(f, 'ca_11_test1.txt') % test path
+        if strcmp(f, 'ca_11_test1.txt') % test path - small sharpie
             Xtest_11_1.data = M(:,2:end);
             Xtest_11_1.base_pos = data.base_pos;
             Xtest_11_1.theta = data.theta;
             Xtest_11_1.file = f;
+            flag = 0;
+        end
+         if strcmp(f, 'ca_31_test1.txt') % test path - acrylic paint
+            Xtest_31_1.data = M(:,2:end);
+            Xtest_31_1.base_pos = data.base_pos;
+            Xtest_31_1.theta = data.theta;
+            Xtest_31_1.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_31_test2.txt') % test path - acrylic paint
+            Xtest_31_2.data = M(:,2:end);
+            Xtest_31_2.base_pos = data.base_pos;
+            Xtest_31_2.theta = data.theta;
+            Xtest_31_2.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_30_test3.txt') % test path - Glue stick
+            Xtest_30_3.data = M(:,2:end);
+            Xtest_30_3.base_pos = data.base_pos;
+            Xtest_30_3.theta = data.theta;
+            Xtest_30_3.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_15_test4.txt') % test path - thick sharpy
+            Xtest_15_4.data = M(:,2:end);
+            Xtest_15_4.base_pos = data.base_pos;
+            Xtest_15_4.theta = data.theta;
+            Xtest_15_4.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_45_test1.txt') % test path - thick sharpy
+            Xtest_45_1.data = M(:,2:end);
+            Xtest_45_1.base_pos = data.base_pos;
+            Xtest_45_1.theta = data.theta;
+            Xtest_45_1.file = f;
             flag = 0;
         end
         if flag
@@ -207,7 +242,7 @@ for mode = [1 5 8]%[5 8 9 10 11]
     end
     
     %%
-    if 1
+    if 0
         C = unique(P(:,1));
         h = hist(P(:,1));
         h(h==0) = [];
@@ -228,7 +263,7 @@ for mode = [1 5 8]%[5 8 9 10 11]
     %%
     Xtraining = P;
     
-    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2', 'Xtest_15_3','Xtest_30_1','Xtest_30_2', 'Xtest_11_1');
+    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2', 'Xtest_15_3','Xtest_30_1','Xtest_30_2', 'Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1');
 end
 %%
 plot(P(:,1),P(:,2),'.k');
@@ -239,7 +274,12 @@ plot(Xtest_15_3.data(:,1),Xtest_15_3.data(:,2),'-c','linewidth',4);
 plot(Xtest_30_1.data(:,1),Xtest_30_1.data(:,2),'-b','linewidth',4);
 plot(Xtest_30_2.data(:,1),Xtest_30_2.data(:,2),'-y','linewidth',4);
 plot(Xtest_11_1.data(:,1),Xtest_11_1.data(:,2),'-y','linewidth',4);
+plot(Xtest_31_1.data(:,1),Xtest_31_1.data(:,2),'-b','linewidth',4);
+plot(Xtest_31_2.data(:,1),Xtest_31_2.data(:,2),'-y','linewidth',4);
+plot(Xtest_30_3.data(:,1),Xtest_30_3.data(:,2),'-y','linewidth',4);
+plot(Xtest_15_4.data(:,1),Xtest_15_4.data(:,2),'-y','linewidth',4);
+plot(Xtest_45_1.data(:,1),Xtest_45_1.data(:,2),'-y','linewidth',4);
 hold off
-legend('training','Xtest_15_1','Xtest_15_2','Xtest_15_3','Xtest_30_1','Xtest_30_2','Xtest_11_1');
+legend('training','Xtest_15_1','Xtest_15_2','Xtest_15_3','Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1');
 
 
