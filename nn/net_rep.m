@@ -5,9 +5,9 @@ if nargin == 0
 end
 
 if nargin > 1
-    R = load(['../models/net' num2str(num_net) '_w' num2str(windowSize) '.netxt']);
+    R = load(['./models/net' num2str(num_net) '_w' num2str(windowSize) '.netxt']);
 else
-    R = load(['../models/net' num2str(num_net) '.netxt']);
+    R = load(['./models/net' num2str(num_net) '.netxt']);
 end
 n = R(1);
 activation = R(2);

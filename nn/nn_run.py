@@ -37,7 +37,7 @@ print('Loading training data...')
 
 mode = 8
 
-Q = loadmat('./data/Ca_20_' + str(mode) + '.mat')
+Q = loadmat('../data/Ca_20_' + str(mode) + '.mat')
 Xt = Q['Xtraining']
 Xtest = Q['Xtest1']['data'][0][0]
 

@@ -149,7 +149,7 @@ def log2file(i, learning_rate, num_hidden_layer, k, activation, training_cost, t
 
 def main():
 
-    Q = loadmat('./data/Ca_20_' + str(mode) + '.mat')
+    Q = loadmat('../data/Ca_20_' + str(mode) + '.mat')
     X = Q['Xtraining']
     Xtest = Q['Xtest1']['data'][0][0]
 

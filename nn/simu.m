@@ -9,7 +9,7 @@ action_inx = Q{1}.action_inx;
 state_inx = Q{1}.state_inx;
 state_nxt_inx = Q{1}.state_nxt_inx;
 
-P = D.Xtest1.data;
+P = D.Xtest3.data;
 % P = load('../data/toyDataPath.db');
 % action_inx = 3:4;
 % state_inx = 1:2;
