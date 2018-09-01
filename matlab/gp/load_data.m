@@ -93,7 +93,7 @@ if strcmp(data_source, 'all')
     D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2');
     Q = D.Q;
     
-    Xtraining = D.Xtraining;    
+    Xtraining = D.Xtraining; 
     switch test_num
         case 1
             Xtest = D.Xtest_15_1.data;
@@ -158,6 +158,7 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 43;
             I.test_data_source = {'30','3','3'};
+            lim1 = 6; lim2 = 28;
         case 10 % Thick sharpie
             Xtest = D.Xtest_15_4.data;
             I.base_pos = D.Xtest_15_4.base_pos;
@@ -179,6 +180,7 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 59;
             I.test_data_source = {'26','1','3'};
+            lim1 = 8; lim2 = 28;
         case 13 % Hair-spary
             Xtest = D.Xtest_36_1.data;
             I.base_pos = D.Xtest_36_1.base_pos;
@@ -193,10 +195,18 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 3856;
             I.test_data_source = {'36','2','3'};
+            lim1 = 10; lim2 = 28;
     end
+    figure(1)
+    subplot(121)
+    plot(Xtraining(:,1),'.')
     
-    Xtraining;
-    
+    c = mean(Xtest(:,1));
+    Xtraining(abs(Xtraining(:,1)-c) < lim1,:)=[];
+    Xtraining = Xtraining(abs(Xtraining(:,1)-c) <= lim2, 1:end);
+    subplot(122)
+    plot(Xtraining(:,1),'.')
+    Xtest = Xtest(:,2:end);
 end
 
 %%

@@ -8,8 +8,8 @@ CumSumAll = [];
 L = cell(length(K),1);
 for k = 1:length(K)
     
-% load(['pred_20_' num2str(K(k)) '_3.mat']);
-load(['pred_all_26_1_' num2str(K(k)) '.mat']);
+% load(['pred_20_' num2str(K(k)) '_1.mat']);
+load(['pred_all_36_2_' num2str(K(k)) '.mat']);
 
 [total_score, CumSum, d] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
 

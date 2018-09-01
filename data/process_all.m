@@ -21,9 +21,9 @@ source2remove = [];
 
 %%
 % mode = 1;
-vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 22, 26, 11]+1;
+vec_size = [6, 14, 22, 10, 10, 26, 30, 14, 22, 26, 10]+2;
 
-for mode = 11%[5 8 9 10 11]
+for mode = 1:8%[5 8 9 10 11]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -37,6 +37,11 @@ for mode = 11%[5 8 9 10 11]
             if ~strcmp(f,'ca_30_test1.txt') && ~strcmp(f,'ca_30_test2.txt') && ~strcmp(f,'ca_30_test3.txt')
                 continue;
             end
+        end
+        
+        l = str2num(f(7:8));
+        if cyl_diameter == 25 && ~isempty(l) && l == 36
+            continue;
         end
         
 %         if strcmp(f, 'ca_25_test2.txt') && strcmp(f, 'ca_25_test3.txt') && strcmp(f, 'ca_35_test1.txt')
@@ -82,33 +87,34 @@ for mode = 11%[5 8 9 10 11]
             %                 end
             %             end
             
+           
             % Currently take state as object position (no angle)
             % M = [(state,action), (state')];
             switch mode
                 case 1
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.ref_vel(j,:), data.obj_pos(j+1,1:2)]; % data 1
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.ref_vel(j,:), data.obj_pos(j+1,1:2)]; % data 1
                 case 2
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:)];  % data 2
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:)];  % data 2
                 case 3
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];  % data 2
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];  % data 2
                 case 4
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_pos(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:)];
                 case 5
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:)];
                 case 6
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];
                 case 7
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.act_load(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:), data.act_load(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_pos(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.act_load(j,:),  data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:), data.act_load(j+1,:)];
                 case 8
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:)];
                 case 9
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:)];
                 case 10
-                    M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.m1(j,:), data.m2(j,:), data.m3(j,:), data.m4(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), data.m1(j+1,:), data.m2(j+1,:), data.m3(j+1,:), data.m4(j+1,:)];
                 case 11
 %                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_pos(j,:), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j+1,:), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:))];
 %                     M(k,:) = [cyl_diameter, data.obj_pos(j,1:2), data.act_load(j,:), norm(data.m1(j,:)-data.m2(j,:)), norm(data.m3(j,:)-data.m4(j,:)), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:), norm(data.m1(j+1,:)-data.m2(j+1,:)), norm(data.m3(j+1,:)-data.m4(j+1,:))];
-                    M(k,:) = [cyl_diameter, norm(data.m1(250,:)-data.m2(250,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_pos(j,:)];         
+                    M(k,:) = [cyl_diameter, norm(data.m1(300,:)-data.m2(300,:)), data.obj_pos(j,1:2), data.act_load(j,:), data.ref_vel(j,:), data.obj_pos(j+1,1:2), data.act_load(j+1,:)];         
             end
             
             k = k + 1;
