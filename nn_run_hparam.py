@@ -142,7 +142,7 @@ def log2file(i, learning_rate, num_hidden_layer, k, activation, training_cost, t
     # f.write("Training cost: %f\n" % training_cost)
     # f.write("Testing cost: %f\n" % testing_cost)
 
-    f.write("%d %.5f %d %d %d, %f %f\n" % (i, learning_rate, num_hidden_layer, k, activation, training_cost, testing_cost))
+    f.write("%d %.5f %d %d %d %f %f\n" % (i, learning_rate, num_hidden_layer, k, activation, training_cost, testing_cost))
 
     f.close()
 
