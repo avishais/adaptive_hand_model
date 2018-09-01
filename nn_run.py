@@ -9,7 +9,7 @@ import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
-# import scipy.io as sio
+from scipy.io import loadmat
 import time
 
 import argparse
@@ -35,9 +35,11 @@ Regularization = False
 
 print('Loading training data...')
 
-mode = 5
-Xt = np.loadtxt('./data/data_25_' + str(mode) + '.db')
-# Xt = np.loadtxt('./data/toyData.db')
+mode = 8
+
+Q = loadmat('./data/Ca_20_' + str(mode) + '.mat')
+Xt = Q['Xtraining']
+Xtest = Q['Xtest1']['data'][0][0]
 
 if mode==1:
     num_input = 4 
@@ -60,14 +62,18 @@ if mode==6:
 if mode==7:
     num_input = 16
     num_output = 14
+if mode==8:
+    num_input = 8
+    num_output = 6
 
-i_test_start = 77657
-i_test_end = 78607
+i_test_start = Xt.shape[0]
+Xt = np.concatenate((Xt, Xtest), axis=0)
+i_test_end = Xt.shape[0]
 n_test = i_test_end-i_test_start+1
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [2000]*2
+hidden_layers = [80]*2
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -92,7 +98,7 @@ y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
 learning_rate = 0.02
-num_steps = int(1e5)
+num_steps = int(1e4)
 batch_size = 150
 display_step = 100
 
