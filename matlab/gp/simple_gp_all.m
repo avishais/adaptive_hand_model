@@ -16,25 +16,25 @@ ps.Pool.AutoCreate = false;
 
 test_num = 9;
 % w = [1 1 10 10 10 10 1 1 1];
-w = [];
-% switch mode
-%     case 1
-%         w = [3 3 1 1];
-%     case 2
-%         w = [3 3 1 1 1 1 1 1];
-%     case 3
-%         w = [3 3 1 1 1 1 1 1 1 1 3 3];
-%     case 4
-%         w = [];
-%     case 5
-%         w = [];%[60 60 1 1 3 3];
-%     case 7
-%         w = [10 10 ones(1,14)];
-%     case 8
-%         w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
-%     case 11
-%         w = [];
-% end
+% w = [];
+switch mode
+    case 1
+        w = [3 3 1 1];
+    case 2
+        w = [3 3 1 1 1 1 1 1];
+    case 3
+        w = [3 3 1 1 1 1 1 1 1 1 3 3];
+    case 4
+        w = [];
+    case 5
+        w = [];%[60 60 1 1 3 3];
+    case 7
+        w = [10 10 ones(1,14)];
+    case 8
+        w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+    case 11
+        w = [];
+end
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
@@ -103,7 +103,7 @@ title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 %%
-load(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat']);
+% load(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat']);
 
 file = ['../../data/test_images/ca_' I.test_data_source{1} '_test' I.test_data_source{2} '/image_test' I.test_data_source{3} '_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));

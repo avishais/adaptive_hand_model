@@ -73,7 +73,7 @@ n_test = i_test_end-i_test_start+1
 n = Xt.shape[0]-n_test
 
 # Network Parameters
-hidden_layers = [80]*2
+hidden_layers = [72]*2
 activation = 2
 
 prev_states = Xt[:,0:num_input-2]
@@ -97,8 +97,8 @@ x_test = X[i_test_start:i_test_end+1,0:num_input]
 y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
-learning_rate = 0.02
-num_steps = int(1e4)
+learning_rate =  0.001
+num_steps = int(1e6)
 batch_size = 150
 display_step = 100
 
