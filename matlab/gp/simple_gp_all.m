@@ -1,20 +1,20 @@
 clear all
-for test_num = [9 12 14]
-
-for mode = [1 2 3 4 5 7 8]
+% for test_num = [9 12 14]
+% 
+% for mode = [1 2 3 4 5 7 8]
 warning('off','all')
 
 % if ~exist('is_nm','var')
 %     clear all
     
-% mode = 11;
+mode = 8;
 % end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-% test_num = 9;
+test_num = 14;
 % w = [1 1 10 10 10 10 1 1 1];
 w = [];
 % switch mode
@@ -103,7 +103,7 @@ title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 %%
-% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+load(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat']);
 
 file = ['../../data/test_images/ca_' I.test_data_source{1} '_test' I.test_data_source{2} '/image_test' I.test_data_source{3} '_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
@@ -121,8 +121,8 @@ hold off
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-end
-end
+% end
+% end
 %% Closed loop
 
 % figure(2)

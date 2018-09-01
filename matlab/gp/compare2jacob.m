@@ -41,7 +41,7 @@ DX = DX(id,:);
 K0 = [100, 100];
 % K = fminsearch(@(x)objfunc(x, DX),K0);
 
-K = [-1.00623980020688,1.49934686818620];
+K = [-0.995820726947830,1.52591298431857];
 %%
 
 px2mm = 0.2621;
@@ -86,6 +86,10 @@ end
     
 mse_J = mse_J/(size(Xtest,1)-2);
 mse_GP = mse_GP/(size(Xtest,1)-2);
+
+rmse_J = sqrt(mse_J);
+rmse_GP = sqrt(mse_GP);
+
 
 %%
 function f = objfunc(x, DX)
