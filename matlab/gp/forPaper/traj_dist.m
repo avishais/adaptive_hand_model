@@ -220,7 +220,7 @@ xlim([0 max(data{it}.T)-2]);
 % end
 
 
-print(['distributions20.png'],'-dpng','-r150');
+% print(['distributions20.png'],'-dpng','-r150');
 
 %%
 

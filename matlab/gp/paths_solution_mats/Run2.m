@@ -46,4 +46,4 @@ xlabel('Traversed path (mm)','fontsize',17);
 ylabel('RMSE (mm)','fontsize',17);
 xlim([0 d(end)]);
 
-% print(['cumsum_test_20_1.png'],'-dpng','-r150');
+print(['cumsum_test_all_56.png'],'-dpng','-r150');

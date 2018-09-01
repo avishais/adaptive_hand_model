@@ -14,7 +14,7 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 14;
+test_num = 9;
 % w = [1 1 10 10 10 10 1 1 1];
 w = [];
 % switch mode
