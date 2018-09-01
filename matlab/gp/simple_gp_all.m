@@ -122,6 +122,7 @@ hold off
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
 end
+end
 %% Closed loop
 
 % figure(2)

@@ -197,15 +197,15 @@ if strcmp(data_source, 'all')
             I.test_data_source = {'36','2','3'};
             lim1 = 10; lim2 = 28;
     end
-    figure(1)
-    subplot(121)
-    plot(Xtraining(:,1),'.')
+%     figure(1)
+%     subplot(121)
+%     plot(Xtraining(:,1),'.')
     
     c = mean(Xtest(:,1));
     Xtraining(abs(Xtraining(:,1)-c) < lim1,:)=[];
-    Xtraining = Xtraining(abs(Xtraining(:,1)-c) <= lim2, 1:end);
-    subplot(122)
-    plot(Xtraining(:,1),'.')
+    Xtraining = Xtraining(abs(Xtraining(:,1)-c) <= lim2, 2:end);
+%     subplot(122)
+%     plot(Xtraining(:,1),'.')
     Xtest = Xtest(:,2:end);
 end
 
