@@ -8,10 +8,11 @@ import matplotlib.pyplot as plt
 from mpl_toolkits import mplot3d
 import time
 import random
+from scipy.io import loadmat
 
-mode = 5
+mode = 8
 
-def run_net(Xt, learning_rate, num_hidden_layer, k, activation):
+def run_net(Xt, Xtest, learning_rate, num_hidden_layer, k, activation):
 
     if mode==1:
         num_input = 4 
@@ -34,9 +35,13 @@ def run_net(Xt, learning_rate, num_hidden_layer, k, activation):
     if mode==7:
         num_input = 16
         num_output = 14
+    if mode==8:
+        num_input = 8
+        num_output = 6
 
-    i_test_start = 77657
-    i_test_end = 78607
+    i_test_start = Xt.shape[0]
+    Xt = np.concatenate((Xt, Xtest), axis=0)
+    i_test_end = Xt.shape[0]
     n_test = i_test_end-i_test_start+1
     n = Xt.shape[0]-n_test
 
@@ -126,7 +131,7 @@ def run_net(Xt, learning_rate, num_hidden_layer, k, activation):
         return training_cost, testing_cost
 
 def log2file(i, learning_rate, num_hidden_layer, k, activation, training_cost, testing_cost):
-    f = open('./hparam_abb.txt','a+')
+    f = open('./models/hparam.txt','a+')
 
     # f.write("-----------------------------\n")
     # f.write("Trial %d\n" % i)
@@ -144,7 +149,9 @@ def log2file(i, learning_rate, num_hidden_layer, k, activation, training_cost, t
 
 def main():
 
-    X = np.loadtxt('./data/data_25_' + str(mode) + '.db')
+    Q = loadmat('./data/Ca_20_' + str(mode) + '.mat')
+    X = Q['Xtraining']
+    Xtest = Q['Xtest1']['data'][0][0]
 
     lr = [0.0001, 0.0005,	0.001,	0.002,	0.003,	0.004,	0.005,	0.006,	0.007,	0.008,	0.009,	0.01,	0.02,	0.0288888888888889,	0.0377777777777778,	0.0466666666666667,	0.0555555555555556,	0.0644444444444444,	0.0733333333333333,	0.0822222222222222,	0.0911111111111111,	0.1,	0.110000000000000,	0.120000000000000]
 
@@ -166,7 +173,7 @@ def main():
         else: Astr = "tanh"
         print("Activation function: ", Astr)
 
-        training_cost, testing_cost = run_net(X, learning_rate, num_hidden_layer, size_layers, activation)
+        training_cost, testing_cost = run_net(X, Xtest, learning_rate, num_hidden_layer, size_layers, activation)
         print("Training cost: ", training_cost)
         print("Testing cost: ", testing_cost)
 
