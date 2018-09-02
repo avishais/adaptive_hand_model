@@ -104,7 +104,7 @@ title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 %%
-% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
 
 file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
@@ -115,7 +115,7 @@ clf
 imshow(IM);
 hold on
 plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
-plot(SI(:,1),SI(:,2),'-c','linewidth',3);
+% plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
 frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
 % frame.cdata = imcrop(frame.cdata, [50 80 431+432 311]);

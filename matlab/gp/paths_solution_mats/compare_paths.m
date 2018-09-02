@@ -35,6 +35,8 @@ d = cumsum(d);
 
 d = d ./ (1:length(d))';
 
+d = sqrt(d);
+
 end
 
 function d = dtw(S1, S2)

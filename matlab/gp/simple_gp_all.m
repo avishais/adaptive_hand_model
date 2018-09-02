@@ -1,10 +1,13 @@
-for mode = [1 2 3 4 5 7 8]
+clear all
+% for test_num = [9 12 14]
+% 
+% for mode = [1 2 3 4 5 7 8]
 warning('off','all')
 
 % if ~exist('is_nm','var')
 %     clear all
     
-% mode = 8;
+mode = 8;
 % end
 
 ps = parallel.Settings;
@@ -24,11 +27,13 @@ switch mode
     case 4
         w = [];
     case 5
-        w = [60 60 1 1 3 3];
+        w = [];%[60 60 1 1 3 3];
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [3 3 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+        w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+    case 11
+        w = [];
 end
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
@@ -60,6 +65,7 @@ SI = zeros(size(Sr,1), 2);
 S(1,:) = s;
 SI(1,:) = project2image(s(1:2), I);
 loss = 0;
+cyl = s(I.state_dim);
 for i = 1:size(Sr,1)-1
     a = Sr(i+offset, I.action_inx);
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
@@ -97,7 +103,7 @@ title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 %%
-% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+% load(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat']);
 
 file = ['../../data/test_images/ca_' I.test_data_source{1} '_test' I.test_data_source{2} '/image_test' I.test_data_source{3} '_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 files = dir(fullfile(file));
@@ -115,7 +121,8 @@ hold off
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-end
+% end
+% end
 %% Closed loop
 
 % figure(2)
