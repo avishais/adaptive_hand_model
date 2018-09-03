@@ -2,7 +2,7 @@ clear all
 warning('off','all')
 
 data_source = '20';
-test_num = 3;
+test_num = 1;
 mode = 8;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
@@ -89,6 +89,9 @@ mse_GP = mse_GP/(size(Xtest,1)-2);
 
 rmse_J = sqrt(mse_J);
 rmse_GP = sqrt(mse_GP);
+
+%% NN
+
 
 
 %%
