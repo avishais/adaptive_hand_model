@@ -1,10 +1,10 @@
 clear all
 clc
 
-K = [5 8];%[1 2 3 4 5 8 7];
-data_sources = {'26_1','30_3','36_2'};
+K = [1 2 3 4 5 8 7];
+data_sources = {'30_4'};%{'26_2','30_4','36_3'};
 objs = {'Butter can','Glue stick','Hair-spary'};
-realFC = [5 6]; %[1 2 3 4 5 6 7];
+realFC = [1 2 3 4 5 6 7];
 
 px2mm = 0.2621;
 

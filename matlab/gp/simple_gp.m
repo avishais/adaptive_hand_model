@@ -115,7 +115,7 @@ clf
 imshow(IM);
 hold on
 plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
-% plot(SI(:,1),SI(:,2),'-c','linewidth',3);
+plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
 frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
 % frame.cdata = imcrop(frame.cdata, [50 80 431+432 311]);

@@ -1,6 +1,6 @@
 clear all
 
-filename = 'ca_40_32';
+filename = 'ca_36_test3';
 
 M = dlmread(['./ca/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -89,7 +89,7 @@ title('Actuation inputs');
 
 %%
 % for i = data.n-60:2:data.n
-for i = 1%data.n%[1:10:data.n ]%1:50:
+for i = data.n%[1:10:data.n ]%1:50:
     i
     figure(3)
     clf

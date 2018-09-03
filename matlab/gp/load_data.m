@@ -47,7 +47,6 @@ if strcmp(data_source, '25')
             I.base_pos = D.Xtest2.base_pos;
             I.theta = D.Xtest2.theta;
             j_min = 1; j_max = size(Xtest,1);
-           c
         case 3
             Xtest = D.Xtest3.data;
             I.base_pos = D.Xtest3.base_pos;
@@ -90,7 +89,7 @@ end
 
 %%
 if strcmp(data_source, 'all')
-    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2');
+    D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest_15_1','Xtest_15_2','Xtest_15_3', 'Xtest_30_1','Xtest_30_2','Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2','Xtest_26_2','Xtest_30_4','Xtest_36_3');
     Q = D.Q;
     
     Xtraining = D.Xtraining; 
@@ -151,7 +150,7 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 1846;
             I.test_data_source = {'31','2','3'};
-       case 9 % Glue stick
+       case 9 % Glue stick - traj 1
             Xtest = D.Xtest_30_3.data;
             I.base_pos = D.Xtest_30_3.base_pos;
             I.theta = D.Xtest_30_3.theta;
@@ -173,7 +172,7 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 71;
             I.test_data_source = {'45','1','3'};
-        case 12 % Butter can
+        case 12 % Butter can - traj 1
             Xtest = D.Xtest_26_1.data;
             I.base_pos = D.Xtest_26_1.base_pos;
             I.theta = D.Xtest_26_1.theta;
@@ -188,13 +187,37 @@ if strcmp(data_source, 'all')
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 1996;
             I.test_data_source = {'36','1','3'};
-        case 14 % Hair-spary - same traj as previous but up-side down
+        case 14 % Hair-spary - same traj as Xtest_36_1 but up-side down - traj 1
             Xtest = D.Xtest_36_2.data;
             I.base_pos = D.Xtest_36_2.base_pos;
             I.theta = D.Xtest_36_2.theta;
             j_min = 1; j_max = size(Xtest, 1);
             I.im_min = 3856;
             I.test_data_source = {'36','2','3'};
+            lim1 = 10; lim2 = 28;
+        case 15 % Butter can - traj 2
+            Xtest = D.Xtest_26_2.data;
+            I.base_pos = D.Xtest_26_2.base_pos;
+            I.theta = D.Xtest_26_2.theta;
+            j_min = 650; j_max = size(Xtest, 1);
+            I.im_min = 81+j_min-1;
+            I.test_data_source = {'26','2','3'};
+            lim1 = 8; lim2 = 28;
+        case 16 % Glue stick - traj 2
+            Xtest = D.Xtest_30_4.data;
+            I.base_pos = D.Xtest_30_4.base_pos;
+            I.theta = D.Xtest_30_4.theta;
+            j_min = 650; j_max = size(Xtest, 1);
+            I.im_min = 2583+j_min-1;
+            I.test_data_source = {'30','4','3'};
+            lim1 = 6; lim2 = 28;
+        case 17 % Hair-spary - same traj as Xtest_36_1 but up-side down - traj 2
+            Xtest = D.Xtest_36_3.data;
+            I.base_pos = D.Xtest_36_3.base_pos;
+            I.theta = D.Xtest_36_3.theta;
+            j_min = 650; j_max = size(Xtest, 1);
+            I.im_min = 4979+j_min-1;
+            I.test_data_source = {'36','3','3'};
             lim1 = 10; lim2 = 28;
     end
 %     figure(1)
@@ -204,6 +227,7 @@ if strcmp(data_source, 'all')
     c = mean(Xtest(:,1));
     Xtraining(abs(Xtraining(:,1)-c) < lim1,:)=[];
     Xtraining = Xtraining(abs(Xtraining(:,1)-c) <= lim2, 2:end);
+%     Xtraining = Xtraining(:,2:end);
 %     subplot(122)
 %     plot(Xtraining(:,1),'.')
     Xtest = Xtest(:,2:end);
