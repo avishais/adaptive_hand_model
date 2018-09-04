@@ -11,9 +11,9 @@ for k = 1:length(K)
 load(['pred_20_' num2str(K(k)) '_1.mat']);
 % load(['pred_all_30_3_' num2str(K(k)) '.mat']);
 
-[total_score, CumSum, d] = compare_paths(Sr(:,1:2), S, I);
+[total_score, CumSum, d] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
 
-disp(total_score*px2mm);
+disp(total_score);
 
 CumSumAll = [CumSumAll CumSum];
 

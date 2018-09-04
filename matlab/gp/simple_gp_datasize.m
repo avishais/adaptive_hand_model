@@ -6,47 +6,63 @@ ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
 px2mm = 0.2621;
-M = 30 + 1;
+M = 15 + 1;
 
-mse = zeros(M-1, 3);
-for test_num = 1:3
-    
-    data_source = '20';
-    
-    mode = 8;
-    % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
-    switch mode
-        case 1
-            w = [3 3 1 1];
-        case 2
-            w = [3 3 1 1 1 1 1 1];
-        case 3
-            w = [3 3 1 1 1 1 1 1 1 1 3 3];
-        case 4
-            w = [];
-        case 5
-            w = [60 60 1 1 3 3];
-        case 7
-            w = [10 10 ones(1,14)];
-        case 8
-            w = [5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
-    end
-    [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
-    
-    Sr = Xtest;
-    
-    N = size(Xtraining, 1);
-    
-    %%
-    
-    n = linspace(0, N, M);
-    n = n(2:end);
-    
-    for j = 1:length(n)
+% load('datasize_analysis.mat');
+test_num = 1;
+
+data_source = '20';
+
+mode = 8;
+% w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
+switch mode
+    case 1
+        w = [3 3 1 1];
+    case 2
+        w = [3 3 1 1 1 1 1 1];
+    case 3
+        w = [3 3 1 1 1 1 1 1 1 1 3 3];
+    case 4
+        w = [];
+    case 5
+        w = [60 60 1 1 3 3];
+    case 7
+        w = [10 10 ones(1,14)];
+    case 8
+        w = [5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+end
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
+
+Sr = Xtest;
+
+Sr = Sr(100:400,:);
+
+%%
+
+N = size(Xtraining, 1);
+
+n = linspace(0, N, M);
+n = n(2:end);
+
+X = cell(M-1,1);
+k = 1;
+for i = 1:M-1
+    X{i} = Xtraining(k:n(i),:);
+    k = n(i)+1;
+end
+
+K = 10;
+mse = zeros(M-1, K);
+
+%%
+for k = 1:K
+    for j = 1:M-1
         
-        p = randperm(size(Xtraining,1));
-        p = 1:n(j);%p(1:n(j));
-        Xtraining_new = Xtraining(p,:);
+        p = randperm(M-1);
+        Xtraining_new = [];
+        for a = 1:length(p)
+            Xtraining_new = [Xtraining_new; X{p(a)}];
+        end
         
         global W
         W = diag(w);
@@ -75,17 +91,16 @@ for test_num = 1:3
         end
         S = S(1:i+1,:);
         
-        mse(j, test_num) = MSE(SRI, SI)*px2mm;
+        mse(j, k) = MSE(SRI, SI)*px2mm;
         
-        save('datasize_analysis.mat','mse','n');
+        save('datasize_analysis_test1.mat','mse','n');
         
     end
 end
 
 
-%%
 
-mse(7,1) = 15;
+%%
 
 figure(1)
 clf

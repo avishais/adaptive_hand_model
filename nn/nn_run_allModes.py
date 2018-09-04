@@ -35,7 +35,7 @@ Regularization = False
 
 print('Loading training data...')
 
-for mode in range(2,8+1):
+for mode in range(1,8+1):
 
     data_source = 20
     Q = loadmat('../data/Ca_' + str(data_source) + '_' + str(mode) + '.mat')

@@ -15,7 +15,7 @@ action_inx = Q{1}.action_inx;
 state_inx = Q{1}.state_inx;
 state_nxt_inx = Q{1}.state_nxt_inx;
 
-P = D.Xtest1.data;
+P = D.Xtest2.data;
 P = P(700:end,:);
 
 [W, b, x_max, x_min, activation] = net_rep(mode, data_source);

@@ -13,7 +13,7 @@ n = size(files,1);
 
 for j = 1:n
     
-    mode = files{j,1}(8)
+    mode = files{j,1}(8);
     
     file = ['../data/Ca_' num2str(data_source) '_' num2str(mode)];
     D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1','Xtest2', 'Xtest3');
@@ -46,9 +46,9 @@ for j = 1:n
     %
     figure(1)
     clf
-    plot(Sr(:,1),Sr(:,2),'.-b');
+    plot(Sr(:,1),Sr(:,2),'o-b');
     hold on
-    plot(S(:,1),S(:,2),'.-m');
+    plot(S(:,1),S(:,2),'x-m');
     hold off
     axis equal
     title('open loop');
@@ -75,7 +75,7 @@ set(gca, 'fontsize',12);
 legend(L,'location','northwest','fontsize',14);
 xlabel('Traversed path (mm)','fontsize',17);
 ylabel('RMSE (mm)','fontsize',17);
-xlim([0 d{1}(end)]);
+xlim([0 d{2}(end)]);
 
 % print(['cumsum_NN_20_1.png'],'-dpng','-r150');
 

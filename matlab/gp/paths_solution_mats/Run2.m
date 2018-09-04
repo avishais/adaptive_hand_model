@@ -2,7 +2,7 @@ clear all
 clc
 
 K = [1 2 3 4 5 8 7];
-data_sources = {'36_3'};%{'26_2','30_4','36_3'};
+data_sources = {'30_4'};%{'26_2','30_4','36_3'};
 objs = {'Butter can','Glue stick','Hair-spary'};
 realFC = [1 2 3 4 5 6 7];
 

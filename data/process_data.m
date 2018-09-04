@@ -52,7 +52,7 @@ data.m2 = MovingAvgFilter((R*data.m2')');
 data.m3 = MovingAvgFilter((R*data.m3')');
 data.m4 = MovingAvgFilter((R*data.m4')');
 % data.obj_pos(:,1:2) = MovingAvgFilter((R*data.obj_pos(:,1:2)')', 20);
-data.obj_pos(:,1:2) = ((R*data.obj_pos(:,1:2)')');
+data.obj_pos(:,1:2) = MovingAvgFilter((R*data.obj_pos(:,1:2)')');
 
 end
 
