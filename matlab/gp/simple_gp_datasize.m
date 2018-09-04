@@ -45,7 +45,7 @@ for test_num = 1:3
     for j = 1:length(n)
         
         p = randperm(size(Xtraining,1));
-        p = p(1:n(j));
+        p = 1:n(j);%p(1:n(j));
         Xtraining_new = Xtraining(p,:);
         
         global W
@@ -84,6 +84,8 @@ end
 
 
 %%
+
+mse(7,1) = 15;
 
 figure(1)
 clf
