@@ -1,5 +1,5 @@
 clear all
-num_net = 4;
+num_net = 8;
 data_source = '20';
 file = ['../data/Ca_' data_source '_' num2str(num_net)];
 D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1','Xtest2', 'Xtest3');
@@ -10,18 +10,19 @@ state_inx = Q{1}.state_inx;
 state_nxt_inx = Q{1}.state_nxt_inx;
 
 P = D.Xtest1.data;
-P = P(700:end,:);
+P = P(1:end,:);
 
 % P = load('../data/toyDataPath.db');
 % action_inx = 3:4;
 % state_inx = 1:2;
 % state_nxt_inx = 5:6;
 
-[W, b, x_max, x_min, activation] = net_rep(num_net, data_source);
+% [W, b, x_max, x_min, activation] = net_rep(num_net, data_source);
+[W, b, x_max, x_min, activation] = net_rep(num_net);
 
 %% 
 
-tc = 500;
+tc = 101;
 a = P(tc, action_inx);
 x = P(tc, state_inx);
 x_next = P(tc,state_nxt_inx);
