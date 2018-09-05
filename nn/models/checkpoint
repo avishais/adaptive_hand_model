@@ -1,3 +1,3 @@
-model_checkpoint_path: "cp.ckpt"
+model_checkpoint_path: "cp_8.ckpt"
 all_model_checkpoint_paths: "cp_temp.ckpt"
-all_model_checkpoint_paths: "cp.ckpt"
+all_model_checkpoint_paths: "cp_8.ckpt"
