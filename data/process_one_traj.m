@@ -1,6 +1,6 @@
 clear all
 
-filename = 'cc_20_17';
+filename = 'cc_20_50';
 
 M = dlmread(['./cc/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -69,6 +69,7 @@ grid
 title('Actuation inputs');
 
 figure(2)
+clf
 plot(data.T, data.act_load);
 xlabel('Time (sec)');
 ylabel('Load');

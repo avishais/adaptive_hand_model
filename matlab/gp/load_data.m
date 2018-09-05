@@ -269,4 +269,10 @@ else
     kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
 end
 
+%% Reduced dimension kdtree
+% Xtraining_reduced = dr_diffusionmap(Xtraining(:,I.state_inx), 3);
+% kdtree_r = createns(Xtraining_reduced, 'NSMethod','kdtree','Distance','euclidean');
+
+
+%%
 clear Q D

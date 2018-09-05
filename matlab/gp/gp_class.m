@@ -108,7 +108,7 @@ classdef gp_class
             
         end
         
-        function [sp, sigma] = predict(obj, s, a)
+        function [sp, sigma] = predict(obj, s, a)        
             
             gprMdl = obj.getPredictor(s, a);
             
@@ -117,6 +117,7 @@ classdef gp_class
             for i = 1:length(obj.I.state_nxt_inx)
                 [sp(i), sigma(i)] = predict(gprMdl{i}, [s a]);
             end
+            
             
         end
         

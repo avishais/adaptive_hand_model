@@ -22,7 +22,7 @@ switch mode
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [5 5 3 3 1 1 3 3];
+        w = [10 10 3 3 1 1 1 1];
 end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
