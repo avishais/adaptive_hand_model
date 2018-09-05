@@ -9,7 +9,7 @@ px2mm = 0.2621;
 M = 15 + 1;
 
 % load('datasize_analysis.mat');
-test_num = 1;
+test_num = 2;
 
 data_source = '20';
 
@@ -35,7 +35,8 @@ end
 
 Sr = Xtest;
 
-Sr = Sr(100:400,:);
+% Sr = Sr(100:400,:);
+Sr = Sr(350:600,:);
 
 %%
 
@@ -53,12 +54,14 @@ end
 
 K = 10;
 mse = zeros(M-1, K);
+% load('datasize_analysis_test2.mat');
 
 %%
 for k = 1:K
     for j = 1:M-1
         
         p = randperm(M-1);
+        p = p(1:j);
         Xtraining_new = [];
         for a = 1:length(p)
             Xtraining_new = [Xtraining_new; X{p(a)}];
@@ -93,7 +96,7 @@ for k = 1:K
         
         mse(j, k) = MSE(SRI, SI)*px2mm;
         
-        save('datasize_analysis_test1.mat','mse','n');
+        save('datasize_analysis_test2.mat','mse','n');
         
     end
 end
@@ -102,9 +105,11 @@ end
 
 %%
 
+M = mean(mse')';
+
 figure(1)
 clf
-plot(n, mse);
+plot(n, M);
 
 
 
