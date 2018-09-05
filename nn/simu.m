@@ -9,17 +9,20 @@ action_inx = Q{1}.action_inx;
 state_inx = Q{1}.state_inx;
 state_nxt_inx = Q{1}.state_nxt_inx;
 
-P = D.Xtest3.data;
+P = D.Xtest1.data;
+P = P(1:end,:);
+
 % P = load('../data/toyDataPath.db');
 % action_inx = 3:4;
 % state_inx = 1:2;
 % state_nxt_inx = 5:6;
 
+% [W, b, x_max, x_min, activation] = net_rep(num_net, data_source);
 [W, b, x_max, x_min, activation] = net_rep(num_net);
 
 %% 
 
-tc = 500;
+tc = 101;
 a = P(tc, action_inx);
 x = P(tc, state_inx);
 x_next = P(tc,state_nxt_inx);

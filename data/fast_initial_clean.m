@@ -2,18 +2,19 @@ clear all
 
 data_source = '20';
 
-files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
+files = dir(fullfile('./cc/', ['cc_' data_source '_*.txt']));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
 n = size(files,1);
 
 %%
-for i = 31:n
+for i = 1:n
     f = files{i,1};
     
-    D = dlmread(['./ca/' f], ' ');
-    
+    D = dlmread(['./cc/' f], ' ');
+    disp(['Processing file ' f ' with ' num2str(size(D,1)) ' nodes...']);
+      
     flag = 0;
     j = 1;
     while j < size(D,1) && sum(D(j,2:9)==0) <= 6
@@ -30,6 +31,6 @@ for i = 31:n
     
     D(1:j-1,:) = [];
     
-    dlmwrite(['./ca/' f], D, 'delimiter',' ','precision',6);
+    dlmwrite(['./cc/' f], D, 'delimiter',' ','precision',6);
         
 end

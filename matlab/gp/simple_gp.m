@@ -5,8 +5,10 @@ ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
+px2mm = 0.2621;
+
 data_source = '20';
-test_num = 3;
+test_num = 1;
 mode = 8;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
 switch mode
@@ -58,22 +60,23 @@ for i = 1:size(Sr,1)-1
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
-    loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
     
     SI(i+1,:) = project2image(s(1:2), I);
     
     if ~mod(i, 10)
         plot(SI(1:i,1),SI(1:i,2),'.-m');
         drawnow;
+        disp(['mse = ' num2str(MSE(SRI(1:i,1:2), SI(1:i,1:2)) * px2mm)]);
     end
 end
 S = S(1:i+1,:);
 hold off
 
-loss = loss / size(Sr,1);
 disp(toc)
 
-% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+disp(['mse = ' num2str(MSE(SRI, SI) * px2mm)]);
+
+save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 %% Closed loop
 
@@ -115,7 +118,7 @@ clf
 imshow(IM);
 hold on
 plot(SRI(:,1),SRI(:,2),'-y','linewidth',3,'markerfacecolor','y');
-% plot(SI(:,1),SI(:,2),'-c','linewidth',3);
+plot(SI(:,1),SI(:,2),'-c','linewidth',3);
 hold off
 frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
 % frame.cdata = imcrop(frame.cdata, [50 80 431+432 311]);
@@ -158,6 +161,23 @@ R = [cos(I.theta) -sin(I.theta); sin(I.theta) cos(I.theta)];
 s = (R' * s')';
 
 sd = s + I.base_pos(1:2);
+
+end
+
+function d = MSE(S1, S2)
+
+d = zeros(size(S1,1),1);
+for i = 1:length(d)
+    d(i) = norm(S1(i,1:2)-S2(i,1:2))^2;
+end
+
+d = cumsum(d);
+
+d = d ./ (1:length(d))';
+
+d = sqrt(d);
+
+d = d(end);
 
 end
 

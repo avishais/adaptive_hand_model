@@ -12,11 +12,13 @@ K = 100 # Number of NN
 
 saved = False
 
-mode = 5
-Q = loadmat('../data/Ca_all_' + str(mode) + '.mat')
+mode = 8
+Q = loadmat('../data/Ca_20_' + str(mode) + '.mat')
 Qtrain = Q['Xtraining']
-Qtest = Q['Xtest_30_1']['data'][0][0]
+Qtest = Q['Xtest1']['data'][0][0]
 # Qtest = Qtest[1038:1038+300,:]
+print('Loaded training data of ' + str(Qtrain.shape[0]) + ' points in feature conf. ' + str(mode) + '.')
+
 
 # Qtrain = np.loadtxt('../data/toyData.db')
 # Qtest = np.loadtxt('../data/toyDataPath.db')
@@ -76,7 +78,8 @@ for i in range(Ytrain.shape[1]):
     Ytest[:,i] = (Ytest[:,i]-x_min_Y[i])/(x_max_Y[i]-x_min_Y[i])
 
 
-W = np.concatenate( ( np.array([np.sqrt(1.), np.sqrt(1.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
+# W = np.concatenate( ( np.array([np.sqrt(1.), np.sqrt(1.)]).reshape(1,2), np.ones((1,state_dim)) ), axis=1 ).T
+W = (np.array([5, 5, 3, 3, 1, 1, 3, 3]))
 W = W.reshape((W.shape[0],))
 
 print("Loading data to kd-tree...")
@@ -108,6 +111,20 @@ def propagate(sa):
     # s_next = np.random.normal(mu, sigma, state_dim)
 
     return mu#s_next
+
+
+sa = np.array([114.88,-409.8,0.45582,0.36913,45,-43,-0.06,0.06])
+for i in range(len(sa)):
+    sa[i] = (sa[i]-x_min_X[i])/(x_max_X[i]-x_min_X[i])
+sa = sa.reshape((1,state_action_dim))
+print(sa)
+
+idx = kdt.query_radius(sa, r=np.sqrt(0.15))
+
+print(len(idx[0]))
+
+exit(1)
+
 
 
 start = time.time()

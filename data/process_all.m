@@ -235,7 +235,7 @@ for mode = 1:8%[5 8 9 10 11]
             Xtest_31_2.file = f;
             flag = 0;
         end
-        if strcmp(f, 'ca_30_test3.txt') % test path - Glue stick
+        if strcmp(f, 'ca_30_test3.txt') % test path - Glue stick - traj 1
             Xtest_30_3.data = M(:,2:end);
             Xtest_30_3.base_pos = data.base_pos;
             Xtest_30_3.theta = data.theta;
@@ -256,7 +256,7 @@ for mode = 1:8%[5 8 9 10 11]
             Xtest_45_1.file = f;
             flag = 0;
         end
-        if strcmp(f, 'ca_26_test1.txt') % Butter can
+        if strcmp(f, 'ca_26_test1.txt') % Butter can - traj 1
             Xtest_26_1.data = M(:,2:end);
             Xtest_26_1.base_pos = data.base_pos;
             Xtest_26_1.theta = data.theta;
@@ -270,11 +270,32 @@ for mode = 1:8%[5 8 9 10 11]
             Xtest_36_1.file = f;
             flag = 0;
         end
-        if strcmp(f, 'ca_36_test2.txt') % Hair-spary - same traj as previous but up-side down
+        if strcmp(f, 'ca_36_test2.txt') % Hair-spary - same traj as 30_test1 but up-side down - traj 1
             Xtest_36_2.data = M(:,2:end);
             Xtest_36_2.base_pos = data.base_pos;
             Xtest_36_2.theta = data.theta;
             Xtest_36_2.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_26_test2.txt') % Butter can - traj 2
+            Xtest_26_2.data = M(:,2:end);
+            Xtest_26_2.base_pos = data.base_pos;
+            Xtest_26_2.theta = data.theta;
+            Xtest_26_2.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_30_test4.txt') % test path - Glue stick - traj 1
+            Xtest_30_4.data = M(:,2:end);
+            Xtest_30_4.base_pos = data.base_pos;
+            Xtest_30_4.theta = data.theta;
+            Xtest_30_4.file = f;
+            flag = 0;
+        end
+        if strcmp(f, 'ca_36_test3.txt') % Hair-spary - same traj as 30_test1 but up-side down - traj 2
+            Xtest_36_3.data = M(:,2:end);
+            Xtest_36_3.base_pos = data.base_pos;
+            Xtest_36_3.theta = data.theta;
+            Xtest_36_3.file = f;
             flag = 0;
         end
         if flag
@@ -305,7 +326,7 @@ for mode = 1:8%[5 8 9 10 11]
     %%
     Xtraining = P;
     
-    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2', 'Xtest_15_3','Xtest_30_1','Xtest_30_2', 'Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2');
+    save(['Ca_all_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest_15_1', 'Xtest_15_2', 'Xtest_15_3','Xtest_30_1','Xtest_30_2', 'Xtest_11_1','Xtest_31_1','Xtest_31_2','Xtest_30_3','Xtest_15_4','Xtest_45_1','Xtest_26_1','Xtest_36_1','Xtest_36_2','Xtest_26_2','Xtest_30_4','Xtest_36_3');
 end
 %%
 % figure(1)

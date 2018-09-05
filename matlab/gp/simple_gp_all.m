@@ -1,40 +1,40 @@
 clear all
-% for test_num = [9 12 14]
+for test_num = [15 16 17]
 % 
-% for mode = [1 2 3 4 5 7 8]
+for mode = [1 2 3 4 5 7 8]
 warning('off','all')
 
 % if ~exist('is_nm','var')
 %     clear all
     
-mode = 8;
+% mode = 8;
 % end
 
 ps = parallel.Settings;
 ps.Pool.AutoCreate = false;
 % poolobj = gcp; % If no pool, do not create new one.
 
-test_num = 9;
+% test_num = 16;
 % w = [1 1 10 10 10 10 1 1 1];
-% w = [];
-switch mode
-    case 1
-        w = [3 3 1 1];
-    case 2
-        w = [3 3 1 1 1 1 1 1];
-    case 3
-        w = [3 3 1 1 1 1 1 1 1 1 3 3];
-    case 4
-        w = [];
-    case 5
-        w = [];%[60 60 1 1 3 3];
-    case 7
-        w = [10 10 ones(1,14)];
-    case 8
-        w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
-    case 11
-        w = [];
-end
+w = [];
+% switch mode
+%     case 1
+%         w = [3 3 1 1];
+%     case 2
+%         w = [3 3 1 1 1 1 1 1];
+%     case 3
+%         w = [3 3 1 1 1 1 1 1 1 1 3 3];
+%     case 4
+%         w = [];
+%     case 5
+%         w = [];%[60 60 1 1 3 3];
+%     case 7
+%         w = [10 10 ones(1,14)];
+%     case 8
+%         w = [];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+%     case 11
+%         w = [];
+% end
 data_source = 'all';
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
@@ -121,8 +121,8 @@ hold off
 % imshow(frame.cdata);
 
 % imwrite(frame.cdata, ['test' num2str(test_num) '_' num2str(data_source) '.png']);
-% end
-% end
+end
+end
 %% Closed loop
 
 % figure(2)

@@ -98,7 +98,7 @@ y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
 learning_rate =  0.001
-num_steps = int(1e6)
+num_steps = int(0.5e5)
 batch_size = 150
 display_step = 100
 
@@ -143,7 +143,7 @@ init = tf.global_variables_initializer()
 saver = tf.train.Saver()
 
 load_from = 'cp_temp.ckpt'
-save_to = 'cp.ckpt'
+save_to = 'cp_8.ckpt'
 
 # Start Training
 # Start a new TF session
@@ -206,7 +206,7 @@ with tf.Session() as sess:
     testing_cost = sess.run(cost, feed_dict={X: x_test, Y: y_test, keep_prob_input: 1.0, keep_prob: 1.0})
     print("Testing cost=", testing_cost)
 
-    j = 1#np.random.random_integers(1, x_train.shape[0]) %np.array([-0.1177 ,   0.0641  ,  0.9617  ,  0.9387])#
+    j = 100#np.random.random_integers(1, x_train.shape[0]) %np.array([-0.1177 ,   0.0641  ,  0.9617  ,  0.9387])#
     f = x_test[j, :]#.reshape(1,num_input)
     f = f.reshape(1,num_input)
     y = sess.run(prediction, {X: f, keep_prob_input: 1.0, keep_prob: 1.0})
@@ -216,8 +216,9 @@ with tf.Session() as sess:
     # yo = denormz(y, x_max[4:], x_min[4:])
     f = f.reshape(num_input, 1)
     xo = denormzG(f[0:2], x_mu, x_sigma)
-    yo = denormzG(y, x_mu[4:], x_sigma[4:])
-    yr = denormzG(y_train[j,:], x_mu[4:], x_sigma[4:])
+    yo = denormzG(y, x_mu[num_input:], x_sigma[num_input:])
+    print("y ", yo)
+    yr = denormzG(y_test[j,:], x_mu[num_input:], x_sigma[num_input:])
     # print(x_mu, x_sigma)
     print("State: ", xo.reshape(1,2))
     print("Predicted next state: ", xo.reshape(1,2) + yo[:,0:2])
