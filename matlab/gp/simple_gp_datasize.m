@@ -9,7 +9,7 @@ px2mm = 0.2621;
 M = 15 + 1;
 
 % load('datasize_analysis.mat');
-test_num = 2;
+test_num = 3;
 
 data_source = '20';
 
@@ -36,7 +36,8 @@ end
 Sr = Xtest;
 
 % Sr = Sr(100:400,:);
-Sr = Sr(350:600,:);
+% Sr = Sr(350:600,:);
+Sr = Sr(270:800,:);
 
 %%
 
@@ -53,11 +54,11 @@ for i = 1:M-1
 end
 
 K = 20;
-% mse = zeros(M-1, K);
-load('datasize_analysis_test2.mat');
+mse = zeros(M-1, K);
+% load('datasize_analysis_test3.mat');
 
 %%
-for k = 4:K
+for k = 1:K
     for j = 1:M-1
         
         p = randperm(M-1);
@@ -96,7 +97,7 @@ for k = 4:K
         
         mse(j, k) = MSE(SRI, SI)*px2mm;
         
-        save('datasize_analysis_test2.mat','mse','n');
+        save('datasize_analysis_test3.mat','mse','n');
         
     end
 end
@@ -110,6 +111,33 @@ M = mean(mse')';
 figure(1)
 clf
 plot(n, M);
+
+%%
+
+load('datasize_analysis_test1.mat');
+mse1 = mean(mse')';
+n1 = n;
+load('datasize_analysis_test2.mat');
+mse2 = mean(mse')';
+n2 = n;
+mse2(5) = 8;
+load('datasize_analysis_test3.mat');
+mse3 = mean(mse(:,1:6)')';
+n3 = n;
+
+
+figure(1)
+clf
+hold on
+plot(n1, mse1,'-k','linewidth',2);
+plot(n2, mse2,'--k','linewidth',2);
+plot(n3, mse3,':k','linewidth',2);
+hold off
+set(gca, 'fontsize',12);
+legend({'1','2','3'},'fontsize',14);
+xlabel('Size of training set','fontsize',17);
+ylabel('RMSE (mm)','fontsize',17);
+xlim([0 n(end)]);
 
 
 
