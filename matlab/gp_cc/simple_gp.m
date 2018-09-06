@@ -22,11 +22,26 @@ switch mode
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [6 6 3 3 1 1 1 1];
+        w = [6 6 3 3 1 1 10 10];
 end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
 Sr = Xtest;
+
+
+%%
+
+% sa = [113.599461493,-408.676527979,0.484609,0.314633,76.0,-31.0, 0.4,0.0];
+% sa = (sa-I.xmin(1:8))./(I.xmax(1:8)-I.xmin(1:8));
+% 
+% [s, s2] = prediction(kdtree, Xtraining, sa(1:6), sa(7:8), I, 1);
+% 
+% 
+% s = s.*(I.xmax(1:6)-I.xmin(1:6)) + I.xmin(1:6)
+
+
+
+
 
 
 %% open loop
@@ -130,11 +145,12 @@ function sd = project2image(s, I)
 
 s = denormz(s, I);
 
-R = [cos(I.theta) -sin(I.theta); sin(I.theta) cos(I.theta)];
-s = (R' * s')';
+% R = [cos(I.theta) -sin(I.theta); sin(I.theta) cos(I.theta)];
+% s = (R' * s')';
+% 
+% sd = s + I.base_pos(1:2);
 
-sd = s + I.base_pos(1:2);
-
+sd = s;
 end
 
 function d = MSE(S1, S2)

@@ -1,11 +1,11 @@
 clear all
 
-filename = 'cc_20_88';
+filename = 'cc_20_96';
 
 M = dlmread(['./cc/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
-save2newFile = false;
+save2newFile = true;
 
 % The columns are in the following order:
 % 
@@ -34,7 +34,7 @@ save2newFile = false;
 
 %% Clean
 
-% M = M(1:200,:);
+M = M(2000:end,:);
 
 data = process_data(M);
 
@@ -42,7 +42,7 @@ if save2newFile
     
     Q = [];
     for i = 1:data.n-1
-        Q = [Q; data.obj_pos(i,1:2) data.act_load(i,1:2) data.ref_vel(i,:) data.obj_pos(i+1,1:2) data.act_load(i+1,1:2)];
+        Q = [Q; data.obj_pos(i,1:2) data.act_pos(i,1:2) data.act_load(i,1:2) data.ref_vel(i,:) data.obj_pos(i+1,1:2) data.act_pos(i,1:2) data.act_load(i+1,1:2)];
     end
     
     dlmwrite([filename '_processed.txt'],Q , ' ');

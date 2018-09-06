@@ -16,16 +16,10 @@ end
 
 function gprMdl = getPredictor(kdtree, Xtraining, x, a, I, mode)
 
-[idx, d] = knnsearch(kdtree, [x a], 'K', 100);
-% [idx, d] = rangesearch(kdtree, [x a], 0.03); idx = idx{1};
-% if length(idx) > 100
-%     idx = idx(1:100);
-% end
-% if isempty(idx) 
-%     [idx, d] = knnsearch(kdtree, [x a], 'K', 100);
-% end
+% [idx, d] = knnsearch(kdtree, [x a], 'K', 100);
+% data_nn = Xtraining(idx,:);
 
-data_nn = Xtraining(idx,:);
+data_nn =  diffusion_metric([x a], kdtree, Xtraining, I);
 
 gprMdl = cell(length(I.state_nxt_inx),1);
 for i = 1:length(I.state_nxt_inx)

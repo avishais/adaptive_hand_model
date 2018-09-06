@@ -13,7 +13,7 @@ switch mode
         w = [];%[1 1 1 1 1 1];
         r = sqrt(0.15);
     case 8
-        w = [6 6 3 3 1 1 3 3];
+        w = [6 6 3 3 1 1 10 10];
 %         r = 0.15;
 %         w = [];
         r = sqrt(0.15);
@@ -23,11 +23,6 @@ end
 n = size(data,1);
 data = (data-repmat(I.xmin([I.state_inx I.action_inx]), n, 1))./repmat(I.xmax([I.state_inx I.action_inx])-I.xmin([I.state_inx I.action_inx]), n, 1);
 
-% x = [114.88,-409.8,0.45582,0.36913,45,-43,-0.06,0.06];
-% x = (x-repmat(I.xmin(1:8), size(x,1), 1))./repmat(I.xmax(1:8)-I.xmin(1:8), size(x,1), 1);
-% 
-% id = rangesearch(kdtree, x, r^2); id = id{1};
-% length(id)
 %%
 
 NN = zeros(n,1);
@@ -39,6 +34,15 @@ for i = 1:n
     
     NN(i) = length(id);    
 end
+
+%%
+
+% sa = [113.599461493,-408.676527979,0.484609,0.314633,76.0,-31.0, 0.4,0.0];
+% sa = (sa-I.xmin(1:8))./(I.xmax(1:8)-I.xmin(1:8));
+% 
+% id = rangesearch(kdtree, sa, r); id = id{1};
+% 
+% data_nn = Xtraining(id,:);
 
 %%
 sr = 0;
