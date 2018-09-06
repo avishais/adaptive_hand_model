@@ -98,7 +98,7 @@ y_test = X[i_test_start:i_test_end+1,num_input:]
 
 # Training Parameters
 learning_rate =  0.001
-num_steps = int(0.5e5)
+num_steps = int(1e5)
 batch_size = 150
 display_step = 100
 
