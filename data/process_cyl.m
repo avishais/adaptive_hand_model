@@ -1,8 +1,9 @@
 clear all
 
 data_source = '20';
+dataset = 'cc';
 
-files = dir(fullfile('./ca/', ['ca_' data_source '_*.txt']));
+files = dir(fullfile(['./' dataset '/'], [dataset '_' data_source '_*.txt']));
 files = struct2cell(files)';
 files = sortrows(files, 1);
 
@@ -20,7 +21,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = 1:7%[1 5 8]
+for mode = 8%:8%[1 5 8]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -28,7 +29,7 @@ for mode = 1:7%[1 5 8]
     for i = 1:n
         f = files{i,1};
         
-        D = dlmread(['./ca/' f], ' ');
+        D = dlmread(['./' dataset '/' f], ' ');
         
         % Clean data
         data = process_data(D);
@@ -39,7 +40,7 @@ for mode = 1:7%[1 5 8]
         for j = 1:data.n-1
             
             % Check if there is contact/load and action
-            if any(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2) any(data.act_load(j,:)==0) || 
+            if all(data.ref_vel(j,:)==0) %|| any(abs(D(j,6:7))-0.06 > 1e-2) any(data.act_load(j,:)==0) || 
                 if ~strcmp(f, 'ca_25_test2.txt') && ~strcmp(f, 'ca_25_test3.txt')
                     continue;
                 end
@@ -168,6 +169,12 @@ for mode = 1:7%[1 5 8]
             Xtest3.theta = data.theta;
             flag = 0;
         end
+        if strcmp(f, 'cc_20_test1.txt') % test path
+            Xtest1.data = M;
+            Xtest1.base_pos = data.base_pos;
+            Xtest1.theta = data.theta;
+            flag = 0;
+        end
         if flag
             P = [P; M];
         end
@@ -182,9 +189,9 @@ for mode = 1:7%[1 5 8]
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
-        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2','Xtest3');
+        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1');%, 'Xtest2','Xtest3');
     else
-        save(['Ca_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
+        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end
 end
 %%
@@ -192,8 +199,8 @@ plot(P(:,1),P(:,2),'.k');
 hold on
 if exist('Xtest1')% && exist('Xtest2') && exist('Xtest3')
     plot(Xtest1.data(:,1),Xtest1.data(:,2),'-r','linewidth',4);
-    plot(Xtest2.data(:,1),Xtest2.data(:,2),'-g','linewidth',4);
-    plot(Xtest3.data(:,1),Xtest3.data(:,2),'-b','linewidth',4);
+%     plot(Xtest2.data(:,1),Xtest2.data(:,2),'-g','linewidth',4);
+%     plot(Xtest3.data(:,1),Xtest3.data(:,2),'-b','linewidth',4);
 end
 hold off
 legend('training','test_1','test_2','test_3');

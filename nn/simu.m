@@ -1,8 +1,8 @@
 clear all
 num_net = 8;
 data_source = '20';
-file = ['../data/Ca_' data_source '_' num2str(num_net)];
-D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1','Xtest2', 'Xtest3');
+file = ['../data/Cc_' data_source '_' num2str(num_net)];
+D = load([file '.mat'], 'Q', 'Xtraining', 'Xtest1');%,'Xtest2', 'Xtest3');
 Q = D.Q;
 
 action_inx = Q{1}.action_inx;
@@ -55,17 +55,17 @@ title('open loop');
 
 %% Closed loop
 
-% figure(2)
-% clf
-% hold on
-% for i = 1:size(P,1)
-%     s = P(i,state_inx);
-%     a = P(i, action_inx);
-%     sp = s + Net([s a], W, b, x_max, x_min, activation);
-%     sr = P(i, state_nxt_inx);
-%     plot([s(1) sr(1)],[s(2) sr(2)],'.-b');
-%     plot([s(1) sp(1)],[s(2) sp(2)],'.-m');
-% end
-% hold off
-% axis equal
-% title('closed loop');
+figure(2)
+clf
+hold on
+for i = 1:size(P,1)
+    s = P(i,state_inx);
+    a = P(i, action_inx);
+    sp = s + Net([s a], W, b, x_max, x_min, activation);
+    sr = P(i, state_nxt_inx);
+    plot([s(1) sr(1)],[s(2) sr(2)],'.-b');
+    plot([s(1) sp(1)],[s(2) sp(2)],'.-m');
+end
+hold off
+axis equal
+title('closed loop');

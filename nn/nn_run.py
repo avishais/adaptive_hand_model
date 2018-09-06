@@ -37,7 +37,7 @@ print('Loading training data...')
 
 mode = 8
 
-Q = loadmat('../data/Ca_20_' + str(mode) + '.mat')
+Q = loadmat('../data/Cc_20_' + str(mode) + '.mat')
 Xt = Q['Xtraining']
 Xtest = Q['Xtest1']['data'][0][0]
 
@@ -142,8 +142,8 @@ init = tf.global_variables_initializer()
 # Add ops to save and restore all the variables.
 saver = tf.train.Saver()
 
-load_from = 'cp_temp.ckpt'
-save_to = 'cp_8.ckpt'
+load_from = 'cc_temp.ckpt'
+save_to = 'cc_8.ckpt'
 
 # Start Training
 # Start a new TF session
@@ -175,7 +175,7 @@ with tf.Session() as sess:
             # Display logs per step
             if i % display_step == 0 or i == 1:
                 print('Step %i: Minibatch Loss: %f' % (i, c))
-                save_path = saver.save(sess, "./models/cp_temp.ckpt")
+                save_path = saver.save(sess, "./models/cc_temp.ckpt")
                 COSTS.append(c)
                 STEPS.append(i)
 

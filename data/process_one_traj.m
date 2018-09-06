@@ -1,6 +1,6 @@
 clear all
 
-filename = 'cc_20_01';
+filename = 'cc_20_70';
 
 M = dlmread(['./cc/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -64,15 +64,16 @@ plot(data.T,data.ref_vel);
 xlabel('Time (sec)');
 ylabel('Actuattors - velocities');
 legend('actuator 1','actuator 2');
-ylim([-0.07 0.07]);
+% ylim([-0.07 0.07]);
 grid
 title('Actuation inputs');
 
-% figure(2)
-% plot(data.T, data.act_load);
-% xlabel('Time (sec)');
-% ylabel('Load');
-% legend('actuator 1','actuator 2');
+figure(2)
+clf
+plot(data.T, data.act_load);
+xlabel('Time (sec)');
+ylabel('Load');
+legend('actuator 1','actuator 2');
 
 % figure(4)
 % clf
