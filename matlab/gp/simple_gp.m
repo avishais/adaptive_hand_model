@@ -25,7 +25,7 @@ switch mode
     case 7
         w = [10 10 ones(1,14)];
     case 8
-        w = [5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
+        w = [];%[5 5 3 3 1 1 3 3];%[5 5 3 3 1 1 3 3]; % Last best: [3 3 1 1 1 1 1 1];
 end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
@@ -76,7 +76,7 @@ disp(toc)
 
 disp(['mse = ' num2str(MSE(SRI, SI) * px2mm)]);
 
-save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 %% Closed loop
 
