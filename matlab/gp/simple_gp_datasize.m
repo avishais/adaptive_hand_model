@@ -52,12 +52,12 @@ for i = 1:M-1
     k = n(i)+1;
 end
 
-K = 10;
-mse = zeros(M-1, K);
-% load('datasize_analysis_test2.mat');
+K = 20;
+% mse = zeros(M-1, K);
+load('datasize_analysis_test2.mat');
 
 %%
-for k = 1:K
+for k = 4:K
     for j = 1:M-1
         
         p = randperm(M-1);

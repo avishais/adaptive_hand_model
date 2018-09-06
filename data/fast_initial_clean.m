@@ -9,7 +9,7 @@ files = sortrows(files, 1);
 n = size(files,1);
 
 %%
-for i = 1:n
+for i = 50:70
     f = files{i,1};
     
     D = dlmread(['./cc/' f], ' ');
