@@ -1,6 +1,7 @@
 clear all
 clc
 
+px2mm = 0.2621;
 M = dlmread('pt_nn_04.txt');
 
 im_start = 4292;
@@ -11,13 +12,12 @@ files = dir(fullfile(file));
 IM = imread([files.folder '/' files.name]);
 
 obj_pos = MovingAvgFilter(M(:,18:19));
-carrot_pos = M(:,end-1:end);
+carrot_pos = M(:,end-1:end)*px2mm;
 
 carrot_pos(all(carrot_pos==0,2),:) = [];
 carrot_pos(all(carrot_pos==-1,2),:) = [];
 obj_pos(all(obj_pos==0,2),:) = [];
 
-carrot_pos = [obj_pos(1,:); carrot_pos; obj_pos(1,:)];
 obj_pos(end-10:end,:) = [];
 obj_pos = [obj_pos; 
     421.2 171.4
@@ -27,19 +27,84 @@ obj_pos = [obj_pos;
     417.700000000000,170.726910687672
     416.600000000000,170.821454800080
     414.600000000000,171.264068246684
-    obj_pos(1,:)];
+    obj_pos(1,:)]*px2mm;
+carrot_pos = [obj_pos(1,:); carrot_pos; obj_pos(1,:)];
+
+i = 2;
+while i < size(carrot_pos,1)
+    if all(carrot_pos(i,:)==carrot_pos(i-1,:))
+        carrot_pos(i,:)=[];
+    else
+        i = i + 1;
+    end
+end
 
 figure(1)
 clf
-imshow(IM);
+% imshow(IM);
 hold on
-plot(carrot_pos(:,1),carrot_pos(:,2),'--b');
-plot(obj_pos(:,1),obj_pos(:,2),'-r');
+plot(carrot_pos(:,1),carrot_pos(:,2),'--b','linewidth',3);
+plot(obj_pos(:,1),obj_pos(:,2),'-r','linewidth',4);
+hold off
+axis equal
+ylim([44 50]);
+xlim([107 125]);
+set(gca, 'fontsize',12);
+xlabel('x (mm)','fontsize',17);
+ylabel('y (mm)','fontsize',17);
+legend({'ref. traj.','actual path'},'location','southeast','fontsize',12);
+
+% print(['cl_nn.png'],'-dpng','-r150');
+
+%% RMSE compare
+
+L = 0;
+for i = 2:size(carrot_pos,1)
+    L = L + norm(carrot_pos(i,:)-carrot_pos(i-1,:));
+end
+dd = L / size(obj_pos,1);
+
+C = carrot_pos(1,:);
+for i = 2:size(carrot_pos,1)
+    d = norm(carrot_pos(i,:)-carrot_pos(i-1,:));
+    n = ceil(d/dd);
+    lambda = linspace(0,1,n);
+    for j = 1:n
+        c = carrot_pos(i-1,:)*(1-lambda(j)) + carrot_pos(i,:)*lambda(j);
+        C = [C; c];
+    end
+end
+
+figure(2)
+clf 
+hold on
+plot(C(:,1),C(:,2),'.-b');
+   
+MSE = 0;
+max_err = 0;
+for i = 1:size(obj_pos,1)
+    idx = knnsearch(C, obj_pos(i,:));
+    err = norm(C(idx,:)-obj_pos(i,:));
+    MSE = MSE + err^2;  
+    plot(obj_pos(i,1),obj_pos(i,2),'or');
+    plot([obj_pos(i,1) C(idx,1)], [obj_pos(i,2) C(idx,2)],'-k');
+    
+    if err > max_err
+        max_err = err;
+    end
+end
+MSE = MSE/size(obj_pos,1);
+
+disp(['RMSE ' num2str(sqrt(MSE))]);
+disp(['Max error: ' num2str(max_err)]);
+
 hold off
 axis equal
 
+
+
 %%
-record = 1;
+record = 0;
 
 files = dir(fullfile(images_test_folder, '*.jpg'));
 files = struct2cell(files)';

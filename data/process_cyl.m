@@ -175,6 +175,12 @@ for mode = 8%:8%[1 5 8]
             Xtest1.theta = data.theta;
             flag = 0;
         end
+        if strcmp(f, 'cc_20_test2.txt') % test path
+            Xtest2.data = M;
+            Xtest2.base_pos = data.base_pos;
+            Xtest2.theta = data.theta;
+            flag = 0;
+        end
         if flag
             P = [P; M];
         end
@@ -189,7 +195,7 @@ for mode = 8%:8%[1 5 8]
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
-        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1');%, 'Xtest2','Xtest3');
+        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2');%,'Xtest3');
     else
         save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end

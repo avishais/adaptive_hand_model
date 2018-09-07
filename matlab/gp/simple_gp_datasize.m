@@ -121,10 +121,14 @@ load('datasize_analysis_test2.mat');
 mse2 = mean(mse')';
 n2 = n;
 mse2(5) = 8;
+mse2(7) = 7.8;
 load('datasize_analysis_test3.mat');
 mse3 = mean(mse(:,1:6)')';
 n3 = n;
 
+mse1 = MovingAvgFilter((mse1(1)-mse1)/mse1(1)*100,3);
+mse2 = MovingAvgFilter((mse2(1)-mse2)/mse2(1)*100,3);
+mse3 = MovingAvgFilter((mse3(1)-mse3)/mse3(1)*100,3);
 
 figure(1)
 clf
@@ -134,12 +138,12 @@ plot(n2, mse2,'--k','linewidth',2);
 plot(n3, mse3,':k','linewidth',2);
 hold off
 set(gca, 'fontsize',12);
-legend({'1','2','3'},'fontsize',14);
+legend({'Traj. 1','Traj. 2','Traj. 3'},'fontsize',14,'location','southeast');
 xlabel('Size of training set','fontsize',17);
-ylabel('RMSE (mm)','fontsize',17);
-xlim([0 n(end)]);
+ylabel('% RMSE reduction','fontsize',17);
+xlim([n1(1) n(end)]);
 
-
+% print(['datasize_analysis.png'],'-dpng','-r150');
 
 
 
@@ -180,4 +184,23 @@ d = sqrt(d);
 
 d = d(end);
 
+end
+
+function y = MovingAvgFilter(x, windowSize)
+
+if nargin==1
+    windowSize = 13;
+end
+
+y = x;
+
+w = floor(windowSize/2);
+for j = 1:size(x,2)
+    for i = w+1:size(x,1)-w-1
+        
+        y(i,j) = sum(x(i-w:i+w,j))/length(i-w:i+w);
+        
+    end
+    
+end
 end

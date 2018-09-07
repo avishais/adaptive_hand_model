@@ -1,6 +1,6 @@
 clear all
 
-filename = 'cc_20_96';
+filename = 'cc_plan_path';
 
 M = dlmread(['./cc/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
@@ -34,7 +34,7 @@ save2newFile = true;
 
 %% Clean
 
-M = M(2000:end,:);
+M = M(1:end,:);
 
 data = process_data(M);
 

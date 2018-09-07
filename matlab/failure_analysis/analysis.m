@@ -7,15 +7,15 @@ load(['class_data_ ' num2str(mode) '.mat']);
 
 switch mode
     case 1
-        w = [];%[1 1 1 1];
+        w = [];%3 3 1 1];
         r = sqrt(0.01);
     case 5
         w = [];%[1 1 1 1 1 1];
         r = sqrt(0.15);
     case 8
-%         w = [5 5 3 3 1 1 3 3];
+        w = [5 5 3 3 1 1 3 3];
 %         r = 0.15;
-        w = [];
+%         w = [];
         r = sqrt(0.15);
 end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, 1, '20');
@@ -23,11 +23,6 @@ end
 n = size(data,1);
 data = (data-repmat(I.xmin([I.state_inx I.action_inx]), n, 1))./repmat(I.xmax([I.state_inx I.action_inx])-I.xmin([I.state_inx I.action_inx]), n, 1);
 
-x = [114.88,-409.8,0.45582,0.36913,45,-43,-0.06,0.06];
-x = (x-repmat(I.xmin(1:8), size(x,1), 1))./repmat(I.xmax(1:8)-I.xmin(1:8), size(x,1), 1);
-
-id = rangesearch(kdtree, x, r^2); id = id{1};
-length(id)
 %%
 
 NN = zeros(n,1);
@@ -36,8 +31,10 @@ for i = 1:n
     sa = data(i,:);
     
     id = rangesearch(kdtree, sa, r); id = id{1};
-    
     NN(i) = length(id);    
+    
+%     NN(i) = diffusion_metric_nn(sa, kdtree, Xtraining, I, r);    
+
 end
 
 %%

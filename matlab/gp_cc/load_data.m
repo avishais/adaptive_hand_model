@@ -14,6 +14,12 @@ if strcmp(data_source, '20')
             I.theta = D.Xtest1.theta;
             j_min = 300; j_max = size(Xtest, 1);
             I.im_min = 719;
+        case 2
+            Xtest = D.Xtest2.data;
+            I.base_pos = D.Xtest2.base_pos;
+            I.theta = D.Xtest2.theta;
+            j_min = 1; j_max = size(Xtest, 1);
+            I.im_min = 719;
         otherwise
             Xtest = [];            
     end
