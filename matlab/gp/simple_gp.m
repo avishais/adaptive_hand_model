@@ -76,7 +76,7 @@ disp(toc)
 
 disp(['mse = ' num2str(MSE(SRI, SI) * px2mm)]);
 
-% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_dm.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 %% Closed loop
 

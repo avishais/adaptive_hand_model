@@ -37,12 +37,12 @@ end
 
 %%
 
-% sa = [113.599461493,-408.676527979,0.484609,0.314633,76.0,-31.0, 0.4,0.0];
-% sa = (sa-I.xmin(1:8))./(I.xmax(1:8)-I.xmin(1:8));
-% 
-% id = rangesearch(kdtree, sa, r); id = id{1};
-% 
-% data_nn = Xtraining(id,:);
+sa = [-17.777 -287.86 0.63961 0.37684 21 -169 0 0];
+sa = (sa-I.xmin(1:8))./(I.xmax(1:8)-I.xmin(1:8));
+
+id = rangesearch(kdtree, sa, r); id = id{1};
+
+data_nn = Xtraining(id,:);
 
 %%
 sr = 0;
