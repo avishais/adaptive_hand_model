@@ -4,8 +4,8 @@ N = size(TS,1);
 data = TS;
 
 %% Changing these values will lead to different nonlinear embeddings
-knn    = ceil(0.01*N); % each patch will only look at its knn nearest neighbors in R^d
-sigma2 = 1000; % determines strength of connection in graph... see below
+knn    = ceil(0.03*N); % each patch will only look at its knn nearest neighbors in R^d
+sigma2 = 100; % determines strength of connection in graph... see below
 
 %% now let's get pairwise distance info and create graph 
 m                = size(data,1);
