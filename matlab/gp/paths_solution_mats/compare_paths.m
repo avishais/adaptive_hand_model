@@ -1,4 +1,4 @@
-function [total_score, CumSum, d] = compare_paths(Sr, S, I)
+function [total_score, CumSum, d, max_error] = compare_paths(Sr, S, I)
 
 SRI = zeros(size(Sr,1),2);
 SI = zeros(size(S,1),2);
@@ -7,7 +7,7 @@ for i = 1:size(Sr,1)
     SI(i,:) = project2image(S(i,1:2), I);
 end
 
-mse = MSE(SRI,SI);
+[mse, errors] = MSE(SRI,SI);
 % mse = dtw(Sr,S);
 
 
@@ -22,18 +22,22 @@ total_score = mse(end);
 
 CumSum = mse;
 
+max_error = max(errors);
+
 end
 
-function d = MSE(S1, S2)
+function [cd, d] = MSE(S1, S2)
 
 d = zeros(size(S1,1),1);
 for i = 1:length(d)
     d(i) = norm(S1(i,1:2)-S2(i,1:2))^2;
 end
 
-d = cumsum(d);
+cd = cumsum(d);
 
-d = d ./ (1:length(d))';
+cd = cd ./ (1:length(cd))';
+
+cd = sqrt(cd);
 
 d = sqrt(d);
 

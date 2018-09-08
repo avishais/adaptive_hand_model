@@ -23,8 +23,8 @@ for j = 1:n
     state_inx = Q{1}.state_inx;
     state_nxt_inx = Q{1}.state_nxt_inx;
     
-    P = D.Xtest1.data;
-    P = P(700:end,:);
+    P = D.Xtest3.data;
+    P = P(1:end,:);
     
     [W, b, x_max, x_min, activation] = net_rep(mode, data_source);
     
@@ -53,9 +53,9 @@ for j = 1:n
     axis equal
     title('open loop');
     
-    total_score{j} = MSE(Sr, S);
+    [total_score{j} max_err{j}] = MSE(Sr, S);
     d{j} = pathLength(Sr*px2mm);
-    disp(total_score{j}(end)*px2mm);
+    disp([total_score{j}(end)*px2mm max_err{j}*px2mm]);
     Modes(j) = mode;
     
 end
@@ -81,18 +81,20 @@ xlim([0 d{2}(end)]);
 
 %%
 
-function d = MSE(S1, S2)
+function [cd, max_err] = MSE(S1, S2)
 
 d = zeros(size(S1,1),1);
 for i = 1:length(d)
     d(i) = norm(S1(i,1:2)-S2(i,1:2))^2;
 end
 
-d = cumsum(d);
+cd = cumsum(d);
 
-d = d ./ (1:length(d))';
+cd = cd ./ (1:length(cd))';
 
-d = sqrt(d);
+cd = sqrt(cd);
+
+max_err = max(sqrt(d));
 
 end
 
