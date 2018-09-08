@@ -2,25 +2,26 @@ clear all
 warning('off','all')
 
 data_source = '20';
-test_num = 1;
+test_num = 3;
 mode = 8;
 % w = [1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
-switch mode
-    case 1
-        w = [3 3 1 1];
-    case 2
-        w = [3 3 1 1 1 1 1 1];
-    case 3
-        w = [3 3 1 1 1 1 1 1 1 1 3 3];
-    case 4
-        w = [];
-    case 5
-        w = [60 60 1 1 3 3];
-    case 7
-        w = [10 10 ones(1,14)];
-    case 8
-        w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
-end
+w = [];
+% switch mode
+%     case 1
+%         w = [3 3 1 1];
+%     case 2
+%         w = [3 3 1 1 1 1 1 1];
+%     case 3
+%         w = [3 3 1 1 1 1 1 1 1 1 3 3];
+%     case 4
+%         w = [];
+%     case 5
+%         w = [60 60 1 1 3 3];
+%     case 7
+%         w = [10 10 ones(1,14)];
+%     case 8
+%         w = [5 5 3 3 1 1 3 3]; % Last best: [5 5 3 3 1 1 3 3];
+% end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
 %%
@@ -59,6 +60,7 @@ i = 59;
 mse_J = 0;
 mse_GP = 0;
 for i = 2:size(Xtest,1)-1
+    disp(['Step ' num2str(i)]);
     % Berks prediction
     x = Xtest(i, 1:2);
     x_real_next = Xtest(i, 1:2);
@@ -89,10 +91,6 @@ mse_GP = mse_GP/(size(Xtest,1)-2);
 
 rmse_J = sqrt(mse_J);
 rmse_GP = sqrt(mse_GP);
-
-%% NN
-
-
 
 %%
 function f = objfunc(x, DX)

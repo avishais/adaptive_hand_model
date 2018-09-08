@@ -6,24 +6,25 @@ px2mm = 0.2621;
 with_figure = false;
 
 data_source = '20';
-test_num = 1;
+test_num = 2;
 mode = 8;
-switch mode
-    case 1
-        w = [3 3 1 1];
-    case 2
-        w = [3 3 1 1 1 1 1 1];
-    case 3
-        w = [3 3 1 1 1 1 1 1 1 1 3 3];
-    case 4
-        w = [];
-    case 5
-        w = [60 60 1 1 3 3];
-    case 7
-        w = [10 10 ones(1,14)];
-    case 8
-        w = [6 6 3 3 1 1 10 10];
-end
+w = [];
+% switch mode
+%     case 1
+%         w = [3 3 1 1];
+%     case 2
+%         w = [3 3 1 1 1 1 1 1];
+%     case 3
+%         w = [3 3 1 1 1 1 1 1 1 1 3 3];
+%     case 4
+%         w = [];
+%     case 5
+%         w = [60 60 1 1 3 3];
+%     case 7
+%         w = [10 10 ones(1,14)];
+%     case 8
+%         w = [6 6 3 3 1 1 10 10];
+% end
 [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source);
 
 Sr = Xtest;
@@ -38,10 +39,6 @@ Sr = Xtest;
 % 
 % 
 % s = s.*(I.xmax(1:6)-I.xmin(1:6)) + I.xmin(1:6)
-
-
-
-
 
 
 %% open loop
@@ -92,7 +89,7 @@ disp(toc)
 
 disp(['mse = ' num2str(MSE(SRI, SI) * px2mm)]);
 
-save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+% save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_test.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 %%
 
@@ -109,7 +106,7 @@ title(['open loop - ' num2str(mode) ', MSE: ' num2str(loss)]);
 disp(['Loss: ' num2str(loss)]);
 
 %%
-load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+% load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
 if with_figure
 	file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
 	files = dir(fullfile(file));
