@@ -17,7 +17,7 @@ end
 
 UseToyData = 0;
 
-file = ['../../../data/Ca_' data_source '_' num2str(mode)];
+file = ['../../data/Ca_' data_source '_' num2str(mode)];
 
 %% Toy Data
 

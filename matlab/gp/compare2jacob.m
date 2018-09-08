@@ -60,6 +60,7 @@ i = 59;
 mse_J = 0;
 mse_GP = 0;
 for i = 2:size(Xtest,1)-1
+    disp(['Step ' num2str(i)]);
     % Berks prediction
     x = Xtest(i, 1:2);
     x_real_next = Xtest(i, 1:2);
