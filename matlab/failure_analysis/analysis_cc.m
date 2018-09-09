@@ -59,6 +59,7 @@ approx_labels = NN > b_max;
 
 % [max(NN(1:16)) min(NN(17:end))]
 
+disp(['With r = ' num2str(r^2) '^0.5']);
 disp(['Success rate: ' num2str(sr) ' with bound ' num2str(b_max)]);
 
 % success_rate_drop = sum(labels(1:18)==approx_labels(1:18))/18 * 100;

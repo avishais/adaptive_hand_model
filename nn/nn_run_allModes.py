@@ -99,7 +99,7 @@ for mode in range(1,8+1):
 
     # Training Parameters
     learning_rate =  0.001
-    num_steps = int(1e5)
+    num_steps = int(4e5)
     batch_size = 150
     display_step = 100
 

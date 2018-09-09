@@ -5,7 +5,7 @@ filename = 'cc_20_150';
 M = dlmread(['./cc/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
-save2newFile = true;
+save2newFile = false;
 
 % The columns are in the following order:
 % 

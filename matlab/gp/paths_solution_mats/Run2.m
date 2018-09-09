@@ -2,7 +2,7 @@ clear all
 clc
 
 K = [1 2 3 4 5 8 7];
-data_sources = {'30_4'};%{'26_2','30_4','36_3'};
+data_sources = {'26_1'};%{'26_2','30_4','36_3'};
 objs = {'Butter can','Glue stick','Hair-spary'};
 realFC = [1 2 3 4 5 6 7];
 
@@ -16,11 +16,11 @@ for i = 1:length(data_sources)
     for k = 1:length(K)
         
         
-        load(['pred_all_' data_sources{i}  '_' num2str(K(k)) '.mat'] );
+        load(['pred_all_' data_sources{i}  '_' num2str(K(k)) '_dm.mat'] );
         
-        [total_score, CumSum, d] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
+        [total_score, CumSum, d, max_err] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
         
-        disp(total_score);
+        disp([total_score max_err]);
         
         CumSumAll{j} = CumSum;
         D{j} = d;

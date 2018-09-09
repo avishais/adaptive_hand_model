@@ -140,7 +140,7 @@ end
 
 %%
 
-K = 1:length(S);%[1:12 14:23 25:31 33:35 37:41 43:48 51:58 61:63 65:66 68:69 71:75];
+K = [1:67 69:78 80:100];
 
 figure(1)
 clf
@@ -173,7 +173,7 @@ Sy = [Sm(:,2)-Ss(:,2) Sm(:,2)+Ss(:,2)];
 % Sx = [min(Sx')' max(Sx')'];
 % Sy = [min(Sy')' max(Sy')'];
     
-%% Load traj_dist_**.mat and run the previous section, then this.
+% Load traj_dist_**.mat and run the previous section, then this.
 
 px2mm = 0.2621;
 
