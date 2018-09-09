@@ -18,7 +18,7 @@ switch mode
 %         w = [];
         r = sqrt(0.15);
 end
-[Xtraining, Xtest, kdtree, I] = load_data(mode, w, 1, '20');
+[Xtraining, Xtest, kdtree, I] = load_data(mode, w, 2, '20');
 
 n = size(data,1);
 data = (data-repmat(I.xmin([I.state_inx I.action_inx]), n, 1))./repmat(I.xmax([I.state_inx I.action_inx])-I.xmin([I.state_inx I.action_inx]), n, 1);
