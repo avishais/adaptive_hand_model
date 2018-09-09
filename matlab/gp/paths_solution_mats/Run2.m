@@ -14,8 +14,7 @@ j = 1;
 for i = 1:length(data_sources)
     
     for k = 1:length(K)
-        
-        
+                
         load(['pred_all_' data_sources{i}  '_' num2str(K(k)) '_dm.mat'] );
         
         [total_score, CumSum, d, max_err] = compare_paths(Sr(:,1:2)*px2mm, S*px2mm, I);
