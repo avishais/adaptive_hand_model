@@ -1,5 +1,5 @@
 clear all
-for test_num = [15 16 17]
+for test_num = [9 12 14]%[15 16 17]
 % 
 for mode = [1 2 3 4 5 7 8]
 warning('off','all')
