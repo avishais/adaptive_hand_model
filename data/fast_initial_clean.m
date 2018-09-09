@@ -9,8 +9,9 @@ files = sortrows(files, 1);
 n = size(files,1);
 
 %%
-for i = 50:70
-    f = files{i,1};
+for i = 148:149
+%     f = files{i,1};
+    f = findfile(files, i);
     
     D = dlmread(['./cc/' f], ' ');
     disp(['Processing file ' f ' with ' num2str(size(D,1)) ' nodes...']);
@@ -33,4 +34,33 @@ for i = 50:70
     
     dlmwrite(['./cc/' f], D, 'delimiter',' ','precision',6);
         
+end
+
+%%
+
+function f = findfile(files, inx)
+
+for i = 1:size(files,1)
+    str = files{i};
+    k = 1; c = 0;
+    while str(k)~='.'
+        if str(k)=='_'
+            c = c + 1;
+        end
+        if c==2
+            break;
+        end
+        k = k + 1;
+    end
+    k1 = k + 1;
+    while str(k)~='.'
+        k = k + 1;
+    end
+    if str2num(str(k1:k-1))==inx
+        f = files{i};
+        return;
+    end
+    
+end
+
 end
