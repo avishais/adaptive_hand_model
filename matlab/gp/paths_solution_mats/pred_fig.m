@@ -54,7 +54,7 @@ imshow(Igp);
 Iall = [Igp; Imlgp];
 Iall = border(Iall);
 imshow(Iall)
-imwrite(Iall, ['test' num2str(test_num) '_20.png']);
+% imwrite(Iall, ['test' num2str(test_num) '_20.png']);
 
 
 %%

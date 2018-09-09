@@ -4,12 +4,12 @@ clc
 px2mm = 0.2621;
 M = dlmread('pt_vs_04.txt');
 
-im_start = 14;
-images_test_folder = '../../data/test_images/pt_vs_04/';
-file_prefix = 'image_test3_';
-file = [images_test_folder, file_prefix, num2str(im_start), '_*.jpg'];
-files = dir(fullfile(file));
-IM = imread([files.folder '/' files.name]);
+% im_start = 14;
+% images_test_folder = '../../data/test_images/pt_vs_04/';
+% file_prefix = 'image_test3_';
+% file = [images_test_folder, file_prefix, num2str(im_start), '_*.jpg'];
+% files = dir(fullfile(file));
+% IM = imread([files.folder '/' files.name]);
 
 obj_pos = MovingAvgFilter(M(:,18:19))*px2mm;
 carrot_pos = M(:,end-1:end)*px2mm;

@@ -69,7 +69,7 @@ cyl = s(I.state_dim);
 for i = 1:size(Sr,1)-1
     a = Sr(i+offset, I.action_inx);
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
-    [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+    [s, s2] = prediction_mlgp(kdtree, Xtraining, s, a, I, 1);
     S(i+1,:) = s;
     loss = loss + norm(s - Sr(i+1, I.state_nxt_inx));
     
@@ -86,7 +86,7 @@ hold off
 loss = loss / size(Sr,1);
 disp(toc)
 
-save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+save(['./paths_solution_mats/pred_' data_source '_' I.test_data_source{1} '_' I.test_data_source{2} '_' num2str(mode) '_dm.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
 
 
 %%
