@@ -32,16 +32,16 @@ figure(1)
 clf
 % imshow(IM);
 hold on
-plot(carrot_pos(:,1),carrot_pos(:,2),'--b','linewidth',3);
-plot(obj_pos(:,1),obj_pos(:,2),'-r','linewidth',4);
+plot(carrot_pos(:,1)+2,carrot_pos(:,2),'--b','linewidth',3);
+plot(obj_pos(:,1)+2,obj_pos(:,2),'-r','linewidth',4);
 hold off
 axis equal
-% ylim([42.5 49.5]);
-% xlim([105 123]);
-set(gca, 'fontsize',12);
-xlabel('x (mm)','fontsize',17);
-ylabel('y (mm)','fontsize',17);
-legend({'ref. traj.','actual path'},'location','southwest','fontsize',12);
+ylim([42.5 49.5]);
+xlim([105 123]);
+set(gca, 'fontsize',16);
+xlabel('x (mm)','fontsize',22);
+ylabel('y (mm)','fontsize',22);
+legend({'ref. traj.','actual path'},'location','southwest','fontsize',20);
 
 % print(['cl_vs.png'],'-dpng','-r150');
 
