@@ -1,7 +1,7 @@
 clear all
 clc
 
-px2mm = 0.2621*0+1;
+px2mm = 0.2621;
 M = dlmread('pt_nn_04.txt');
 
 im_start = 4292;
@@ -49,10 +49,10 @@ hold off
 axis equal
 ylim([44 50]);
 xlim([107 125]);
-set(gca, 'fontsize',12);
-xlabel('x (mm)','fontsize',17);
-ylabel('y (mm)','fontsize',17);
-legend({'ref. traj.','actual path'},'location','southeast','fontsize',12);
+set(gca, 'fontsize',16);
+xlabel('x (mm)','fontsize',22);
+ylabel('y (mm)','fontsize',22);
+legend({'ref. traj.','actual path'},'location','southeast','fontsize',20);
 
 % print(['cl_nn.png'],'-dpng','-r150');
 

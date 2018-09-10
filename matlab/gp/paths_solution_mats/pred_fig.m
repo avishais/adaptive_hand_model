@@ -54,13 +54,13 @@ imshow(Igp);
 Iall = [Igp; Imlgp];
 Iall = border(Iall);
 imshow(Iall)
-% imwrite(Iall, ['test' num2str(test_num) '_20.png']);
+imwrite(Iall, ['test' num2str(test_num) '_20.png']);
 
 
 %%
 function im = border( im)
 
-t = 10;
+t = 8;
 
 [rows cols n] = size(im);
 

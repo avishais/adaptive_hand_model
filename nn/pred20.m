@@ -71,11 +71,12 @@ for i = 1:length(K)
     L{i} = ['feature conf. ' num2str(i)];
 end
 hold off
-set(gca, 'fontsize',12);
-legend(L,'location','northwest','fontsize',14);
-xlabel('Traversed path (mm)','fontsize',17);
-ylabel('RMSE (mm)','fontsize',17);
+set(gca, 'fontsize',16);
+legend(L,'location','northwest','fontsize',17);
+xlabel('Traversed path (mm)','fontsize',20);
+ylabel('RMSE (mm)','fontsize',20);
 xlim([0 d{2}(end)]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.74, 0.4]);
 
 % print(['cumsum_NN_20_1.png'],'-dpng','-r150');
 
