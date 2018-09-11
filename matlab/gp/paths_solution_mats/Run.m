@@ -30,6 +30,6 @@ legend(L,'location','northwest','fontsize',17);
 xlabel('Traversed path (mm)','fontsize',20);
 ylabel('RMSE (mm)','fontsize',20);
 xlim([0 d(end)]);
-set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.74, 0.4]);
+set(gcf, 'Units', 'Normalized', 'OuterPosition', [0, 0.04, 0.74, 0.6]);
 
 % print(['cumsum_test_20_1.png'],'-dpng','-r150');

@@ -112,10 +112,10 @@ I3 = border(I3);
 
 
 
-Iall = [I1; I2; I3];
+Iall = [I1 I2 I3];
 % Iall = border(Iall);
 imshow(Iall)
-imwrite(Iall, ['test_all_20.png']);
+imwrite(Iall, ['test_all_20_h.png']);
 
 
 %%

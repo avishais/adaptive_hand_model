@@ -1,0 +1,1 @@
+This video presents the analysis and evaluation conducted on learning the transition model of an underactuated adaptive hand. We show results for predicting the motion of one object, generalization to unknown objects and implementation in closed-loop control.
