@@ -1,7 +1,7 @@
 clear all
 
 data_source = '20';
-dataset = 'cc';
+dataset = 'cd';
 
 files = dir(fullfile(['./' dataset '/'], [dataset '_' data_source '_*.txt']));
 files = struct2cell(files)';
@@ -210,5 +210,25 @@ if exist('Xtest1')% && exist('Xtest2') && exist('Xtest3')
 end
 hold off
 legend('training','test_1','test_2','test_3');
+
+%% Report
+
+fprintf('---------------------------------------------------\n');
+fprintf('Generated dataset with %d transition points.\n',size(Xtraining, 1));
+A = unique(Xtraining(:,Q{1}.action_inx), 'rows');
+A = sortrows(A,1);
+H = zeros(size(A,1),1);
+for i = 1:size(Xtraining,1)
+    H = H + all(A==Xtraining(i,Q{1}.action_inx), 2);
+end
+Keys = {'k','W','D','k','k','A','X','k'};
+for i = 1:length(H)
+    fprintf([Keys{i} ': %d\n'], H(i));
+end
+
+
+bar(H);
+set(gca,'xticklabel', Keys);
+
 
 
