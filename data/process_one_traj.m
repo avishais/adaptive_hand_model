@@ -1,8 +1,8 @@
 clear all
 
-filename = 'cd_20_007';
+filename = 'ce_20_010';
 
-M = dlmread(['./cd/' filename '.txt'],' ');
+M = dlmread(['./ce/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
 save2newFile = false;

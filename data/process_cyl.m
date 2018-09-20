@@ -1,7 +1,7 @@
 clear all
 
 data_source = '20';
-dataset = 'cd';
+dataset = 'ce';
 
 files = dir(fullfile(['./' dataset '/'], [dataset '_' data_source '_*.txt']));
 files = struct2cell(files)';
