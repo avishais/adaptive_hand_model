@@ -1,26 +1,65 @@
-function data  = process_data(M)
+function data = process_data(M)
 
 if 1
-    % Clean 0's
-    i = 1;
-    while (i <= size(M,1))
-        if (sum(M(i,2:end)==0) >= 4)
-            M(i,:) = [];
-            continue;
-        end
-        break;
-        i = i + 1;
+    
+    flag = 0;
+    j = 1;
+    while j < size(M,1) && sum(M(j,2:9)==0) <= 6
+        j = j + 1;
     end
     
-    % Clean when gripping
-    i = 1;
-    while (i <= size(M,1))
-        if all(M(i,6:7)==0)
-            M(i,:) = [];
-            continue;
+    if j < size(M,1) 
+        while abs(sum(M(j,6:7))) < 1e-3 
+            j = j + 1;
         end
-        break;
-        i = i + 1;
+    end
+    
+    j_new = j;
+    
+    while all(M(j_new,6:7)==[0.2,0.2])
+        j_new = j_new + 1;        
+    end
+    
+    if all(M(j_new,6:7)==[0,0])
+        j = j_new;
+        while all(M(j,6:7)==[0,0])
+            j = j + 1;
+        end
+    end
+    
+    M(1:j-1,:) = [];
+    
+    if all(M(end,2:5)==0)
+        j = size(M,1);
+        while all(M(j,2:5)==0)
+            j = j - 1;
+        end
+        M(j+1:end,:) = [];        
+        
+        data.fail_type = 'overload';
+    else
+        % Remove constant object position in the end (after drop)
+        j = size(M,1);
+        while all(M(j,18:19)==M(j-1,18:19))
+            j = j - 1;
+        end
+        M(j:end,:) = [];
+        
+        % Check jump in data due to fall
+        j = size(M,1);
+        while j > size(M,1)-60
+            if any(abs(M(j,18:19)-M(j-1,18:19)) >= 4 )
+                while any(abs(M(j,18:19)-M(j-1,18:19)) >= 4 )
+                    j = j - 1;
+                end
+                
+                M(j+1:end,:) = [];
+                break;
+            end
+            j = j - 1;
+        end
+        
+        data.fail_type = 'drop';
     end
 end
 
