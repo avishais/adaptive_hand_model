@@ -8,26 +8,32 @@ if 1
         j = j + 1;
     end
     
+    if j==size(M,1)
+        j = 1;
+    end
+    
     if j < size(M,1) 
-        while abs(sum(M(j,6:7))) < 1e-3 
+        while all(abs(M(j,6:7)) < 1e-3)
             j = j + 1;
         end
     end
     
-    j_new = j;
-    
-    while all(M(j_new,6:7)==[0.2,0.2])
-        j_new = j_new + 1;        
-    end
-    
-    if all(M(j_new,6:7)==[0,0])
-        j = j_new;
-        while all(M(j,6:7)==[0,0])
-            j = j + 1;
+    if j > 1
+        j_new = j;
+        
+        while all(M(j_new,6:7)==[0.2,0.2])
+            j_new = j_new + 1;
         end
+        
+        if all(M(j_new,6:7)==[0,0])
+            j = j_new;
+            while all(M(j,6:7)==[0,0])
+                j = j + 1;
+            end
+        end
+        
+        M(1:j-1,:) = [];
     end
-    
-    M(1:j-1,:) = [];
     
     if all(M(end,2:5)==0)
         j = size(M,1);
@@ -43,7 +49,7 @@ if 1
         while all(M(j,18:19)==M(j-1,18:19))
             j = j - 1;
         end
-        M(j:end,:) = [];
+        M(j+1:end,:) = [];
         
         % Check jump in data due to fall
         j = size(M,1);

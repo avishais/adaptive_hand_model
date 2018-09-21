@@ -1,11 +1,11 @@
 clear all
 
-filename = 'ce_20_010';
+filename = 'ce_20_test1';
 
 M = dlmread(['./ce/' filename '.txt'],' ');
 % M = dlmread('./berk_data/c_l_n_1.txt',',');
 
-save2newFile = false;
+save2newFile = true;
 
 % The columns are in the following order:
 % 

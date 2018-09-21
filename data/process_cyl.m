@@ -21,7 +21,7 @@ n = size(files,1);
 
 %%
 % mode = 1;
-for mode = 8%:8%[1 5 8]
+for mode = [5 8]%:8%[1 5 8]
     disp(['Processing data for feature conf. ' num2str(mode) '...']);
     Q = cell(n,1);
     P = [];
@@ -181,6 +181,12 @@ for mode = 8%:8%[1 5 8]
             Xtest2.theta = data.theta;
             flag = 0;
         end
+        if strcmp(f, 'ce_20_test1.txt') % test path
+            Xtest1.data = M;
+            Xtest1.base_pos = data.base_pos;
+            Xtest1.theta = data.theta;
+            flag = 0;
+        end
         if flag
             P = [P; M];
         end
@@ -195,7 +201,7 @@ for mode = 8%:8%[1 5 8]
     %     dlmwrite(['Ca_25_test2_' num2str(mode) '.db'], Xtest2, ' ');
     
     if exist('Xtest1') %&& exist('Xtest2') && exist('Xtest3')
-        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1', 'Xtest2');%,'Xtest3');
+        save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining', 'Xtest1');%, 'Xtest2');%,'Xtest3');
     else
         save(['C' dataset(2) '_' data_source '_' num2str(mode) '.mat'], 'Q', 'Xtraining');
     end
