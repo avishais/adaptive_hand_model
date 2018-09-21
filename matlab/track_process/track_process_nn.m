@@ -1,7 +1,7 @@
 clear all
 clc
 
-px2mm = 0.2621;
+px2mm = 1;%0.2621;
 M = dlmread('pt_nn_04.txt');
 
 im_start = 4292;
@@ -104,7 +104,7 @@ legend({'ref. traj.','actual path'},'location','southeast','fontsize',20);
 
 
 %%
-record = 1;
+record = 0;
 
 files = dir(fullfile(images_test_folder, '*.jpg'));
 files = struct2cell(files)';
@@ -112,7 +112,7 @@ files = sortrows(files, 1);
 files = files(:,1);
 
 if record
-    writerObj = VideoWriter('/home/avishai/Dropbox/transfer/rec_nn_04.avi'); %my preferred format
+    writerObj = VideoWriter('/home/avishai/Dropbox/transfer/rec_nn.avi'); %my preferred format
     writerObj.FrameRate = 60;
     open(writerObj);
 end
