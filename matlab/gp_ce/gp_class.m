@@ -1,3 +1,9 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Author: Avishai Sintov     %
+% Version 2.0                %
+% Updated: 9/21/2018, 4:00pm %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 classdef gp_class < handle
     %UNTITLED Summary of this class goes here
     %   Detailed explanation goes here
@@ -7,7 +13,9 @@ classdef gp_class < handle
         w
         We
         Xtraining
+        Xtest
         kdtree
+        kdtree_nn
         I
         euclidean
         dr_dim
@@ -28,7 +36,7 @@ classdef gp_class < handle
                 case 8
                     obj.dr_dim = 3;
                 case 5
-                    obj.dr_dim = 5;
+                    obj.dr_dim = 2;
                 otherwise
                     obj.dr_dim = 3;
             end
@@ -48,14 +56,17 @@ classdef gp_class < handle
             
             
 %             file = ['../../data/Ca_' data_source '_' num2str(obj.mode)];
-            file = ['/home/akimmel/Documents/ICRA_2019_adaptive/Cc_' data_source '_' num2str(obj.mode)];
+            file = ['../../data/Ce_' data_source '_' num2str(obj.mode)];
             
             
             if strcmp(data_source, '20')
-                D = load([file '.mat'], 'Q', 'Xtraining');
+                D = load([file '.mat']);
                 Q = D.Q;
                 
                 obj.Xtraining = D.Xtraining;
+                obj.Xtest = D.Xtest1.data;
+                obj.I.base_pos = D.Xtest1.base_pos;
+                obj.I.theta = D.Xtest1.theta;
             else
                 error('Wrong data source!');
             end
@@ -81,9 +92,14 @@ classdef gp_class < handle
             
             if isempty(obj.w)
                 obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
+                
+                % kd-tree for the nn search 
+                obj.We = diag([ones(1,obj.I.state_dim) [10 10]]);
+                obj.kdtree_nn = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance',@obj.distfun);
             else
                 obj.We = diag(obj.w);
                 obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance',@obj.distfun);
+                obj.kdtree_nn = obj.kdtree;
             end
             
         end
@@ -121,12 +137,12 @@ classdef gp_class < handle
         
         function [sp, sigma] = predict(obj, s, a)
             
-            gprMdl = obj.getPredictor(s, a);
+            sa = obj.normz([s,a]);
+            
+            gprMdl = obj.getPredictor(sa(obj.I.state_inx), sa(obj.I.action_inx));
             
             sp = zeros(1, length(obj.I.state_nxt_inx));
-            sigma = zeros(1, length(obj.I.state_nxt_inx));
-            
-            sa = obj.normz([s,a]);
+            sigma = zeros(1, length(obj.I.state_nxt_inx));         
             
             for i = 1:length(obj.I.state_nxt_inx)
                 [sp(i), sigma(i)] = predict(gprMdl{i}, sa);
@@ -194,7 +210,7 @@ classdef gp_class < handle
         
         function num_neighbors = getNN(obj, s, a, r)
             sa = obj.normz([s,a]);
-            id = rangesearch(obj.kdtree, sa,r);
+            id = rangesearch(obj.kdtree_nn, sa, r);
             id = id{1};
             num_neighbors = length(id);
         end
