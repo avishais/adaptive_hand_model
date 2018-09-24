@@ -14,6 +14,7 @@ MaxS = [293.8557 -176.4176  601.0000   16.0000];
 
 figure(1)
 clf
+plot(s(1),s(2),'pb','markerfacecolor','b');
 xlim([MinS(1) MaxS(1)]);
 ylim([MinS(2) MaxS(2)]);
 axis equal
@@ -28,11 +29,11 @@ for i = 1:10
     
     for j = 1:n
         
-        sa = GP.normz([s a]);       
-        nn = GP.getNN(sa(1:4), sa(5:6), 12);
-        if nn < 5000
-            break;
-        end
+%         sa = GP.normz([s a]);       
+        nn = -1;%GP.getNN(sa(1:4), sa(5:6), 12);
+%         if nn < 5000
+%             break;
+%         end
         
         [s_next, sigma] = GP.predict(s, a);
         
