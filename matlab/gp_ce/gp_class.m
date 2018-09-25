@@ -56,7 +56,7 @@ classdef gp_class < handle
             
             
 %             file = ['../../data/Ca_' data_source '_' num2str(obj.mode)];
-            file = ['../../data/Ce_' data_source '_' num2str(obj.mode)];
+            file = ['../../../data/Ce_' data_source '_' num2str(obj.mode)];
             
             
             if strcmp(data_source, '20')
@@ -94,8 +94,8 @@ classdef gp_class < handle
                 obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
                 
                 % kd-tree for the nn search 
-                obj.We = diag([ones(1,obj.I.state_dim) [10 10]]);
-                obj.kdtree_nn = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance',@obj.distfun);
+                obj.We = ([ones(1,obj.I.state_dim) [10 10].^0.5]);
+                obj.kdtree_nn = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]).*repmat(obj.We,size(obj.Xtraining,1),1), 'NSMethod','kdtree','Distance','euclidean');
             else
                 obj.We = diag(obj.w);
                 obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'Distance',@obj.distfun);

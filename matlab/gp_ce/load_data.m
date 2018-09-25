@@ -1,6 +1,6 @@
 function [Xtraining, Xtest, kdtree, I] = load_data(mode, w, test_num, data_source)
 
-file = ['../../data/Ce_' data_source '_' num2str(mode)];
+file = ['../../../data/Ce_' data_source '_' num2str(mode)];
 
 if strcmp(data_source, '20')
     D = load([file '.mat']);%, 'Q', 'Xtraining');%, 'Xtest1');

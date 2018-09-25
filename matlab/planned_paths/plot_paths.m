@@ -1,7 +1,7 @@
 clear all
 addpath('../../data/');
 
-num = 14;
+num = 19;
 p = 1;0.26;
 
 M1 = dlmread(['traj' num2str(num) '.txt_edited'])*p;
@@ -15,7 +15,7 @@ plot(M1(:,1),M1(:,2),'--b');
 plot(M1(1,1),M1(1,2),'ob');
 
 
-f = 'abc';
+f = 'a';
 for i = 1:length(f)
     
     M2 = dlmread(['planned_' num2str(num) f(i) '.txt']);
@@ -28,18 +28,19 @@ hold off
 axis equal
 
 %%
-S1 = S1(:,1:2);
+% S1 = S1(:,1:2);
 
 for i = 2:size(S1,1)
     S1(i,:) = sqrt((S1(i-1,:).^2.*S1(i,:).^2)./(S1(i-1,:).^2+S1(i,:).^2));
 end
+figure(3)
+plot(S1);
     
 
 figure(2)
 subplot(211)
 errorbar(1:size(M1,1)-1,M1(1:end-1,1),S1(:,1),'-');
 hold on
-f = 'ab';
 for i = 1:length(f)
     
     M2 = dlmread(['planned_' num2str(num) f(i) '.txt']);
@@ -48,11 +49,13 @@ for i = 1:length(f)
     
 end
 hold off
+xlabel('Step');
+ylabel('x coordinate');
+legend('planned','actual path','location','northwest');
 
 subplot(212)
 errorbar(1:size(M1,1)-1,M1(1:end-1,2),S1(:,2),'-');
 hold on
-f = 'ab';
 for i = 1:length(f)
     
     M2 = dlmread(['planned_' num2str(num) f(i) '.txt']);
@@ -61,3 +64,6 @@ for i = 1:length(f)
     
 end
 hold off
+xlabel('Step');
+ylabel('y coordinate');
+legend('planned','actual path','location','northwest');
