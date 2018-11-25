@@ -1,7 +1,9 @@
 clear all
 warning('off','all')
 
-for mode = 1:8
+with_ml = 0;
+
+for mode = 6:8
     for test_num = 3
         
         ps = parallel.Settings;
@@ -14,6 +16,7 @@ for mode = 1:8
         % test_num = 1;
         % mode = 8;
         w = [];%1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
+
         % switch mode
         %     case 1
         %         w = [3 3 1 1];
@@ -61,12 +64,16 @@ for mode = 1:8
         for i = 1:size(Sr,1)-1
             a = Sr(i, I.action_inx);
             disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
-            [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+            if with_ml
+                [s, s2] = prediction_mlgp(kdtree, Xtraining, s, a, I, 1);
+            else
+                [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
+            end
             S(i+1,:) = s;
             
             SI(i+1,:) = project2image(s(1:2), I);
             
-            if ~mod(i, 10)
+            if ~mod(i, 100)
                 plot(SI(1:i,1),SI(1:i,2),'.-m');
                 drawnow;
                 disp(['mse = ' num2str(MSE(SRI(1:i,1:2), SI(1:i,1:2)) * px2mm)]);
@@ -79,7 +86,11 @@ for mode = 1:8
         
         disp(['mse = ' num2str(MSE(SRI, SI) * px2mm)]);
         
-        save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_dm.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+        if with_ml
+            save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_dm.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+        else
+            save(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat'],'data_source','I','loss','mode','S','SI','Sr','SRI','test_num','w','Xtest');
+        end
         
         %% Closed loop
         
@@ -110,8 +121,8 @@ for mode = 1:8
         disp(['Loss: ' num2str(loss)]);
         
         %%
-        % load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
-        load(['./paths_solution_mats/pred_' '20' '_' num2str(5) '_' num2str(1) '_dm.mat']);
+        load(['./paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+%         load(['./paths_solution_mats/pred_' '20' '_' num2str(5) '_' num2str(1) '_dm.mat']);
         
         file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(I.im_min+size(Xtest,1)) '*.jpg'];
         files = dir(fullfile(file));

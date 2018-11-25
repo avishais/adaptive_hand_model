@@ -6,7 +6,7 @@ px2mm = 0.2621;
 with_figure = false;
 
 data_source = '20';
-test_num = 2;
+test_num = 1;
 mode = 8;
 w = [];
 % switch mode
