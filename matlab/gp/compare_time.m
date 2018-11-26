@@ -3,12 +3,12 @@ warning('off','all')
 
 with_ml = 0;
 
-T = zeros(8,2);
+T = cell(8,2);
 t = 0;
 test_num = 1;
 data_source = '20';
 w = [];%1.05 1.05 1 1 2 2 3 3]; % For cyl 25 and mode 8
-N = 5;
+N = 100;
 
 
 for j = 1:2
@@ -23,7 +23,7 @@ for j = 1:2
         Sr = Xtest;
         K = randi(size(Sr,1),N, 1);
         
-        t = 0;
+        t = zeros(N,1);
         for i = 1:N
             disp([j mode i]);
             s = Sr(K(i), I.state_inx);
@@ -34,10 +34,12 @@ for j = 1:2
             else
                 [s, s2] = prediction(kdtree, Xtraining, s, a, I, 1);
             end
-            t = t + toc;
+            t(i) = toc;
         end
-        T(mode, j) = t / N;        
+        T{mode, j} = t;        
     end
 end
 
 disp(T);
+
+save('time.mat','T');
