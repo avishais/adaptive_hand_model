@@ -43,3 +43,13 @@ end
 disp(T);
 
 save('time.mat','T');
+
+%%
+
+Tavg = zeros(8,2);
+for i = 1:8
+    for j = 1:2
+        Tavg(i,j) = mean(T{i,j});
+    end
+end
+disp([Tavg Tavg(:,2)./Tavg(:,1)]);
