@@ -24,7 +24,7 @@ I = GP.I;
 figure(2)
 clf
 hold on
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',3,'markerfacecolor','y');
+plot(Sr(:,1),Sr(:,2),'-b','linewidth',2,'markerfacecolor','y');
 axis equal
 
 tic;
@@ -35,6 +35,11 @@ S(1,:) = s;
 loss = 0;
 for i = 1:size(Sr,1)-1
     a = Sr(i, I.action_inx);
+    
+    if i==50
+        i;
+    end
+
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = GP.predict(s, a);
     S(i+1,:) = s;

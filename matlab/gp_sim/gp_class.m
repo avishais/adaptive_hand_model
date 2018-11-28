@@ -14,6 +14,7 @@ classdef gp_class < handle
         We
         Xtraining
         Xtest
+        Xtest_norm
         kdtree
         kdtree_nn
         I
@@ -22,14 +23,15 @@ classdef gp_class < handle
         IsDiscrete
         k_ambiant
         k_manifold
-%         predictServer
+        k_euclidean
+        %         predictServer
     end
     
     methods
         % Constructor
         function obj = gp_class(m, IsDiscrete)
-%             rosinit
-%             obj.predictServer = rossvcserver('/predictWithState', 'gp_predict/StateAction2State',@obj.predictStateCallback)
+            %             rosinit
+            %             obj.predictServer = rossvcserver('/predictWithState', 'gp_predict/StateAction2State',@obj.predictStateCallback)
             
             if nargin == 0
                 m = 2;
@@ -40,14 +42,14 @@ classdef gp_class < handle
                 end
             end
             obj.IsDiscrete = IsDiscrete;
-
+            
             obj.mode = m;
             obj.w = [];
             
-            % Choose the manifold dimension to reduce to 
+            % Choose the manifold dimension to reduce to
             switch obj.mode
                 case 1
-                    obj.dr_dim = 2;
+                    obj.dr_dim = 3;
                 case 2
                     obj.dr_dim = 2;
                 otherwise
@@ -56,30 +58,28 @@ classdef gp_class < handle
             
             obj.euclidean = false;
             
-            obj.k_ambiant = 10000;
-            obj.k_manifold = 1000;
+            obj.k_ambiant = 1000;
+            obj.k_manifold = 100;
+            obj.k_euclidean = 100;
             
             obj = obj.load_data();
             disp("Finished constructor")
         end
         
-%         function predictStateCallback(obj)
-%             exampleHelperROSCreateSampleNetwork
+        %         function predictStateCallback(obj)
+        %             exampleHelperROSCreateSampleNetwork
         
-        function obj = load_data(obj)      
+        function obj = load_data(obj)
             disp('Loading data...');
             
             if obj.IsDiscrete
-                file = '../../data/sim_transition_data_discrete.db';
-                is_start = 1;
-                is_end = 260;
+                Q = load('data_discrete.mat');
             else
-                file = '../../data/sim_transition_data_cont.db';
-                is_start = 12100;%250;
-                is_end = 12600;%750;
+                Q = load('data_cont.mat');
             end
-                
-            D = dlmread(file);
+            D = Q.D;
+            is_start = Q.is_start;
+            is_end = Q.is_end;
             
             obj.Xtraining = [D(1:is_start-1,:); D(is_end+1:end,:)];
             obj.Xtest = D(is_start:is_end,:);
@@ -90,6 +90,9 @@ classdef gp_class < handle
                 obj.I.action_inx = 5:6;
                 obj.I.state_inx = 1:4;
                 obj.I.state_nxt_inx = 7:10;
+                %                 obj.I.action_inx = 3:4;
+                %                 obj.I.state_inx = 1:2;
+                %                 obj.I.state_nxt_inx = 5:6;
                 obj.I.state_dim = length(obj.I.state_inx);
             end
             if obj.mode == 2
@@ -100,7 +103,7 @@ classdef gp_class < handle
                 obj.I.state_nxt_inx = 5:6;
                 obj.I.state_dim = length(obj.I.state_inx);
             end
-                           
+            
             xmax = max(obj.Xtraining);
             xmin = min(obj.Xtraining);
             
@@ -110,6 +113,7 @@ classdef gp_class < handle
                 xmin(id) = min(xmin(id));
             end
             obj.Xtraining = (obj.Xtraining-repmat(xmin, size(obj.Xtraining,1), 1))./repmat(xmax-xmin, size(obj.Xtraining,1), 1);
+            obj.Xtest_norm = (obj.Xtest-repmat(xmin, size(obj.Xtest,1), 1))./repmat(xmax-xmin, size(obj.Xtest,1), 1);
             
             obj.I.xmin = xmin;
             obj.I.xmax = xmax;
@@ -117,7 +121,7 @@ classdef gp_class < handle
             if isempty(obj.w)
                 obj.kdtree = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]), 'NSMethod','kdtree','Distance','euclidean');
                 
-                % kd-tree for the nn search 
+                % kd-tree for the nn search
                 obj.We = ([ones(1,obj.I.state_dim) [10 10].^0.5]);
                 obj.kdtree_nn = createns(obj.Xtraining(:,[obj.I.state_inx obj.I.action_inx]).*repmat(obj.We,size(obj.Xtraining,1),1), 'NSMethod','kdtree','Distance','euclidean');
             else
@@ -148,11 +152,13 @@ classdef gp_class < handle
         function gprMdl = getPredictor(obj, s, a)
             
             if obj.euclidean
-                [idx, ~] = knnsearch(obj.kdtree, [s a], 'K', 100);
+                [idx, ~] = knnsearch(obj.kdtree, [s a], 'K', obj.k_euclidean);
                 data_nn = obj.Xtraining(idx,:);
-            else 
+            else
                 data_nn =  obj.diffusion_metric([s a]);
             end
+            
+            obj.plot_data(s, data_nn);
             
             gprMdl = cell(length(obj.I.state_nxt_inx),1);
             for i = 1:length(obj.I.state_nxt_inx)
@@ -168,7 +174,7 @@ classdef gp_class < handle
             gprMdl = obj.getPredictor(sa(obj.I.state_inx), sa(obj.I.action_inx));
             
             sp = zeros(1, length(obj.I.state_nxt_inx));
-            sigma = zeros(1, length(obj.I.state_nxt_inx));         
+            sigma = zeros(1, length(obj.I.state_nxt_inx));
             
             for i = 1:length(obj.I.state_nxt_inx)
                 [sp(i), sigma(i)] = predict(gprMdl{i}, sa);
@@ -188,7 +194,7 @@ classdef gp_class < handle
             
             % Changing these values will lead to different nonlinear embeddings
             knn    = ceil(0.03*N); % each patch will only look at its knn nearest neighbors in R^d
-            sigma2 = 100; % determines strength of connection in graph... see below
+            sigma2 = 10; % determines strength of connection in graph... see below
             
             % now let's get pairwise distance info and create graph
             m                = size(data,1);
@@ -247,6 +253,55 @@ classdef gp_class < handle
         
         function x = denormz(obj, x)
             x = x .* (obj.I.xmax(1:length(x))-obj.I.xmin(1:length(x))) + obj.I.xmin(1:length(x));
+        end
+        
+        function plot_data(obj, s, data_nn)
+            
+            figure(2)
+            clf
+            subplot(121)
+            plot(obj.Xtest_norm(:,1),obj.Xtest_norm(:,2),':k');
+            hold on
+            plot(s(1),s(2),'ok','markersize',10,'markerfacecolor','c');
+            plot(data_nn(:,1),data_nn(:,2),'.m','markersize',6)
+            
+            for i = 1:size(data_nn,1)
+                plot(data_nn(i,[1 7]), data_nn(i,[2 8]), '-b');
+                if obj.IsDiscrete
+                    d = what_action(data_nn(i,obj.I.action_inx));
+                    quiver(data_nn(i,1),data_nn(i,2), d(1), d(2),0.0002,'k');
+                    %                 plot(data_nn(i,[obj.I.state_inx(1) obj.I.state_nxt_inx(1)]),data_nn(i,[obj.I.state_inx(2) obj.I.state_nxt_inx(2)]),'.-m');
+                end
+            end
+            hold off
+            subplot(122)
+            plot(obj.Xtest_norm(:,3),obj.Xtest_norm(:,4),':k');
+            hold on
+            plot(s(3),s(4),'ok','markersize',10,'markerfacecolor','c');
+            plot(data_nn(:,3),data_nn(:,4),'.m','markersize',6)
+            for i = 1:size(data_nn,1)
+                plot(data_nn(i,[3 9]), data_nn(i,[4 10]), '-b');
+            end
+            hold off
+            drawnow;
+            
+            function d = what_action(a)
+                if all(a==[0 0])
+                    d = [0 -1];
+                else if all(a==[1 1])
+                        d = [0 1];
+                    else if all(a==[0 1])
+                            d = [1 0];
+                        else
+                            if all(a==[1 0])
+                                d = [-1 0];
+                            end
+                        end
+                    end
+                end
+            end
+            
+            
         end
         
     end

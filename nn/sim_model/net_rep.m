@@ -1,7 +1,9 @@
 function [W, b, x_max, x_min, activation] = net_rep()
 
 
-R = load('net_transition.netxt');
+% R = load('net_transition.netxt');
+R = load('/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/net_transition.netxt');
+
 
 n = R(1);
 activation = R(2);

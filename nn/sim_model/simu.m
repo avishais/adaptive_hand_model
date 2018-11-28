@@ -1,6 +1,7 @@
 clear all
 
-D = dlmread('../../data/sim_transition_data_cont.db');
+% D = dlmread('../../data/sim_transition_data_cont.db');
+D = dlmread('/home/pracsys/catkin_ws/src/rutgers_collab/src/sim_transition_model/data/transition_data_cont_0.db');
 
 action_inx = 5:6;
 state_inx = 1:4;
