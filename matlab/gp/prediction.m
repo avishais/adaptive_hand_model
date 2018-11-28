@@ -16,7 +16,7 @@ end
 
 function gprMdl = getPredictor(kdtree, Xtraining, x, a, I, mode)
 % 
-[idx, d] = knnsearch(kdtree, [x a], 'K', 100);
+[idx, d] = knnsearch(kdtree, [x a], 'K', 1000); % Changed to 1000 after RAL paper review
 data_nn = Xtraining(idx,:);
 
 % data_nn =  diffusion_metric([x a], kdtree, Xtraining, I);

@@ -50,8 +50,8 @@ plot(data{it}.T,Rm(:,1)*px2mm+Ut(:,1),'-k','linewidth',2.5);
 % plot([data{1}.T; flipud(data{1}.T)], [Sx(:,1); flipud(Sx(:,2))],'-k','linewidth',4);
 hold off
 set(gca, 'FontSize', 12)
-xlabel('Time (sec)','fontsize', 17);
-ylabel('Position - x axis (mm)','fontsize', 17);
+xlabel('Time (sec)','fontsize', 16);
+ylabel('Position - x axis (mm)','fontsize', 16);
 % legend({'pred. std.','ground truth std.','pred. mean','ground truth mean'},'location','northwest','fontsize',14);
 xlim([0 max(data{it}.T)-2]);
 ylim([130 180])
@@ -68,17 +68,12 @@ plot(T_nn,NNm(:,2)*px2mm+Unn(:,2),'--k','linewidth',2.5);
 plot(data{it}.T,Rm(:,2)*px2mm+Ut(:,2),'-k','linewidth',2.5);
 % plot([data{1}.T; flipud(data{1}.T)], [Sy(:,1); flipud(Sy(:,2))],'-k','linewidth',3);
 hold off
-set(gca, 'FontSize', 13)
-xlabel('Time (sec)','fontsize', 18);
-ylabel('Position - y axis (mm)','fontsize', 18);
-legend({'EGP pred. std.','MLGP pred. std.','NN std.','ground truth std.','MLGP pred. mean','NN mean','ground truth mean'},'location','northwest','fontsize',15);
+set(gca, 'FontSize', 12)
+xlabel('Time (sec)','fontsize', 16);
+ylabel('Position - y axis (mm)','fontsize', 16);
+legend({'EGP_{100} pred. std.','MLGP pred. std.','NN std.','ground truth std.','MLGP pred. mean','NN mean','ground truth mean'},'location','northwest','fontsize',13);
 xlim([0 max(data{it}.T)-2]);
 ylim([25 65])
-
-
-
-
-
 
 %%
 

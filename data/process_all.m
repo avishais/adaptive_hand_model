@@ -284,7 +284,7 @@ for mode = 1:8%[5 8 9 10 11]
             Xtest_26_2.file = f;
             flag = 0;
         end
-        if strcmp(f, 'ca_30_test4.txt') % test path - Glue stick - traj 1
+        if strcmp(f, 'ca_30_test4.txt') % test path - Glue stick - traj 2
             Xtest_30_4.data = M(:,2:end);
             Xtest_30_4.base_pos = data.base_pos;
             Xtest_30_4.theta = data.theta;

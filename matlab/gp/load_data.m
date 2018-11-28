@@ -17,7 +17,7 @@ end
 
 UseToyData = 0;
 
-file = ['../../data/Ca_' data_source '_' num2str(mode)];
+file = ['../../../data/Ca_' data_source '_' num2str(mode)];
 
 %% Toy Data
 
@@ -265,7 +265,7 @@ if isempty(w)
 else
     global W
     % W = diag([ones(1,2)*w ones(1,I.state_dim)]);
-    W = diag(w);
+    W = diag(ones(1,I.state_dim+2));
     kdtree = createns(Xtraining(:,[I.state_inx I.action_inx]), 'Distance',@distfun);
 end
 

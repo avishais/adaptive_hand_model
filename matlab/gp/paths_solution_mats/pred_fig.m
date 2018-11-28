@@ -1,7 +1,7 @@
 clear all
 
 data_source = '20';
-test_num = 3;
+test_num = 1;
 mode = 8;
 
 %%
@@ -54,7 +54,7 @@ imshow(Igp);
 Iall = [Igp; Imlgp];
 Iall = border(Iall);
 imshow(Iall)
-imwrite(Iall, ['test' num2str(test_num) '_20.png']);
+% imwrite(Iall, ['test' num2str(test_num) '_20.png']);
 
 
 %%
@@ -66,8 +66,5 @@ t = 8;
 
 im = [zeros(rows, t, n) im zeros(rows, t, n)];
 im = [zeros(t, cols+2*t, n); im; zeros(t, cols+2*t, n)];
-
-
-
 
 end
