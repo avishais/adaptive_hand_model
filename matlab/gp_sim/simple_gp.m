@@ -3,7 +3,7 @@ warning('off','all')
 
 px2mm = 1;
 
-GP = gp_class(1, false);
+GP = gp_class(1, 0, 1);
 
 Sr = GP.Xtest;
 I = GP.I;
@@ -24,7 +24,7 @@ I = GP.I;
 figure(2)
 clf
 hold on
-plot(Sr(:,1),Sr(:,2),'-b','linewidth',2,'markerfacecolor','y');
+plot(Sr(:,1),Sr(:,2),'x-b','linewidth',2,'markerfacecolor','y');
 axis equal
 
 tic;
@@ -36,9 +36,9 @@ loss = 0;
 for i = 1:size(Sr,1)-1
     a = Sr(i, I.action_inx);
     
-    if i==50
-        i;
-    end
+%     if i==35
+%         GP.plotData = true;
+%     end
 
     disp(['Step: ' num2str(i) ', action: ' num2str(a)]);
     [s, s2] = GP.predict(s, a);

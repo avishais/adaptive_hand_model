@@ -24,24 +24,31 @@ classdef gp_class < handle
         k_ambiant
         k_manifold
         k_euclidean
+        plotData
         %         predictServer
     end
     
     methods
         % Constructor
-        function obj = gp_class(m, IsDiscrete)
+        function obj = gp_class(m, IsDiscrete, plotData)
             %             rosinit
             %             obj.predictServer = rossvcserver('/predictWithState', 'gp_predict/StateAction2State',@obj.predictStateCallback)
             
             if nargin == 0
                 m = 2;
                 IsDiscrete = false;
+                plotData = false;
             else
                 if nargin == 1
                     IsDiscrete = false;
+                    plotData = false;
+                end
+                if nargin == 2
+                    plotData = false;
                 end
             end
             obj.IsDiscrete = IsDiscrete;
+            obj.plotData = plotData;
             
             obj.mode = m;
             obj.w = [];
@@ -60,7 +67,7 @@ classdef gp_class < handle
             
             obj.k_ambiant = 1000;
             obj.k_manifold = 100;
-            obj.k_euclidean = 100;
+            obj.k_euclidean = 1500;
             
             obj = obj.load_data();
             disp("Finished constructor")
@@ -78,8 +85,8 @@ classdef gp_class < handle
                 Q = load('data_cont.mat');
             end
             D = Q.D;
-            is_start = Q.is_start;
-            is_end = Q.is_end;
+            is_start = Q.is_start;%+90;
+            is_end = is_start+50;%Q.is_end;
             
             obj.Xtraining = [D(1:is_start-1,:); D(is_end+1:end,:)];
             obj.Xtest = D(is_start:is_end,:);
@@ -158,7 +165,9 @@ classdef gp_class < handle
                 data_nn =  obj.diffusion_metric([s a]);
             end
             
-            obj.plot_data(s, data_nn);
+            if obj.plotData
+                obj.plot_data(s, data_nn);
+            end
             
             gprMdl = cell(length(obj.I.state_nxt_inx),1);
             for i = 1:length(obj.I.state_nxt_inx)
@@ -194,7 +203,7 @@ classdef gp_class < handle
             
             % Changing these values will lead to different nonlinear embeddings
             knn    = ceil(0.03*N); % each patch will only look at its knn nearest neighbors in R^d
-            sigma2 = 10; % determines strength of connection in graph... see below
+            sigma2 = 100; % determines strength of connection in graph... see below
             
             % now let's get pairwise distance info and create graph
             m                = size(data,1);
@@ -254,7 +263,7 @@ classdef gp_class < handle
         function x = denormz(obj, x)
             x = x .* (obj.I.xmax(1:length(x))-obj.I.xmin(1:length(x))) + obj.I.xmin(1:length(x));
         end
-        
+               
         function plot_data(obj, s, data_nn)
             
             figure(2)
@@ -284,6 +293,7 @@ classdef gp_class < handle
             end
             hold off
             drawnow;
+            
             
             function d = what_action(a)
                 if all(a==[0 0])
