@@ -58,7 +58,7 @@ while 1
     frame = insertText(frame, [1020 650], 'Yellow - ref. traj.','fontsize',35, 'BoxOpacity',0.8,'TextColor','Yellow','BoxColor','black');
     frame = insertText(frame, [1020 700], 'Cyan - predicted traj.','fontsize',35, 'BoxOpacity',0.8,'TextColor','cyan','BoxColor','black');
     
-    imshow(frame);
+%     imshow(frame);
     
     if record
         writeVideo(writerObj, frame);

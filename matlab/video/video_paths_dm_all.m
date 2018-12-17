@@ -1,8 +1,8 @@
 clear all
 
 data_source = 'all';
-obj = 26;%36;30;26;
-test_numd = 1;%2;%1;
+obj = 36;%36;30;26;
+test_numd = 2;%2;%3;%1;
 mode = 7;%7;
 
 speed = 5;
@@ -30,7 +30,7 @@ if record
     open(writerObj);
 end
 
-of = 0;
+of = 120;
 j = 1+of;
 for i = I.im_min+of:speed:I.im_min+size(Xtest,1)-1
     disp(['Step DM ' num2str(i-I.im_min)]);
@@ -54,7 +54,9 @@ for i = I.im_min+of:speed:I.im_min+size(Xtest,1)-1
     frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
     Imlgp = imcrop(frame.cdata, [xd 50 500 500]); % Traj 1 & 2, x-250 for 2
     
-    Imlgp = insertText(Imlgp, [7 430], 'Butter can','fontsize',35);
+%     Imlgp = insertText(Imlgp, [7 430], 'Butter can','fontsize',35);
+%     Imlgp = insertText(Imlgp, [7 430], 'Glue stick','fontsize',35);
+    Imlgp = insertText(Imlgp, [7 430], 'Hair spray','fontsize',35);
 %     imshow(Imlgp);
     
     if record

@@ -1,8 +1,8 @@
 clear all
 
 data_source = '20';
-test_num = 3;
-mode = 8;
+test_num = 2;
+% mode = 8;
 
 speed = 5;
 record = 1;
@@ -17,10 +17,10 @@ switch test_num
 end
 
 %%
-k = 1;
-for mode = [1 2 3 4 5 8 7]
+k = 6;
+for mode = 8%[1 2 3 4 5 8 7]
     
-    if mode == 9
+    if mode == 8
         load(['../gp/paths_solution_mats/beforeDM/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
     else
         load(['../gp/paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '_dm.mat']);

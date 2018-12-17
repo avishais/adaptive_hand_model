@@ -1,7 +1,7 @@
 clear all
 
 data_source = '20';
-test_num = 1;
+test_num = 4;
 mode = 8;
 
 speed = 1;
@@ -28,7 +28,7 @@ if record
 end
 
 j = 1;
-for i = I.im_min:speed:I.im_min+size(Xtest,1)
+for i = I.im_min:speed:I.im_min+size(Xtest,1)-1 
     disp(['Step DM ' num2str(i-I.im_min)]);
     
     file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(i) '*.jpg'];
@@ -61,7 +61,9 @@ if record
 end
 
 %%
-load(['../gp/paths_solution_mats/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
+
+mode = 8;
+load(['../gp/paths_solution_mats/b4review/pred_' data_source '_' num2str(mode) '_' num2str(test_num) '.mat']);
 
 
 if record
@@ -71,7 +73,7 @@ if record
 end
 
 j = 1;
-for i = I.im_min:speed:I.im_min+size(Xtest,1)
+for i = I.im_min:speed:I.im_min+size(Xtest,1)-1
         disp(['Step ' num2str(i-I.im_min)]);
     
     file = ['../../data/test_images/ca_' num2str(data_source) '_test' num2str(test_num) '/image_test3_' num2str(i) '*.jpg'];

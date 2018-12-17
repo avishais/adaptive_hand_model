@@ -5,6 +5,7 @@
 
 *.jpg
 *.avi
+*.mp4
 
 ### C++ ###
 # Prerequisites

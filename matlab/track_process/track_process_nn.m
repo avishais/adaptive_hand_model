@@ -104,7 +104,7 @@ legend({'ref. traj.','actual path'},'location','southeast','fontsize',20);
 
 
 %%
-record = 0;
+record = 1;
 
 files = dir(fullfile(images_test_folder, '*.jpg'));
 files = struct2cell(files)';
@@ -112,7 +112,7 @@ files = sortrows(files, 1);
 files = files(:,1);
 
 if record
-    writerObj = VideoWriter('/home/avishai/Dropbox/transfer/rec_nn.avi'); %my preferred format
+    writerObj = VideoWriter('/home/avishai/Dropbox/transfer/rec_nn_04.avi'); %my preferred format
     writerObj.FrameRate = 60;
     open(writerObj);
 end
@@ -137,9 +137,19 @@ for i = 1:speed:size(obj_pos,1)
     
     if record
         frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
-        frame.cdata = imcrop(frame.cdata, [300 30 830-300 480-30]);
-%         frame.cdata = imcrop(frame.cdata, [360 90 770-360 420-90]);
-%         frame.cdata = insertText(frame.cdata,[220 8],'with learned model','fontsize',18);
+%         frame.cdata = imcrop(frame.cdata, [300 30 830-300 480-30]);
+                frame.cdata = imcrop(frame.cdata, [360 90 770-360 420-90]);
+                frame.cdata = insertText(frame.cdata,[220 8],'with learned model','fontsize',18);
+        
+%         frame.cdata = insertText(frame.cdata,[120 8],'Within-hand precise manipulation','fontsize',18,'BoxColor',...
+%             'white','BoxOpacity',0.,'TextColor','red');
+%         frame.cdata = insertText(frame.cdata,[120 32],'with a learned model','fontsize',18,'BoxColor',...
+%             'white','BoxOpacity',0.,'TextColor','red');
+%         frame.cdata = insertText(frame.cdata,[5 380],'Yellow - ref. trajectory  ','fontsize',16,'BoxColor',...
+%             'black','BoxOpacity',0.9,'TextColor','yellow');
+%         frame.cdata = insertText(frame.cdata,[5 408],'Red - tracked trajectory','fontsize',16,'BoxColor',...
+%             'black','BoxOpacity',0.9,'TextColor','red');
+%        
 %         imshow(frame.cdata);
         writeVideo(writerObj, frame);
     end

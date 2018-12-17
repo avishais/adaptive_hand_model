@@ -20,9 +20,13 @@ if record
     open(writerObj);
 end
 
+i = 1;
 while 1
     
     if ~hasFrame(v1) && ~hasFrame(v2) && ~hasFrame(v3) && ~hasFrame(v4) && ~hasFrame(v5) && ~hasFrame(v6) && ~hasFrame(v7)
+        for j = 1:300
+            writeVideo(writerObj, frame);
+        end
         break;
     end
     
@@ -61,12 +65,18 @@ while 1
     frame = insertText(frame, [30 80], 'Yellow - ref. traj.','fontsize',35, 'BoxOpacity',0.8,'TextColor','Yellow','BoxColor','black');
     frame = insertText(frame, [30 140], 'Cyan - predicted traj.','fontsize',35, 'BoxOpacity',0.8,'TextColor','cyan','BoxColor','black');
     
+    if i > 180
+        frame = insertText(frame, [1007 820], 'feature configuration 6','fontsize',42, 'BoxOpacity',0.,'TextColor','white','BoxColor','black');  
+        frame = insertText(frame, [1007 880], 'provides best predictions','fontsize',42, 'BoxOpacity',0.,'TextColor','white','BoxColor','black');  
+    end
+    
     imshow(frame);
     
     if record
         writeVideo(writerObj, frame);
     end
     
+    i = i + 1;
 end
 
 if record

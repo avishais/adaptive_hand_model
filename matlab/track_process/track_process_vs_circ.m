@@ -5,7 +5,7 @@ px2mm = 1;0.2621;
 
 M = dlmread('pt_vs_circ.txt');
 im_start = 19;
-images_test_folder = '../../data/test_images/pt_vs_circ_b/';
+images_test_folder = '../../data/test_images/pt_vs_circ/';
 
 file_prefix = 'image_test3_';
 file = [images_test_folder, file_prefix, num2str(im_start), '*.jpg'];
@@ -110,7 +110,7 @@ if record
 end
 
 ix = im_start;
-speed = 5;
+speed = 3;
 for i = 1:speed:size(obj_pos,1)
     
     filename = find_file(file_prefix, ix, files);
@@ -130,7 +130,8 @@ for i = 1:speed:size(obj_pos,1)
     if record
         frame = getframe(gcf); % 'gcf' can handle if you zoom in to take a movie.
 %         frame.cdata = imcrop(frame.cdata, [380 1 300 300]);
-%         frame.cdata = insertText(frame.cdata,[10 36],'visual servoing','fontsize',18);
+        frame.cdata = imcrop(frame.cdata, [360 90 770-360 420-90]);
+        frame.cdata = insertText(frame.cdata,[10 10],'visual servoing','fontsize',18);
 %         imshow(frame.cdata);
         writeVideo(writerObj, frame);
     end
