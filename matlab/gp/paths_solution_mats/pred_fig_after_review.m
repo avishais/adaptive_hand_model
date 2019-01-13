@@ -88,7 +88,7 @@ Iall = [border(Imlgp1) border(Imlgp2) border(Imlgp3)];
 Iall(:,[201:211 417:422] ,:) = [];
 % Iall = border(Iall);
 imshow(Iall)
-imwrite(Iall, ['test_20_mlgp.png']);
+% imwrite(Iall, ['test_20_mlgp.png']);
 
 
 %%

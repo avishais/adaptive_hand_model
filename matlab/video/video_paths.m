@@ -5,7 +5,7 @@ test_num = 2;
 % mode = 8;
 
 speed = 5;
-record = 1;
+record = 0;
 
 switch test_num
     case 1

@@ -1,3 +1,6 @@
 ffmpeg command to reduce file size:
 
 ffmpeg -i RAL2019b.mp4 -strict -2 -b:a 600000 ral2019b.mp4
+
+Add this if error of not able to divide width by 2
+-vf "scale=trunc(i2/2)*2:trunc(ih/2)*2"
